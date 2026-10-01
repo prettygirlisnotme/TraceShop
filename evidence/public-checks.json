@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-01",
+  "job_id": "178861",
+  "state": "COMPLETED",
+  "exit_code": "0:0",
+  "elapsed_seconds": 12,
+  "scope": "public checkout, stdlib, synthetic catalog, loopback HTTP",
+  "stdlib_imports": {
+    "import_ok": true,
+    "import_stderr_tail": [],
+    "site_packages_on_path": false,
+    "polluted_paths": []
+  },
+  "unit_tests": {
+    "ran": 11,
+    "passed": true
+  },
+  "http_flow": {
+    "checks": {
+      "health_status": 200,
+      "health_real_merchant_integrated": false,
+      "research_status": 200,
+      "research_feasible": true,
+      "approve_status": 200,
+      "approve_verified": true,
+      "approve_idempotent": false,
+      "reservation_status": "draft_reserved",
+      "reapprove_status": 200,
+      "reapprove_idempotent": true,
+      "same_reservation_id": true,
+      "readback_status": 200,
+      "readback_reservations": 1,
+      "readback_same_reservation": true,
+      "simulate_quote_status": 200,
+      "simulate_replan_required": true,
+      "quote_changed_status": 409,
+      "quote_changed_code": "quote_changed",
+      "reject_status": 200,
+      "reject_proposal_status": "REJECTED",
+      "reject_approve_status": 409,
+      "reject_approve_code": "proposal_rejected"
+    },
+    "required": {
+      "health_200": true,
+      "no_real_merchant": true,
+      "research_200_feasible": true,
+      "approve_verified_explicit": true,
+      "reservation_is_draft": true,
+      "idempotent_same_draft": true,
+      "readback_one_reservation": true,
+      "quote_change_409": true,
+      "reject_then_approve_409": true
+    },
+    "ok": true
+  },
+  "server_stopped": true,
+  "passed": true
+}

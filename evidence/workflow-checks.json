@@ -1,0 +1,31 @@
+{
+  "job_id": "178695",
+  "date": "2026-10-01",
+  "host_pin": {
+    "repo": "OctoSense-org/robrix2",
+    "commit": "05daf9bdb05fafc6d8f04dcb312a35f1d46a661e",
+    "binary_sha256": "489612ba24292763213bdc539c61982943d7241d385a910d222d4d60a1699e5d",
+    "protocol_message_type": "rs.robius.robrix.mini_app",
+    "note": "historical commit linked from the official example, built separately; not latest Rinx main"
+  },
+  "video_seconds": 60.0,
+  "checks": {
+    "fixture_ready": true,
+    "native_send_card_event_from_receiver": true,
+    "native_send_card_sender_differs_from_incoming": true,
+    "native_send_card_body_has_app_url": true,
+    "native_open_in_browser_to_real_browser": true,
+    "browser_readback_fields_match": true,
+    "browser_clipboard_copied": true,
+    "browser_shareable_cleared_after_price_change": true,
+    "native_result_return_body_equals_clipboard": true,
+    "current_browser_webm_captured": true
+  },
+  "limitations": [
+    "private loopback synthetic fixture, CPU only",
+    "does not prove a public live merchant service or latest Rinx main",
+    "browser loaded via a transparent headless URL-opener adapter, not the desktop default GUI browser",
+    "native host screenshots are separate stills, not continuous desktop video",
+    "local-only URL; official acceptance not confirmed"
+  ]
+}

@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+envs/
+
+# Local runtime state
+.local-state/
+*.sqlite3
+*.sqlite3-*
+
+# Secrets / tokens / private fixtures
+secrets/
+*.token
+*.secret
+fixture.json
+
+# Temp
+temp/
+tmp/
+scratch/

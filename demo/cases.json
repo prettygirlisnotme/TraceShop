@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "fixture": "demo/catalog.jsonl",
+  "fixture_note": "Portable hand-authored demo catalog matching the real schema_version=1 Office catalog fields (item_id/asin/title/brand/price_usd/categories/features/description/technical_details). The cluster run passes the full Office catalog via --catalog.",
+  "disclaimer_zh": "本地采购草稿，不下单、不扣款 / 商品来源见需求简报；库存与变更为演示服务",
+  "disclaimer_en": "Local draft only. No order is placed and no payment is taken. Items come from a historical catalog; stock and changes are simulated by the demo service.",
+  "description": "Five fixed acceptance cases. The same deterministic policy is used by the HTTP API and by tests/test_shopping_flow.py.",
+  "cases": [
+    {
+      "id": "normal_confirm_idempotent",
+      "label_zh": "正常确认 + 幂等 + 重启可读",
+      "label_en": "Confirm + idempotent + durable readback",
+      "kind": "confirm",
+      "query": "wireless mouse under 30 dollars",
+      "top_k": 3,
+      "step": "research -> approve the proposal -> approve the same proposal again",
+      "expect": "first approve writes one durable draft reservation with a verified readback; the repeated approve returns the same reservation_id and writes nothing new; reopening the DB still shows the reservation",
+      "ui_runnable": true
+    },
+    {
+      "id": "reject",
+      "label_zh": "拒绝提案不产生预订",
+      "label_en": "Reject creates no reservation",
+      "kind": "reject",
+      "query": "wireless mouse under 30 dollars",
+      "top_k": 3,
+      "step": "research -> reject the proposal -> attempt approve",
+      "expect": "rejection is recorded, no reservation row exists, a later approve is refused with 409 proposal_rejected",
+      "ui_runnable": true
+    },
+    {
+      "id": "no_feasible_budget",
+      "label_zh": "预算内无可行商品",
+      "label_en": "No feasible item within budget",
+      "kind": "no_feasible",
+      "query": "wireless mouse under 3 dollars",
+      "top_k": 3,
+      "step": "research with an impossible budget",
+      "expect": "no recommendation and no proposal; deterministic negotiation options are returned; no reservation is created",
+      "ui_runnable": true
+    },
+    {
+      "id": "price_changed_after_proposal",
+      "label_zh": "提案后报价变化被拦截",
+      "label_en": "Price changed after proposal is blocked",
+      "kind": "price_changed",
+      "query": "wireless mouse under 30 dollars",
+      "top_k": 3,
+      "simulate": {"mode": "price", "delta_usd": 5.0},
+      "step": "research -> 模拟报价变化 -> attempt approve",
+      "expect": "proposal moves to NEEDS_REVIEW; approve is refused with 409 quote_changed and asks for replan; no reservation and no automatic re-approval",
+      "ui_runnable": true
+    },
+    {
+      "id": "expired",
+      "label_zh": "提案过期被拦截",
+      "label_en": "Expired proposal is blocked",
+      "kind": "expired",
+      "query": "wireless mouse under 30 dollars",
+      "top_k": 3,
+      "advance_seconds_for_test": 100000,
+      "step": "research -> advance the injected clock past expires_at -> attempt approve",
+      "expect": "approve is refused with 409 proposal_expired; no reservation is created. Covered by unittest via an injected clock (no sleeps).",
+      "ui_runnable": false
+    }
+  ]
+}

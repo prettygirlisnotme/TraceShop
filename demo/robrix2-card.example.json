@@ -1,0 +1,10 @@
+{
+  "_about": "Sample mini-app card message CONTENT only, for reference. It is not a manifest, capability grant, or signature, and it does not grant any chat/account permission.",
+  "msgtype": "rs.robius.robrix.mini_app",
+  "body": "[Mini app] TraceShop\nhttp://127.0.0.1:8088/",
+  "mini_app": {
+    "version": 1,
+    "title": "TraceShop",
+    "url": "http://127.0.0.1:8088/"
+  }
+}

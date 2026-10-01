@@ -1,0 +1,21 @@
+GOSIM Shopping Decision Agent
+
+Original competition workflow and UI: this workspace's GOSIM project, 2026.
+Licensed under Apache License 2.0 (see LICENSE).
+
+Reused Project A code in vendor/project_a/:
+  Source: user's MultimodalGenRec shopping mainline (private source repository)
+  Source HEAD: 0c4f3752d5f50eedaed4a04d009f0aed26b6a28a
+  Files: online_api.py, querystate_session.py, search_mvp.py, evidence_guard.py, clip_crossmodal_bench.py
+  Upstream Apache-2.0 license retained at vendor/project_a/LICENSE.
+  Exact file checksums: vendor/project_a/SHA256SUMS.
+
+Official protocol reference in docs/upstream/robrix2-mini_app.rs:
+  OctoSense-org/robrix2, MIT (LICENSE-MIT; Project Robius Developers)
+  Commit 05daf9bdb05fafc6d8f04dcb312a35f1d46a661e
+  https://github.com/OctoSense-org/robrix2
+  Reference only, not compiled into this application.
+
+Historical catalog data and pretrained model weights are NOT distributed.
+The portable demo catalog is authored synthetic data and marked accordingly.
+No trademarks, retailer affiliation or actual transaction processing is claimed.

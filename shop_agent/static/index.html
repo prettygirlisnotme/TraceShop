@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shopping Decision Agent · 购物决策代理</title>
+  <link rel="icon" type="image/svg+xml" href="/static/icon.svg" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>Shopping Decision Agent</h1>
+      <p class="sub">确定性购物决策代理 · 证据驱动 · 本地草稿（无真实下单）</p>
+    </div>
+    <div class="top-actions">
+      <label class="owner-field hidden">
+        <span>owner</span>
+        <input id="ownerInput" type="text" value="local-demo" spellcheck="false" />
+      </label>
+      <button id="historyBtn" class="ghost">读取历史</button>
+    </div>
+  </header>
+
+  <div class="disclaimer" id="disclaimer">
+    本地采购草稿，不下单、不扣款 / 商品来源见需求简报；库存与变更为演示服务
+  </div>
+
+  <section class="querybar">
+    <form id="researchForm" autocomplete="off">
+      <input id="queryInput" type="text" value="wireless mouse under 30 dollars"
+             placeholder="输入查询，例如 wireless mouse under 30 dollars" />
+      <label class="img-upload" id="imageUploadWrap">
+        <span>图片检索</span>
+        <input id="imageInput" type="file" accept="image/*" />
+      </label>
+      <button type="submit" class="primary" id="researchSubmit">研究 / Research</button>
+    </form>
+    <div class="image-preview hidden" id="imagePreview">
+      <img id="imagePreviewImg" alt="已选图片预览" />
+      <button type="button" id="imageClear" class="ghost small">移除图片</button>
+    </div>
+    <p class="muted hidden" id="imageNote"></p>
+    <p class="muted hidden" id="researchStatus"></p>
+    <form id="refineForm" autocomplete="off">
+      <input id="refineInput" type="text" placeholder="多轮细化，例如 prefer gaming / require bluetooth" />
+      <button type="submit" class="ghost">细化 / Refine</button>
+    </form>
+    <div class="cases" id="caseButtons"></div>
+    <p class="muted case-note hidden" id="caseNote"></p>
+  </section>
+
+  <main class="grid">
+    <section class="panel" id="briefPanel">
+      <h2>1 · 需求简报 <span class="en">Brief</span></h2>
+      <div class="panel-body" id="briefBody"><p class="muted">尚未发起研究。</p></div>
+    </section>
+
+    <section class="panel" id="candidatePanel">
+      <h2>2 · 候选商品 <span class="en">Candidates · top 3</span></h2>
+      <div class="panel-body" id="candidateBody"><p class="muted">暂无候选。</p></div>
+    </section>
+
+    <section class="panel" id="actionPanel">
+      <h2>3 · 行动评审 <span class="en">Action review</span></h2>
+      <div class="panel-body" id="actionBody"><p class="muted">暂无提案。</p></div>
+    </section>
+  </main>
+
+  <section class="panel wide" id="timelinePanel">
+    <h2>状态时间线 <span class="en">Status timeline</span></h2>
+    <div class="panel-body" id="timelineBody"><p class="muted">暂无事件。</p></div>
+  </section>
+
+  <section class="panel wide" id="tracePanel">
+    <h2>查看决策依据 <span class="en">Decision evidence</span></h2>
+    <div class="panel-body">
+      <details>
+        <summary>展开查阅完整决策依据（默认折叠）</summary>
+        <pre id="traceBody" class="trace"></pre>
+      </details>
+    </div>
+  </section>
+
+  <section class="panel wide hidden" id="historyPanel">
+    <h2>历史记录 <span class="en">History</span></h2>
+    <div class="panel-body" id="historyBody"></div>
+  </section>
+
+  <footer class="footer">
+    <span id="sourceLabel">source: -</span>
+    <span id="sessionLabel">session: -</span>
+  </footer>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
