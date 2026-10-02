@@ -1,11 +1,13 @@
 {
-  "date": "2026-10-01",
-  "job_id": "178861",
+  "checked_date": "2026-10-02",
+  "version": "v0.2.0",
+  "job_id": "180053",
   "state": "COMPLETED",
   "exit_code": "0:0",
-  "elapsed_seconds": 12,
+  "elapsed_seconds": 6,
+  "cpus": 2,
   "scope": "public checkout, stdlib, synthetic catalog, loopback HTTP",
-  "stdlib_imports": {
+  "imports": {
     "import_ok": true,
     "import_stderr_tail": [],
     "site_packages_on_path": false,
@@ -13,7 +15,8 @@
   },
   "unit_tests": {
     "ran": 11,
-    "passed": true
+    "passed": true,
+    "returncode": 0
   },
   "http_flow": {
     "checks": {

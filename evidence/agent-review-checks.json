@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "checked_date": "2026-10-02",
+  "job_id": "180045",
+  "state": "COMPLETED",
+  "exit_code": "0:0",
+  "cpus": 8,
+  "elapsed_seconds": 124,
+  "scope": "CPU-only Linux; private loopback synthetic Matrix fixture and 14-item demo catalog; genuine X11 frames; real opt-in MiniMax provider",
+  "host": {
+    "repository": "https://github.com/hagency-org/Rinx",
+    "commit": "5a9e2af2433a04129f2ad0c11acafb187c66f649",
+    "binary_sha256": "60431b16b8e67f2167eae951bec306ca0a554f02264c798e3cf1ef78ec29a720",
+    "source_unchanged": true
+  },
+  "kernel": {
+    "commit": "fe08d8e6b3b32e672b0f956a2b692c3c8205b167",
+    "version": "2.0.3-rc.13",
+    "packaged_child_observed": true
+  },
+  "bundle": {
+    "version": "0.2.0",
+    "official_stamp_rc": 0,
+    "blake3": "41410f5e18dd36018aa223249afafb91122a33e6c9a53b705853f3f4f87027a9",
+    "file_sha256": {
+      "README.md": "282dd390f199d90939802ff5bd923411f160b1be73342b2a93196870046c3170",
+      "main.splash": "4c962abc3473171f27283e7190fdcb77860b7232f886679a117adf553844ccc5",
+      "manifest.json": "a31f95f50f5895b2f182162d441b506eb74ae509ec6a618b315f297eb0dfdd2d"
+    },
+    "capabilities": [
+      "octos.session.open",
+      "octos.turn.start",
+      "octos.turn.interrupt"
+    ]
+  },
+  "browser_export_capture_ok": true,
+  "native_agent_review_ok": true,
+  "agent_review_verified": true,
+  "checks": [
+    "rinx_password_login_to_loopback_synapse",
+    "assistant_off_error_is_real_host_error",
+    "minimax_staged_input_validated",
+    "minimax_provider_fields_filled_from_staged_values",
+    "local_assistant_enabled_via_real_ui",
+    "octos_session_open_executed_against_packaged_kernel",
+    "minimax_live_turn_completed_via_real_splash_callback",
+    "rinx_source_and_lock_unchanged"
+  ],
+  "native": {
+    "script_rendered": true,
+    "export_pasted": true,
+    "pasted_fields_found": true,
+    "no_room_granted": true,
+    "capabilities_exact": true,
+    "assistant_off_error": "The assistant is off. Choose this device or a server in the assistant settings.",
+    "local_assistant_enabled": true,
+    "session_open_executed": true,
+    "session_open_evidence": "review_status_connected",
+    "terminal_label": "审阅完成（建议未执行）"
+  },
+  "provider": {
+    "family": "minimax-cn",
+    "model": "MiniMax-M3",
+    "base_url": "https://api.minimaxi.com/v1",
+    "key_field_cleared_before_screenshot": true,
+    "live_turn_completed": true,
+    "completion_status": "completed_success_callback",
+    "completion_unverified": false,
+    "answer_sha256": "3cd77ee610a031af184a503eac37728987e68e1ac6fe57836a39e17a6480eb9e"
+  },
+  "observed_answer": "推荐项：当前提案 item_id=3（TeckNet Wireless Mouse，$9.99，1000 DPI，可充电电池）。备选：item_id=4（VicTsing，$12.99，1600 DPI，三档可调、静音、1 节 AA）；item_id=1（Amazon Basics，$11.99，1600 DPI、对称造型、1 节 AA）。\n\n硬约束核对：价格上限 $30，三项均满足；must_include / must_exclude / 品牌限制均为空，无须校验。\n\n证据不足与过期：当前2026-10-02，提案 expires_at=2026-10-02T02:44:05Z 已到期，必须重新研究。资料未列 soft_preferences、库存、售后、品牌倾向、must_include，无法在偏好维度比较 DPI、静音、电池类型（可充电 vs AA）、造型等差异。建议≠用户批准，最终需本人确认。",
+  "screenshots": [
+    "agent-review-result.png",
+    "agent-review-off.png",
+    "agent-review-export.png"
+  ],
+  "observed_limitations": [
+    "The model incorrectly called the proposal expired during the 02:28-02:30 UTC job; its expires_at was 2026-10-02T02:44:05Z. Date alone does not establish expiry.",
+    "The model described explicitly empty preference/constraint fields as missing. This run verifies integration, not advisory accuracy.",
+    "Web confirmation uses actual clock and quote-version checks; model prose has no approval or write authority.",
+    "Standalone Rinx own local Agent peer; not injected OctoSense System Agent or automatic Web bridge.",
+    "No public endpoint, Hub signing, organizer runtime acceptance or advancement proven; screenshots and existing Web video are separate artifacts."
+  ]
+}

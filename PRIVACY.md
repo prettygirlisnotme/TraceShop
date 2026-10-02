@@ -11,7 +11,8 @@ claim that the app is publicly hosted or certified.
   **not** a public multi-user service.
 - It performs no outbound network calls, no telemetry, no analytics, no account
   sign-up and no real payment. "Owner" is just a local label used to scope rows in
-  the local database; it is not an identity or a login.
+  the local database; it is not an identity or a login. (The separate, opt-in
+  native review bundle is described below.)
 
 ## Data stored locally (SQLite)
 
@@ -50,6 +51,26 @@ re-uploaded. This is enforced in the vendored pipeline
   their local asset paths and checkpoints are supplied at launch. They are **not**
   bundled, and no real catalog data or trained weights are distributed. When
   disabled, the image-upload control stays off and text search uses the fixture.
+
+## Optional native Agent review (separate from the web app)
+
+The repository also contains an optional Rinx mini-app bundle,
+[`native/agent-review/`](native/agent-review/). It is **not part of the local web
+prototype** and the web server never loads or calls it. The distinction matters:
+
+- **The web app makes zero outbound calls.** It does not contact any model or
+  provider. The web app only ever writes the local draft after an explicit user
+  confirmation.
+- **The native bundle only does something when you opt in.** You must copy the
+  review export out of the web app, paste it into the bundle in a Rinx host, and
+  click to start a review. Only then does the host send the pasted evidence and
+  query to the **provider configured inside that host**. The bundle itself stores
+  no data and never contacts a provider on its own.
+- The native bundle is **advisory only**: it returns text suggestions. It does not
+  approve proposals, edit the catalog, relax constraints, write drafts, place
+  orders, or send messages. There is no automatic approval path.
+- Provider credentials and the model profile are managed by the **host profile,
+  outside this app**. This app does not receive, store, or forward the key.
 
 ## No real transactions
 

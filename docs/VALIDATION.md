@@ -1,13 +1,39 @@
 # 验证说明
 
-本仓库区分三类证据：随包可自行运行的标准库检查、交付包在隔离环境中的验收、以及私有集群内的
-宿主工作流实测。它们证明的范围不同，不能互相替代。
+本仓库区分几类证据：随包可自行运行的标准库检查、公开检出目录的复验、交付包在隔离环境中的验收、
+私有集群内的宿主工作流实测，以及可选的 Rinx 原生 Agent 审阅。它们证明的范围不同，不能互相替代。
 
-## 1. 公开检出目录验证（2026-10-01）
+## 1. 原生 Agent 审阅（作业 180045，2026-10-02）
 
-作业 178861：CPU-only，12 秒，COMPLETED 0:0。对待公开目录使用系统 Python -I -S -B、清理继承环境，标准库导入、11 项检查及 HTTP 确认/读回/幂等/拒绝/报价变化路径通过；自测服务已停止。摘要见 [public-checks.json](../evidence/public-checks.json)。
+CPU-only，约 2 分钟，COMPLETED 0:0。使用**未修改**的固定 Rinx（`5a9e2af`，二进制 SHA-256
+`60431b16b8e67f2167eae951bec306ca0a554f02264c798e3cf1ef78ec29a720`）与官方打包的固定 `octos`
+内核（`fe08d8e…`，`2.0.3-rc.13`），真实浏览器导出与原生 Rinx 导入在同一次作业内闭环：
 
-## 2. 随包标准库检查（任何人可复跑）
+- 浏览器导出检查：研究 200、复制不新增草稿、导出字段逐项匹配（候选 3 条、硬/软约束、报价版本、
+  有效期）、报价变化后旧导出被清除、新研究可再导出、无禁止字段、无页面错误
+  （[agent-review-browser-checks.json](../evidence/agent-review-browser-checks.json)）。
+- 原生导入：stamped bundle `0.2.0`（BLAKE3
+  `41410f5e18dd36018aa223249afafb91122a33e6c9a53b705853f3f4f87027a9`），Review 能力恰为
+  `octos.session.open`、`octos.turn.start`、`octos.turn.interrupt`，无 room。
+- assistant 关闭时返回真实宿主错误 `The assistant is off. Choose this device or a server in the assistant settings.`
+- 经真实宿主 UI 配置本机 provider（CN `minimax-cn`，`MiniMax-M3`）后，`session.open` 与 `turn.start`
+  经真实 Splash 回调完成，终态标签“审阅完成（建议未执行）”，返回非空建议；源码与 `Cargo.lock` 未改。
+- 脱敏截图：[结果](../evidence/agent-review-result.png)、[assistant 关闭](../evidence/agent-review-off.png)、
+  [导出](../evidence/agent-review-export.png)；aggregate JSON 见
+  [agent-review-checks.json](../evidence/agent-review-checks.json)。
+
+**边界**：这是 standalone Rinx 的本地 Agent peer，不是宿主注入的 OctoSense System Agent，也不是 Web
+的自动 bridge；未经签名或 App Hub 上架。模型建议可能出现错误（本次把未过期提案描述为已过期，也把空字段
+描述为缺失）；权威判断仍是 Web 的确定性有效期与版本检查。
+
+## 2. 公开检出目录复验（作业 180053，2026-10-02）
+
+CPU-only，6 秒，COMPLETED 0:0。对 **v0.2.0 公开目录**使用系统 Python `-I -S -B`、清理继承环境，
+标准库导入、11 项检查及 HTTP 确认/读回/幂等/拒绝/报价变化路径全部通过；自测服务已停止。摘要见
+[public-checks.json](../evidence/public-checks.json)。同一复验此前也用于 v0.1.1（作业 **178861**，
+2026-10-01，12 秒，结果一致）。
+
+## 3. 随包标准库检查（任何人可复跑）
 
 ```bash
 python3 -m unittest discover -s tests -v
@@ -17,13 +43,13 @@ python3 -m unittest discover -s tests -v
 过期提案被拦、重规划取代旧提案并推进版本、输入校验与 owner 绑定、按当前报价重规划且守住预算、
 重规划排除缺货项、目录健康、以及 HTTP 研究/确认与错误结构。这些是行为检查，不是检索质量基准。
 
-## 3. 交付包验收（作业 178692）
+## 4. 交付包验收（作业 178692）
 
 在独立解压目录、以系统 Python、禁用第三方包并清理环境变量的方式运行：**11 项标准库检查 + HTTP
 闭环 + 真实浏览器**（含图标 SVG 响应）全部通过。HTTP 闭环覆盖研究、确认、读回、拒绝后确认被拦、
 涨价后确认被拦（HTTP 409）等。作业 COMPLETED 0:0。
 
-## 4. 私有集群宿主工作流实测（作业 178695）
+## 5. 私有集群宿主工作流实测（作业 178695）
 
 在私有回环合成 fixture 内，使用官网示例链接的历史固定宿主
 `05daf9bdb05fafc6d8f04dcb312a35f1d46a661e`（独立编译），完成 **10 项**结构化检查：
@@ -37,11 +63,13 @@ python3 -m unittest discover -s tests -v
 
 该作业为 CPU-only、COMPLETED 0:0。演示截图与浏览器实录见 `evidence/`。
 
-## 5. 证据的边界
+## 6. 证据的边界
 
-- `evidence/` 中的浏览器截图与约 60 秒 WebM 是**当前 Web 原型**的实录；宿主截图是**独立定格**，
-  两者不是同一段连续录屏。
+- `evidence/` 中的浏览器截图与约 60 秒 WebM 是**当前 Web 原型**的实录；宿主截图与原生 Agent 审阅
+  截图是**独立定格**，两者不是同一段连续录屏。
 - 上述宿主实测使用的是**合成 fixture 与小型合成目录**，**不能**证明公开线上商户、实时报价、
-  最新 Rinx main 或官方受理。
+  主办方受理或晋级结果。
+- 原生 Agent 审阅针对固定 Rinx `5a9e2af` 与固定 `octos`；不承诺最新移动中的 main、Windows 或其它
+  未测试平台。
 - 「Open in browser」经由透明 headless URL 打开器适配器完成，不是桌面默认 GUI 浏览器。
 - 本包不包含历史目录、模型、数据库、凭据或认证日志；随包目录为自编合成数据。

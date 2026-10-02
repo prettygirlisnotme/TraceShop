@@ -1,0 +1,18 @@
+{
+  "capabilities": [
+    "octos.session.open",
+    "octos.turn.start",
+    "octos.turn.interrupt"
+  ],
+  "compute": {
+    "instruction_budget": 4000000,
+    "memory_bytes": 33554432
+  },
+  "id": "traceshop.agent-review",
+  "integrity": {
+    "bundle_blake3": "41410f5e18dd36018aa223249afafb91122a33e6c9a53b705853f3f4f87027a9"
+  },
+  "name": "TraceShop · Agent 审阅",
+  "schema": 1,
+  "version": "0.2.0"
+}
