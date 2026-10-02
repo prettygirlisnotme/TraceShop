@@ -1,0 +1,29 @@
+{
+  "app_loaded": true,
+  "research_ok": true,
+  "human_candidate_selected": true,
+  "agent_suggestion_adopted": true,
+  "selection_adds_no_reservation": true,
+  "stale_suggestion_rejected": true,
+  "stale_approval_rejected": true,
+  "replanned_approved_verified": true,
+  "readback_matches": true,
+  "no_page_errors": true,
+  "version": "0.3.0",
+  "workflow_job": "180215",
+  "catalog": "14 hand-authored fixture records; USD",
+  "native_model": "MiniMax-M3",
+  "native_completion_status": "completed_success_callback",
+  "native_agent_review_verified": true,
+  "bundle_blake3": "80b72b23174a2d3123e8c6798d4cc19db35f9984e0bb6a7f733089453078ef63",
+  "selection": {
+    "human_item_id": "4",
+    "agent_item_id": "4",
+    "reservations_after_selection": 0,
+    "reservations_after_adoption": 0
+  },
+  "reply_sha256": "cb7e79c2a8676ea8ed6330d82a6e89bbeb694386cb2758b0ade7c9aaae75f045",
+  "demo_video": "agent-workflow.webm",
+  "video_note": "Real browser actions edited with an independent actual Rinx screenshot; model wait removed. Not a continuous native desktop recording.",
+  "capture_recovery": "Original browser video was recovered from the completed Playwright recording; no model or workflow rerun."
+}

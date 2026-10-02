@@ -24,7 +24,11 @@ All durable state lives in a single local SQLite file. The default path is
   the user's utterance history text, `top_k`, simulated merchant version, source
   label and catalog path, and an updated timestamp.
 - `proposals` — proposed item fields (title, brand, price, availability), the
-  evidence and rationale used, status and expiry.
+  evidence and rationale used, status and expiry. For a candidate selection
+  (human or adopted Agent suggestion) the evidence also holds the server-side
+  candidate snapshot and a `selection` block (`selection_source`, optional
+  `reason`, and the source proposal id); the source proposal is marked
+  superseded, and no draft row is written by this step.
 - `merchant_quotes` — **simulated** demo price/availability overrides. These are
   demo events, not real merchant facts.
 - `reservations` — the "local purchase draft" rows created only after an explicit
@@ -68,7 +72,15 @@ prototype** and the web server never loads or calls it. The distinction matters:
   no data and never contacts a provider on its own.
 - The native bundle is **advisory only**: it returns text suggestions. It does not
   approve proposals, edit the catalog, relax constraints, write drafts, place
-  orders, or send messages. There is no automatic approval path.
+  orders, or send messages. There is no automatic approval path. In bundle
+  **0.3.0** the suggestion includes a fixed six-field JSON
+  (`schema_version`, `proposal_id`, `revision`, `merchant_version`,
+  `selected_item_id`, `reason`). If the user chooses to copy it back and paste it
+  into the web app, the web backend re-validates it against the server-side
+  candidate snapshot, revision, merchant version, expiry and live quote, and only
+  creates a new **pending** proposal; it still requires an explicit confirmation
+  click before any draft is written. The pasted `reason` is stored and shown as
+  an Agent suggestion, not as a catalog fact.
 - Provider credentials and the model profile are managed by the **host profile,
   outside this app**. This app does not receive, store, or forward the key.
 

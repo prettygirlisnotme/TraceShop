@@ -135,6 +135,14 @@ class Store:
                         (owner, session_id))
         return row["merchant_version"] if row else None
 
+    def bump_revision(self, owner, session_id, now=None):
+        self._run("UPDATE sessions SET revision=revision+1, updated_at=?"
+                  " WHERE owner=? AND session_id=?",
+                  (time.time() if now is None else now, owner, session_id))
+        row = self._one("SELECT revision FROM sessions WHERE owner=? AND session_id=?",
+                        (owner, session_id))
+        return row["revision"] if row else None
+
     # -- proposals --------------------------------------------------------
     def insert_proposal(self, proposal, now=None):
         now = time.time() if now is None else now

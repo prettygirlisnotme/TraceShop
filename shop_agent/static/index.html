@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Shopping Decision Agent · 购物决策代理</title>
+  <title>TraceShop · 购物决策代理</title>
   <link rel="icon" type="image/svg+xml" href="/static/icon.svg" />
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
   <header class="topbar">
     <div class="brand">
-      <h1>Shopping Decision Agent</h1>
+      <h1><span class="brand-mark">TraceShop</span> · Shopping Decision Agent</h1>
       <p class="sub">确定性购物决策代理 · 证据驱动 · 本地草稿（无真实下单）</p>
     </div>
     <div class="top-actions">
@@ -25,6 +25,16 @@
   <div class="disclaimer" id="disclaimer">
     本地采购草稿，不下单、不扣款 / 商品来源见需求简报；库存与变更为演示服务
   </div>
+
+  <nav class="phasebar" id="phasebar" aria-label="决策阶段">
+    <span class="phase" data-phase="brief"><b>1</b> 需求</span>
+    <span class="phase-arrow">›</span>
+    <span class="phase" data-phase="evidence"><b>2</b> 证据</span>
+    <span class="phase-arrow">›</span>
+    <span class="phase" data-phase="proposal"><b>3</b> 提案</span>
+    <span class="phase-arrow">›</span>
+    <span class="phase" data-phase="verify"><b>4</b> 核验</span>
+  </nav>
 
   <section class="querybar">
     <form id="researchForm" autocomplete="off">
@@ -46,6 +56,9 @@
       <input id="refineInput" type="text" placeholder="多轮细化，例如 prefer gaming / require bluetooth" />
       <button type="submit" class="ghost">细化 / Refine</button>
     </form>
+    <div class="quickfills" id="quickFills" aria-label="演示快捷输入">
+      <span class="quickfills-label">快捷输入：</span>
+    </div>
     <div class="cases" id="caseButtons"></div>
     <p class="muted case-note hidden" id="caseNote"></p>
   </section>
@@ -57,12 +70,12 @@
     </section>
 
     <section class="panel" id="candidatePanel">
-      <h2>2 · 候选商品 <span class="en">Candidates · top 3</span></h2>
+      <h2>2 · 候选商品与证据 <span class="en">Candidates · top 3</span></h2>
       <div class="panel-body" id="candidateBody"><p class="muted">暂无候选。</p></div>
     </section>
 
     <section class="panel" id="actionPanel">
-      <h2>3 · 行动评审 <span class="en">Action review</span></h2>
+      <h2>3 · 提案与核验 <span class="en">Proposal · Action review</span></h2>
       <div class="panel-body" id="actionBody"><p class="muted">暂无提案。</p></div>
     </section>
   </main>

@@ -14,6 +14,9 @@ Routes
   POST /api/refine             {owner, session_id, utterance, top_k?}
   POST /api/approve            {owner, session_id, proposal_id}
   POST /api/reject             {owner, session_id, proposal_id}
+  POST /api/select-candidate   {owner, session_id, proposal_id, item_id,
+                                selection_source?=human|agent_review, reason?,
+                                review_revision?, review_merchant_version?}
   POST /api/simulate-quote     {owner, session_id, proposal_id?, item_id?, price_usd?, availability?}
 
 Only loopback is intended.  This is a local demo with owner/session binding, not a
@@ -151,6 +154,14 @@ def make_handler(engine):
                     result = engine.reject(
                         payload.get("owner"), payload.get("session_id"),
                         payload.get("proposal_id"))
+                elif path == "/api/select-candidate":
+                    result = engine.select_candidate(
+                        payload.get("owner"), payload.get("session_id"),
+                        payload.get("proposal_id"), payload.get("item_id"),
+                        selection_source=payload.get("selection_source", "human"),
+                        reason=payload.get("reason"),
+                        review_revision=payload.get("review_revision"),
+                        review_merchant_version=payload.get("review_merchant_version"))
                 elif path == "/api/simulate-quote":
                     result = engine.simulate_quote(
                         payload.get("owner"), payload.get("session_id"),

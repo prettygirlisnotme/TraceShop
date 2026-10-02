@@ -9,6 +9,7 @@
     merchantVersion: null,
     data: null,
     outcome: null,
+    selectedItemId: null,
     timeline: [],
     imageOnline: false,
     imageBase64: null,
@@ -126,6 +127,64 @@
       "</pre></details>";
   }
 
+  function directEvidenceHtml(evidence) {
+    if (!evidence || typeof evidence !== "object") return "";
+    var order = ["features", "technical_details", "description", "categories", "title", "brand"];
+    var rows = [];
+    order.forEach(function (key) {
+      if (rows.length >= 2) return;
+      var snip = evidence[key];
+      if (!snip || snip.value === null || snip.value === undefined) return;
+      var value = snip.value;
+      if (Array.isArray(value)) value = value.slice(0, 3).join(", ");
+      else if (typeof value === "object") value = JSON.stringify(value);
+      if (String(value).length > 120) value = String(value).slice(0, 120) + "…";
+      rows.push('<div class="direct-ev"><span class="de-key">' + esc(key) + "</span>" +
+        '<span class="de-val">' + esc(String(value)) + "</span></div>");
+    });
+    return rows.length ? '<div class="direct-evs">' + rows.join("") + "</div>" : "";
+  }
+
+  function budgetHeadroomHtml(c) {
+    var brief = (state.data && state.data.brief) || {};
+    var price = (brief.hard_constraints || {}).price || {};
+    var upper = price.upper;
+    if (typeof upper !== "number" || !isFinite(upper) || typeof c.price_usd !== "number") return "";
+    var left = upper - c.price_usd;
+    var cls = left < 0 ? " over" : (left < 2 ? " tight" : "");
+    return '<span class="headroom' + cls + '">预算余量 ' + money(left) + "</span>";
+  }
+
+  function candidateCardHtml(c) {
+    var data = state.data;
+    var selectedId = state.selectedItemId;
+    if (selectedId == null && data.proposal) selectedId = data.proposal.item_id;
+    var isSelected = selectedId != null && String(c.item_id) === String(selectedId);
+    var prefs = (c.matched_preferences || []).map(function (p) {
+      return '<span class="tag">' + esc(p.term) + "</span>";
+    }).join("");
+    var meta = [esc(c.brand || "—")];
+    if (typeof c.score === "number" && isFinite(c.score)) meta.push("匹配度 " + num(c.score, 3));
+    if (c.hard_constraint_ok) meta.push("硬约束 OK");
+    var raw = {
+      item_id: c.item_id, score: c.score,
+      visual_cosine: c.visual_cosine, reranker_logit: c.reranker_logit
+    };
+    return '<div class="cand' + (isSelected ? " selected" : "") + '" data-item="' + esc(c.item_id) + '">' +
+      (isSelected ? '<div class="cand-flag">已选</div>' : "") +
+      '<div class="cand-head"><span class="title">#' + esc(c.rank) + " " + esc(catalogText(c.title)) + "</span>" +
+      '<span class="price">' + money(c.price_usd) + "</span></div>" +
+      '<div class="meta">' + meta.join(" · ") + budgetHeadroomHtml(c) + "</div>" +
+      (prefs ? '<div class="meta">命中偏好 ' + prefs + "</div>" : "") +
+      directEvidenceHtml(c.evidence) +
+      '<details class="evidence"><summary>查看排序依据</summary><pre class="evidence-pre">' +
+      esc(JSON.stringify({ ranking: raw, evidence: c.evidence }, null, 2)) + "</pre></details>" +
+      '<div class="cand-actions">' +
+      '<button class="ghost small" data-act="select-candidate" data-item="' + esc(c.item_id) + '"' +
+      (isSelected ? " disabled" : "") + ">选择此候选，生成待确认提案</button>" +
+      "</div></div>";
+  }
+
   function renderCandidates() {
     var data = state.data;
     if (!data) return;
@@ -136,26 +195,7 @@
         (neg.needed ? '<p class="muted">可查看下方确定性协商选项（来自真实价格/词项统计）。</p>' : "");
       return;
     }
-    var bestId = data.proposal && data.proposal.item_id;
-    $("candidateBody").innerHTML = list.map(function (c) {
-      var prefs = (c.matched_preferences || []).map(function (p) {
-        return '<span class="tag">' + esc(p.term) + "</span>";
-      }).join("");
-      var meta = [esc(c.brand || "—")];
-      if (typeof c.score === "number" && isFinite(c.score)) meta.push("匹配度 " + num(c.score, 3));
-      if (c.hard_constraint_ok) meta.push("硬约束 OK");
-      var raw = {
-        item_id: c.item_id, score: c.score,
-        visual_cosine: c.visual_cosine, reranker_logit: c.reranker_logit
-      };
-      return '<div class="cand' + (String(c.item_id) === String(bestId) ? " best" : "") + '">' +
-        '<div class="cand-head"><span class="title">#' + esc(c.rank) + " " + esc(catalogText(c.title)) + "</span>" +
-        '<span class="price">' + money(c.price_usd) + "</span></div>" +
-        '<div class="meta">' + meta.join(" · ") + "</div>" +
-        (prefs ? '<div class="meta">命中偏好 ' + prefs + "</div>" : "") +
-        '<details class="evidence"><summary>查看排序依据</summary><pre class="evidence-pre">' +
-        esc(JSON.stringify({ ranking: raw, evidence: c.evidence }, null, 2)) + "</pre></details></div>";
-    }).join("");
+    $("candidateBody").innerHTML = list.map(candidateCardHtml).join("");
   }
 
   function negotiationHtml() {
@@ -251,10 +291,19 @@
       hard_constraints: b.hard_constraints || {},
       soft_preferences: prefs,
       proposal: {
+        proposal_id: p.proposal_id,
         status: p.status,
         item_id: p.item_id,
         price_usd: p.price_usd,
         expires_at: p.expires_at_iso
+      },
+      return_contract: {
+        schema_version: 1,
+        proposal_id: p.proposal_id,
+        revision: state.revision,
+        merchant_version: state.merchantVersion,
+        selected_item_id: "<候选ID>",
+        reason: "<中文理由>"
       },
       time_context: {
         proposal_created_at_utc: utcSecondsIso(p.created_at),
@@ -309,6 +358,72 @@
       }
       toast("浏览器未允许自动复制，请在展开的资料中手动复制。", true);
     }
+  }
+
+  // ---- adopt a native Agent reply (fixed return_contract only) --------
+  function parseAgentReply(text) {
+    var raw = (text || "").trim();
+    if (!raw) return { error: "粘贴内容为空。" };
+    var fence = raw.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+    if (fence) raw = fence[1].trim();
+    var obj;
+    try { obj = JSON.parse(raw); } catch (e) { return { error: "不是完整 JSON：" + e.message }; }
+    if (!obj || typeof obj !== "object" || Array.isArray(obj)) {
+      return { error: "最外层必须是 JSON 对象。" };
+    }
+    if (obj.schema_version !== 1) return { error: "schema_version 必须为 1。" };
+    if (typeof obj.proposal_id !== "string" || !obj.proposal_id) return { error: "缺少 proposal_id。" };
+    if (!Number.isInteger(obj.revision)) return { error: "revision 必须为整数。" };
+    if (!Number.isInteger(obj.merchant_version)) return { error: "merchant_version 必须为整数。" };
+    if (typeof obj.selected_item_id !== "string" || !obj.selected_item_id) {
+      return { error: "缺少 selected_item_id。" };
+    }
+    if (typeof obj.reason !== "string" || !obj.reason.trim()) return { error: "缺少中文 reason。" };
+    var extra = Object.keys(obj).filter(function (k) {
+      return ["schema_version", "proposal_id", "revision", "merchant_version",
+              "selected_item_id", "reason"].indexOf(k) < 0;
+    });
+    if (extra.length) return { error: "包含未允许字段：" + extra.join(", ") };
+    return { value: obj };
+  }
+
+  function agentAdoptBlockHtml() {
+    if (!agentReviewableProposal()) return "";
+    return '<div class="alert agent-adopt">' +
+      "<strong>采纳原生 Agent 建议（可选）</strong>" +
+      '<p class="muted">把原生审阅包回复的 JSON 粘贴到下方。只接受契约字段；' +
+      "来源与版本由服务端复核，报价变化后会拒绝旧建议。按钮只生成待确认提案，仍需你点击确认。</p>" +
+      '<textarea id="agentReturnInput" class="share-result" rows="5" ' +
+      'aria-label="粘贴原生 Agent 返回的 JSON"></textarea>' +
+      '<div class="actions">' +
+      '<button class="ghost small" data-act="adopt-agent">采纳建议，生成待确认提案</button>' +
+      "</div>" +
+      '<p class="muted hidden" id="agentAdoptNote"></p></div>';
+  }
+
+   async function adoptAgentReply() {
+    var p = agentReviewableProposal();
+    if (!p) { toast("当前没有可采纳的提案；报价变化后请重新研究。", true); return; }
+    var field = $("agentReturnInput");
+    var parsed = parseAgentReply(field ? field.value : "");
+    var note = $("agentAdoptNote");
+    if (parsed.error) {
+      if (note) { note.textContent = "拒绝采纳：" + parsed.error; note.classList.remove("hidden"); }
+      toast("格式不符：" + parsed.error, true);
+      return;
+    }
+    var reply = parsed.value;
+    if (reply.proposal_id !== p.proposal_id) {
+      if (note) { note.textContent = "拒绝采纳：proposal_id 与当前提案不一致。"; note.classList.remove("hidden"); }
+      toast("建议针对另一份提案；请重新审阅。", true);
+      return;
+    }
+    await doSelectCandidate(reply.selected_item_id, {
+      selection_source: "agent_review",
+      reason: reply.reason,
+      review_revision: reply.revision,
+      review_merchant_version: reply.merchant_version
+    });
   }
 
   function renderOutcome() {
@@ -366,7 +481,11 @@
       '<span class="status-pill status-' + esc(p.status) + '">' + esc(statusLabel(p.status)) + "</span>" +
       " · " + esc(availLabel(p.availability)) + " · 报价版本 v" + esc(p.merchant_version) + "</div>" +
       '<p class="rationale">' + esc(catalogText(p.rationale)) + "</p>" +
-      '<div class="meta">有效期至 ' + esc(fmtTime(p.expires_at_iso)) + "</div>" +
+      (p.selection ? '<div class="meta">选择来源：' +
+        (p.selection.selection_source === "agent_review" ? "Agent 建议（非目录事实）" : "用户选择") +
+        (p.selection.reason ? " · 理由：" + esc(p.selection.reason) : "") + "</div>" : "") +
+      '<div class="meta">有效期至 ' + esc(fmtTime(p.expires_at_iso)) +
+      " · 待确认后才能创建草稿</div>" +
       '<details class="evidence"><summary>查看提案依据与候选范围</summary><pre class="evidence-pre">' +
       esc(JSON.stringify({ proposal_id: p.proposal_id, eligible_item_ids: p.eligible_item_ids,
                            evidence: p.evidence }, null, 2)) +
@@ -378,7 +497,7 @@
       '<button class="ghost small" data-act="sim-down">模拟降价 -$3</button>' +
       '<button class="ghost small" data-act="sim-stock">模拟缺货</button>' +
       "</div>" +
-      agentReviewBlockHtml() +
+      (agentReviewableProposal() ? '<details class="agent-tools"><summary>Agent 审阅与建议采纳</summary>' + agentReviewBlockHtml() + agentAdoptBlockHtml() + '</details>' : "") +
       "</div>";
     $("actionBody").innerHTML = html;
     mountAgentReview();
@@ -399,8 +518,26 @@
         limitations: state.data.limitations }, null, 2);
   }
 
+  function renderPhasebar() {
+    var bar = $("phasebar");
+    if (!bar) return;
+    var data = state.data;
+    var done = { brief: !!data, evidence: !!(data && (data.candidates || []).length),
+                 proposal: !!(data && data.proposal), verify: !!(state.outcome && state.outcome.reservation) };
+    var active = "brief";
+    if (done.evidence) active = "evidence";
+    if (done.proposal) active = "proposal";
+    if (done.verify) active = "verify";
+    bar.querySelectorAll(".phase").forEach(function (el) {
+      var key = el.getAttribute("data-phase");
+      el.classList.toggle("done", !!done[key]);
+      el.classList.toggle("active", key === active);
+    });
+  }
+
   function renderAll() {
     renderBrief(); renderCandidates(); renderAction(); renderTimeline(); renderTrace();
+    renderPhasebar();
     $("sourceLabel").textContent = "source: " + ((state.data && state.data.source_label) || "-");
     $("sessionLabel").textContent = "session: " + (state.sessionId || "-") +
       (state.revision ? " · revision " + state.revision : "");
@@ -498,6 +635,7 @@
       state.sessionId = data.session.session_id;
       state.revision = data.session.revision;
       state.merchantVersion = data.session.merchant_version;
+      state.selectedItemId = null;
       state.outcome = null;
       pushTimeline("research", "query=" + (query || "(仅图片)") + " → " +
         (data.feasible ? "提案 " + (data.proposal && data.proposal.item_id) : "无可行方案"));
@@ -515,10 +653,49 @@
       state.data = data;
       state.revision = data.session.revision;
       state.merchantVersion = data.session.merchant_version;
+      state.selectedItemId = null;
       state.outcome = null;
       pushTimeline("refine", utterance + " → revision " + data.session.revision);
       renderAll();
     } catch (err) { fail(err); }
+    finally { setBusy(false); }
+  }
+
+  function applySelectionResult(data) {
+    if (state.data) {
+      state.data.proposal = data.proposal;
+      state.data.feasible = true;
+    }
+    if (data.proposal && typeof data.proposal.revision === "number") {
+      state.revision = data.proposal.revision;
+      if (state.data && state.data.session) state.data.session.revision = data.proposal.revision;
+    }
+    state.selectedItemId = data.selected_item_id;
+    state.outcome = { note: data.note || "已生成新的待确认提案。", reservation: null, error: null,
+                      selection: { source: data.selection_source, item: data.selected_item_id } };
+  }
+
+  async function doSelectCandidate(itemId, opts) {
+    var p = state.data && state.data.proposal;
+    if (!p) { toast("当前没有可选择候选的提案", true); return; }
+    opts = opts || {};
+    var body = {
+      owner: state.owner, session_id: state.sessionId, proposal_id: p.proposal_id,
+      item_id: String(itemId),
+      selection_source: opts.selection_source || "human"
+    };
+    if (opts.reason) body.reason = opts.reason;
+    if (opts.review_revision != null) body.review_revision = opts.review_revision;
+    if (opts.review_merchant_version != null) body.review_merchant_version = opts.review_merchant_version;
+    setBusy(true, "正在按候选快照生成新提案…");
+    try {
+      var data = await api("/api/select-candidate", { method: "POST", body: body });
+      applySelectionResult(data);
+      pushTimeline("select-candidate", "选中 " + data.selected_item_id +
+        "（" + data.selection_source + "）→ 新待确认提案，未创建草稿");
+      renderAll();
+      toast("已生成待确认提案；仍需点击确认才会创建草稿。");
+    } catch (err) { fail(err, "select-candidate"); }
     finally { setBusy(false); }
   }
 
@@ -654,6 +831,11 @@
       else if (act === "sim-stock") doSimulate("stock");
       else if (act === "copy-result") copyResult();
       else if (act === "copy-agent-review") copyAgentReview();
+      else if (act === "adopt-agent") adoptAgentReply();
+    });
+    $("candidateBody").addEventListener("click", function (e) {
+      var act = e.target.getAttribute && e.target.getAttribute("data-act");
+      if (act === "select-candidate") doSelectCandidate(e.target.getAttribute("data-item"));
     });
     api("/api/cases").then(function (data) {
       var box = $("caseButtons");
@@ -667,6 +849,25 @@
       });
       if (data.disclaimer_zh) $("disclaimer").textContent = data.disclaimer_zh;
     }).catch(function () { /* cases optional */ });
+
+    var QUICK_FILLS = [
+      { label: "无线鼠标 ≤$30", query: "wireless mouse under 30 dollars" },
+      { label: "蓝牙键盘 ≤$35", query: "keyboard under 35 dollars require keyboard" },
+      { label: "预算过低演示", query: "wireless mouse under 3 dollars" }
+    ];
+    var qf = $("quickFills");
+    QUICK_FILLS.forEach(function (item) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "quickfill-chip";
+      btn.textContent = item.label;
+      btn.addEventListener("click", function () {
+        $("queryInput").value = item.query;
+        toast("已填入查询，请点击“研究 / Research”");
+      });
+      qf.appendChild(btn);
+    });
+
     initHealth();
     renderAll();
   }

@@ -150,13 +150,15 @@ class ShopAgentEngine:
             raise AgentError(403, "session_mismatch", "proposal belongs to another session")
 
     def _public_proposal(self, p):
+        evidence = p.get("evidence") or {}
         return {"proposal_id": p["proposal_id"], "session_id": p["session_id"],
                 "item_id": p["item_id"], "title": p["title"], "brand": p["brand"],
                 "price_usd": p["price_usd"], "availability": p["availability"],
                 "eligible_item_ids": p["eligible_item_ids"], "rationale": p["rationale"],
-                "evidence": p["evidence"], "status": p["status"], "revision": p["revision"],
+                "evidence": evidence, "status": p["status"], "revision": p["revision"],
                 "merchant_version": p["merchant_version"], "expires_at": p["expires_at"],
-                "expires_at_iso": _iso(p["expires_at"]), "created_at": p["created_at"]}
+                "expires_at_iso": _iso(p["expires_at"]), "created_at": p["created_at"],
+                "selection": evidence.get("selection")}
 
     # -- health ----------------------------------------------------------
     def health(self):
@@ -170,6 +172,7 @@ class ShopAgentEngine:
             "db_path": self.db_path, "persistence": "sqlite3 (stdlib)",
             "proposal_ttl_seconds": self.ttl_seconds, "real_merchant_integrated": False,
             "capabilities": {"propose": True, "approve": True, "reject": True,
+                             "select_candidate": True, "select_candidate_creates_reservation": False,
                              "simulate_quote_change": True, "idempotent_approve": True,
                              "durable_readback": True,
                              "visual_online": self.service.visual_adapter is not None,
@@ -270,6 +273,26 @@ class ShopAgentEngine:
                 return entry
         return None
 
+    @staticmethod
+    def _candidate_snapshot(entry):
+        """Server-stored, evidence-only copy of a top-3 candidate.
+
+        The client must never be trusted to describe an item: the selection
+        endpoint re-checks price/stock/constraints and rebuilds the new
+        proposal's evidence from THIS snapshot, not from the old proposal and
+        not from any client-supplied product attribute.
+        """
+        if not entry:
+            return None
+        return {"rank": entry.get("rank"), "item_id": str(entry.get("item_id")),
+                "title": entry.get("title"), "brand": entry.get("brand"),
+                "price_usd": entry.get("price_usd"), "score": entry.get("score"),
+                "visual_cosine": entry.get("visual_cosine"),
+                "reranker_logit": entry.get("reranker_logit"),
+                "hard_constraint_ok": entry.get("hard_constraint_ok"),
+                "matched_preferences": entry.get("matched_preferences") or [],
+                "evidence": entry.get("evidence") or {}}
+
     def _create_proposal(self, owner, sid, result, item_id, revision, merchant_version, now):
         comparison = result.get("comparison") or []
         top = comparison[:3]
@@ -283,7 +306,8 @@ class ShopAgentEngine:
         evidence = {"catalog_fields": (entry or {}).get("evidence") or {},
                     "supported_claims": (result.get("recommendation") or {}).get("retained_claims") or [],
                     "why_ranked_here": ranked.get("why_ranked_here"),
-                    "route_scores": ranked.get("route_scores")}
+                    "route_scores": ranked.get("route_scores"),
+                    "candidates": [self._candidate_snapshot(c) for c in top]}
         return self.store.insert_proposal({
             "proposal_id": uuid.uuid4().hex, "owner": owner, "session_id": sid,
             "revision": revision, "merchant_version": merchant_version, "item_id": item_id,
@@ -467,6 +491,162 @@ class ShopAgentEngine:
                     "reservation": None,
                     "outcome": {"kind": "rejected", "ordered": False, "charged": False,
                                 "note": "已拒绝，没有任何本地预订"}}
+
+    # -- candidate selection (propose only, never a reservation) --------
+    SELECTION_SOURCES = ("human", "agent_review")
+
+    def select_candidate(self, owner, session_id, proposal_id, item_id,
+                         selection_source="human", reason=None, review_revision=None,
+                         review_merchant_version=None):
+        """Turn one of the top-3 candidates into a NEW pending proposal.
+
+        This creates no reservation and never approves anything; the user still
+        has to click confirm.  Every product attribute used for the new
+        proposal comes from the server-stored candidate snapshot, and the new
+        proposal replaces the old one (its approval is then refused by the
+        existing approve logic because it is SUPERSEDED).
+        """
+        owner = self._owner(owner)
+        session_id = (session_id or "").strip()
+        proposal_id = (proposal_id or "").strip()
+        item_id = str(item_id or "").strip()
+        if not proposal_id:
+            raise AgentError(400, "missing_proposal_id", "proposal_id is required")
+        if not item_id:
+            raise AgentError(400, "missing_item_id", "item_id is required")
+        source = (selection_source or "human").strip() or "human"
+        if source not in self.SELECTION_SOURCES:
+            raise AgentError(400, "invalid_selection_source",
+                             "selection_source must be human or agent_review")
+        reason = (reason or "").strip()[:600]
+
+        def _as_int(value, label):
+            if value is None:
+                return None
+            try:
+                return int(value)
+            except (TypeError, ValueError) as exc:
+                raise AgentError(400, "invalid_" + label, "%s must be an integer" % label) from exc
+
+        review_revision = _as_int(review_revision, "review_revision")
+        review_merchant_version = _as_int(review_merchant_version, "review_merchant_version")
+        if source == "agent_review" and (review_revision is None or review_merchant_version is None or not reason):
+            raise AgentError(400, "review_context_required", "采纳 Agent 建议须提供来源版本和选择理由")
+        with self.store.lock:
+            proposal = self.store.get_proposal(proposal_id)
+            self._bind(proposal, owner, session_id)
+            if proposal["status"] != "PROPOSED":
+                raise AgentError(409, "proposal_not_selectable",
+                                 "只有待确认（PROPOSED）的提案可以选择候选；请重新研究 (replan)")
+            now = self.clock()
+            if now >= (proposal.get("expires_at") or 0):
+                self.store.update_proposal_status(proposal_id, "EXPIRED", now=now)
+                self.store.add_event(owner, proposal["session_id"], "proposal_expired",
+                                     {"proposal_id": proposal_id}, now=now)
+                raise AgentError(409, "proposal_expired", "该提案已过期；请重新研究 (replan)")
+            session = self.store.get_session(owner, proposal["session_id"])
+            if session is None:
+                raise AgentError(409, "session_lost", "会话状态缺失；请重新研究 (replan)")
+            if session["revision"] != proposal["revision"]:
+                raise AgentError(409, "revision_conflict", "研究结果已更新；请重新确认 (replan)")
+            if session["merchant_version"] != proposal["merchant_version"]:
+                raise AgentError(409, "quote_changed", "报价版本已变化；请重新研究 (replan)")
+            if review_revision is not None and review_revision != proposal["revision"]:
+                raise AgentError(409, "review_stale",
+                                 "Agent 建议针对的 revision 已过期；请重新审阅")
+            if (review_merchant_version is not None
+                    and review_merchant_version != proposal["merchant_version"]):
+                raise AgentError(409, "review_stale",
+                                 "Agent 建议针对的报价版本已过期；请重新审阅")
+            if item_id not in (proposal["eligible_item_ids"] or []):
+                raise AgentError(409, "not_eligible", "候选不在当前 top-3 之内；请重新确认")
+            snapshot = None
+            for slot in (proposal.get("evidence") or {}).get("candidates") or []:
+                if slot and str(slot.get("item_id")) == item_id:
+                    snapshot = slot
+                    break
+            if snapshot is None:
+                raise AgentError(409, "candidate_snapshot_missing",
+                                 "服务端未保存该候选的证据快照；请重新研究 (replan)")
+            live = self._live_quote(owner, proposal["session_id"], item_id)
+            if live["availability"] != "in_stock":
+                raise AgentError(409, "out_of_stock", "该候选当前不可供应；请重新研究 (replan)")
+            if not _price_equal(live["price_usd"], snapshot.get("price_usd")):
+                raise AgentError(409, "quote_changed", "候选报价与审阅快照不符；请重新研究 (replan)")
+            if not self._recheck_constraints_for(proposal, item_id, live):
+                raise AgentError(409, "constraint_violation",
+                                 "硬约束在当前报价下不再满足；请重新研究 (replan)")
+            self.store.supersede_open_proposals(owner, proposal["session_id"], now=now)
+            new_revision = self.store.bump_revision(owner, proposal["session_id"], now=now)
+            evidence = {"catalog_fields": snapshot.get("evidence") or {},
+                        "supported_claims": [],
+                        "why_ranked_here": None,
+                        "candidate_snapshot": snapshot,
+                        "selection": {"selection_source": source, "reason": reason or None,
+                                      "from_proposal_id": proposal_id,
+                                      "selected_item_id": item_id},
+                        "candidates": (proposal.get("evidence") or {}).get("candidates")}
+            new_proposal = self.store.insert_proposal({
+                "proposal_id": uuid.uuid4().hex, "owner": owner,
+                "session_id": proposal["session_id"],
+                "revision": new_revision or proposal["revision"],
+                "merchant_version": proposal["merchant_version"], "item_id": item_id,
+                "title": snapshot.get("title"), "brand": snapshot.get("brand"),
+                "price_usd": live["price_usd"], "availability": live["availability"],
+                "eligible_item_ids": list(proposal["eligible_item_ids"]),
+                "rationale": self._selection_rationale(snapshot, live, source, reason),
+                "evidence_json": evidence,
+                "state_json": proposal.get("constraints_state") or {},
+                "status": "PROPOSED",
+                "expires_at": proposal["expires_at"]}, now=now)
+            self.store.add_event(owner, proposal["session_id"], "candidate_selected",
+                                 {"proposal_id": new_proposal["proposal_id"],
+                                  "superseded_proposal_id": proposal_id,
+                                  "item_id": item_id, "selection_source": source}, now=now)
+            return {"disclaimer": DISCLAIMER_ZH, "disclaimer_en": DISCLAIMER_EN,
+                    "selected_item_id": item_id, "selection_source": source,
+                    "reason": reason or None, "creates_reservation": False,
+                    "proposal": self._public_proposal(new_proposal),
+                    "note": ("已按候选快照生成新的待确认提案，取代原提案；"
+                             "不会创建草稿，仍需你点击确认。")}
+
+    def _recheck_constraints_for(self, proposal, item_id, live):
+        rec = dict(self.catalog_by_id.get(str(item_id), {}))
+        if not rec:
+            return False
+        rec["price_usd"] = live["price_usd"]
+        state = dict(proposal.get("constraints_state") or {})
+        hard = dict(state.get("hard") or {})
+        if not hard:
+            return True
+        hard.setdefault("price", {"upper": None, "lower": None})
+        hard.setdefault("must_include", [])
+        hard.setdefault("must_exclude", [])
+        hard.setdefault("brands", [])
+        state["hard"] = hard
+        kept, _ = qs.hard_filter([rec], state)
+        return bool(kept)
+
+    def _recheck_constraints(self, proposal, live):
+        return self._recheck_constraints_for(proposal, proposal["item_id"], live)
+
+    def _selection_rationale(self, snapshot, live, source, reason):
+        title = snapshot.get("title") or "(unknown title)"
+        brand = snapshot.get("brand") or "(no brand field)"
+        parts = []
+        if isinstance(live["price_usd"], (int, float)):
+            parts.append("当前演示报价 $%.2f" % live["price_usd"])
+        else:
+            parts.append("目录未提供价格字段")
+        parts.append("证据快照来自研究阶段服务端保存的候选字段")
+        parts.append("未新增目录未提供的商品特征")
+        if source == "agent_review" and reason:
+            parts.append("理由来自 Agent 建议（非目录事实）：%s" % reason)
+        elif source == "agent_review":
+            parts.append("由 Agent 审阅建议选中（建议非目录事实）")
+        else:
+            parts.append("由用户直接选择候选")
+        return "%s（%s）：%s。" % (title, brand, "；".join(parts))
 
     # -- simulated quote change -----------------------------------------
     def simulate_quote(self, owner, session_id, proposal_id=None, item_id=None,

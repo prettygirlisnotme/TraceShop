@@ -10,9 +10,9 @@
   },
   "id": "traceshop.agent-review",
   "integrity": {
-    "bundle_blake3": "3051f8f0f988d79f5a275b90d98a4ce1fde3b317b84cc5f4737e5410e6f807e0"
+    "bundle_blake3": "80b72b23174a2d3123e8c6798d4cc19db35f9984e0bb6a7f733089453078ef63"
   },
   "name": "TraceShop · Agent 审阅",
   "schema": 1,
-  "version": "0.2.1"
+  "version": "0.3.0"
 }
