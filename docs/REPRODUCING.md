@@ -35,7 +35,7 @@ python3 -m unittest discover -s tests -v
 
 Web 页面研究会话中的“复制给 Agent 审阅”把候选、约束、证据、报价版本与有效期导出到剪贴板。要把它交给宿主 `octos`，需要一个能导入本地 mini-app 的 Rinx，并自行准备官方打包的 `octos` 内核。
 
-导入目录就是仓库内的 [`native/agent-review/`](../native/agent-review/)（`README.md` + `main.splash` + `manifest.json`）。在 Rinx 中走 **Discover → Mini apps → Import**，选中该目录，Review 后 Run。`manifest.json` 的 `integrity.bundle_blake3` 必须由官方打包工具生成；**修改包里任何文件后都必须重新用官方工具盖章**，不能手填校验值。
+导入目录就是仓库内的 [`native/agent-review/`](../native/agent-review/)（`README.md` + `main.splash` + `manifest.json`，本仓库记录的 stamped 版本为 **0.2.1**）。在 Rinx 中走 **Discover → Mini apps → Import**，选中该目录，Review 后 Run。`manifest.json` 的 `integrity.bundle_blake3` 必须由官方打包工具生成；**修改包里任何文件后都必须重新用官方工具盖章**，不能手填校验值（本仓库 manifest 保持空占位，实际导入使用作业返回的 stamped 副本）。
 
 本仓库记录的固定组合是：
 
@@ -64,10 +64,11 @@ python3 tools/package-octos.py desktop --kernel /absolute/path/to/octos --app-bi
 - **standalone Rinx，用自己的本地 Agent peer**：不是宿主注入的 OctoSense System Agent，也不是 Web URL 卡片的自动 bridge，未经签名或 App Hub 上架。
 - provider/model/密钥在**宿主自己的 UI**里配置（例如 “Use this device” 表单），由宿主写成规范 profile；TraceShop 应用不接收、不保存密钥。密钥应由使用者本人提供，无需发给任何人。
 - Web 页面不会自动调用 `octos`；必须由用户手动复制、粘贴并明确点击发起审阅。返回的只是文字建议，仍由用户在 Web 确认或拒绝。
+- Web 导出含 `time_context`：`proposal_created_at_utc` 是服务端提案创建时间（UTC、秒），`current_time_utc` 为 `null`。审阅提示据此区分创建时间、截止时间与当前时间，并说明空数组表示“用户未设置该项”。不要据此断言当前是否过期，需回 Web 用实时时钟与报价版本核对。
 - 这是**精确固定提交**的复现，不承诺最新移动中的 main，也不承诺 Windows 或其它未测试平台。
 - Linux 上若 `XDG_RUNTIME_DIR` 缺失或其 socket 路径过长，Octos 可能启动失败；请使用已存在、路径短、权限 0700 且归当前用户所有的运行时目录，数据目录保持单独配置。
 
-该组合的实测证据见 [VALIDATION.md](VALIDATION.md#1-原生-agent-审阅作业-1800452026-10-02) 与 `evidence/`。
+该组合的实测证据见 [VALIDATION.md](VALIDATION.md) 第 1 节（作业 180063，v0.2.1）与 `evidence/`。
 
 ## 历史宿主版本
 

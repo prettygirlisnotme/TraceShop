@@ -3,17 +3,19 @@
 本仓库区分几类证据：随包可自行运行的标准库检查、公开检出目录的复验、交付包在隔离环境中的验收、
 私有集群内的宿主工作流实测，以及可选的 Rinx 原生 Agent 审阅。它们证明的范围不同，不能互相替代。
 
-## 1. 原生 Agent 审阅（作业 180045，2026-10-02）
+## 1. 原生 Agent 审阅（作业 180063，2026-10-02，v0.2.1）
 
-CPU-only，约 2 分钟，COMPLETED 0:0。使用**未修改**的固定 Rinx（`5a9e2af`，二进制 SHA-256
+CPU-only，1 分 52 秒（112 秒），COMPLETED 0:0。使用**未修改**的固定 Rinx（`5a9e2af`，二进制 SHA-256
 `60431b16b8e67f2167eae951bec306ca0a554f02264c798e3cf1ef78ec29a720`）与官方打包的固定 `octos`
 内核（`fe08d8e…`，`2.0.3-rc.13`），真实浏览器导出与原生 Rinx 导入在同一次作业内闭环：
 
 - 浏览器导出检查：研究 200、复制不新增草稿、导出字段逐项匹配（候选 3 条、硬/软约束、报价版本、
-  有效期）、报价变化后旧导出被清除、新研究可再导出、无禁止字段、无页面错误
+  有效期），并新增 `time_context` 校验——`proposal_created_at_utc` 与服务端一致、`current_time_utc`
+  为 `null`（`export_time_context_created_matches`、`export_time_context_current_null`）；报价变化后
+  旧导出被清除、新研究可再导出、无禁止字段、无页面错误
   （[agent-review-browser-checks.json](../evidence/agent-review-browser-checks.json)）。
-- 原生导入：stamped bundle `0.2.0`（BLAKE3
-  `41410f5e18dd36018aa223249afafb91122a33e6c9a53b705853f3f4f87027a9`），Review 能力恰为
+- 原生导入：stamped bundle `0.2.1`（BLAKE3
+  `3051f8f0f988d79f5a275b90d98a4ce1fde3b317b84cc5f4737e5410e6f807e0`），Review 能力恰为
   `octos.session.open`、`octos.turn.start`、`octos.turn.interrupt`，无 room。
 - assistant 关闭时返回真实宿主错误 `The assistant is off. Choose this device or a server in the assistant settings.`
 - 经真实宿主 UI 配置本机 provider（CN `minimax-cn`，`MiniMax-M3`）后，`session.open` 与 `turn.start`
@@ -23,8 +25,14 @@ CPU-only，约 2 分钟，COMPLETED 0:0。使用**未修改**的固定 Rinx（`5
   [agent-review-checks.json](../evidence/agent-review-checks.json)。
 
 **边界**：这是 standalone Rinx 的本地 Agent peer，不是宿主注入的 OctoSense System Agent，也不是 Web
-的自动 bridge；未经签名或 App Hub 上架。模型建议可能出现错误（本次把未过期提案描述为已过期，也把空字段
-描述为缺失）；权威判断仍是 Web 的确定性有效期与版本检查。
+的自动 bridge；未经签名或 App Hub 上架。模型建议可能出现错误，权威判断仍是 Web 的确定性有效期与版本
+检查。v0.2.1 提示明确区分创建/截止/当前时间、并说明空数组表示“用户未设置”后，本次回复不再把未过期
+提案判为过期、也不再把空数组说成缺失，并主动提示回 Web 用实时时钟与报价版本核对；但这是**单次用例
+改善，不是稳定的准确率成功**，回复仍长于请求的 300 字。
+
+此前同组合的 v0.2.0 运行为作业 **180045**（2026-10-02，约 124 秒），当时模型把未过期提案描述为“已过期”、
+把空字段描述为缺失。该误判作为历史保留在
+[v0.2.0 的 agent-review-checks.json](https://github.com/prettygirlisnotme/TraceShop/blob/v0.2.0/evidence/agent-review-checks.json)。
 
 ## 2. 公开检出目录复验（作业 180053，2026-10-02）
 
@@ -32,6 +40,9 @@ CPU-only，6 秒，COMPLETED 0:0。对 **v0.2.0 公开目录**使用系统 Pytho
 标准库导入、11 项检查及 HTTP 确认/读回/幂等/拒绝/报价变化路径全部通过；自测服务已停止。摘要见
 [public-checks.json](../evidence/public-checks.json)。同一复验此前也用于 v0.1.1（作业 **178861**，
 2026-10-01，12 秒，结果一致）。
+
+v0.2.1 只改 Web 导出与原生审阅包，后端与 `vendor/` 未变，因此该 11 项检查 + HTTP 基线继续适用；未为
+v0.2.1 新跑单元作业。v0.2.1 改动的 Web 导出与原生路径由作业 **180063** 直接验证（见第 1 节）。
 
 ## 3. 随包标准库检查（任何人可复跑）
 
@@ -71,5 +82,7 @@ python3 -m unittest discover -s tests -v
   主办方受理或晋级结果。
 - 原生 Agent 审阅针对固定 Rinx `5a9e2af` 与固定 `octos`；不承诺最新移动中的 main、Windows 或其它
   未测试平台。
+- 模型建议只是只读文本，仍可能在其它用例出错；180063 的时间/空数组表述改善仅覆盖一次用例，不代表
+  稳定的模型准确率。Web 的确定性时钟与版本检查始终是权威。
 - 「Open in browser」经由透明 headless URL 打开器适配器完成，不是桌面默认 GUI 浏览器。
 - 本包不包含历史目录、模型、数据库、凭据或认证日志；随包目录为自编合成数据。

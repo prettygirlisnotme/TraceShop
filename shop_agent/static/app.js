@@ -219,6 +219,11 @@
     return data.proposal;
   }
 
+  function utcSecondsIso(epochSeconds) {
+    if (typeof epochSeconds !== "number" || !isFinite(epochSeconds)) return null;
+    return new Date(Math.floor(epochSeconds) * 1000).toISOString().replace(".000Z", "Z");
+  }
+
   function agentReviewExport() {
     var p = agentReviewableProposal();
     if (!p) return null;
@@ -250,6 +255,11 @@
         item_id: p.item_id,
         price_usd: p.price_usd,
         expires_at: p.expires_at_iso
+      },
+      time_context: {
+        proposal_created_at_utc: utcSecondsIso(p.created_at),
+        current_time_utc: null,
+        note: "proposal_created_at_utc 是提案创建时间，不是当前时间；有效期与价格必须回到 Web 页面用实时时钟和当前报价版本核对。"
       },
       candidates: candidates
     };

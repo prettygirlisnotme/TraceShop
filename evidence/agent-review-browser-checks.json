@@ -14,6 +14,8 @@
   "export_merchant_version_matches": true,
   "export_proposal_matches": true,
   "export_proposal_expiry_matches": true,
+  "export_time_context_created_matches": true,
+  "export_time_context_current_null": true,
   "export_candidate_count": 3,
   "export_candidates_match_api": true,
   "export_candidate_fields_match": true,

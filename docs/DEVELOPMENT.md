@@ -14,7 +14,7 @@
 - `shop_agent/store.py`：`Store` 封装 SQLite。表级操作包括 session、proposal、reservation、quote、
   event；所有读取都经 `_loads`/行映射，写入用参数化 SQL。
 - `shop_agent/static/`：`index.html` + `style.css` + `app.js`，纯前端状态机，调用上述 JSON API；
-  其中“复制给 Agent 审阅”只导出候选/约束/证据/版本/有效期到剪贴板，不调用 `octos`、不创建草稿。
+  其中“复制给 Agent 审阅”把候选/约束/证据/版本/有效期与 `time_context`（提案创建时间 UTC、`current_time_utc` 为 `null`）导出到剪贴板，不调用 `octos`、不创建草稿。
 - `native/agent-review/`：可选的 Rinx 本地导入包（`main.splash` + `manifest.json` + `README.md`），
   与 Web 服务相互独立，不由 `server.py` 加载。
 - `vendor/project_a/`：可复用的 CPU 检索管线（受限解析、硬约束、BM25 排序、证据 guard、可选 CLIP
@@ -50,14 +50,15 @@ python3 -m shop_agent.server                       # 起服务后手动走查
 - Web 决策层是确定性规则策略与受限解析，不是通用 LLM，也不连接任何外部 octos / LLM 服务，默认零出站。
 - 可选的原生 Agent 审阅把用户主动复制的资料发送到**宿主配置的 provider**；它只给建议、不自动批准，
   且为独立 Rinx 本地 peer，未经签名或 App Hub 上架。
-- 模型建议可能出错；Web 的确定性有效期/版本检查才是权威。
+- 模型建议仍可能出错；v0.2.1 提示修正只改善了创建/截止/当前时间与空数组的表述（180063 单次用例），Web 的确定性有效期/版本检查才是权威。
 - 库存/报价变更为演示事件；历史目录价格不是实时报价。
 - 图片入口在后端资源缺失时保持禁用；图片相关性未验证。
 - 公开交付重点是源码与可运行页面；本机回环服务不是公网服务器。
 
 ## 下一步优先级
 
-固定 Rinx `5a9e2af` + 固定 `octos` 的原生审阅已闭环（见 [VALIDATION.md](VALIDATION.md)）。下一个有意义的改进是
-在导出与审阅提示中带上**可信的 UTC 时间**，并增加对模型建议的质量检查，减少“提案已过期/字段缺失”一类
-误判。部署为公网服务或提供稳定公共 URL 仍未做。现有 Web 原型作为可复现载体保持不变；文档只描述当前
-确实存在的 API，不预先编造接口。
+固定 Rinx `5a9e2af` + 固定 `octos` 的原生审阅已在 v0.2.1 复验（作业 180063，见 [VALIDATION.md](VALIDATION.md)）。
+提案创建时间现在由后端真实时间携带（`time_context.proposal_created_at_utc`），当前时间显式为未知；
+下一步优先是在**短视频**中演示一次真实审阅，并在预算允许时多测几个用例，而不是继续重构或补基础设施。
+部署为公网服务或提供稳定公共 URL 仍未做。现有 Web 原型作为可复现载体保持不变；文档只描述当前确实
+存在的 API，不预先编造接口。

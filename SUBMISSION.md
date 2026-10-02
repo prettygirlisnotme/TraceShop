@@ -10,16 +10,16 @@
 
 ## 一句话
 
-一个证据驱动、可确认、可读回的购物决策 Web 原型：把文字需求变成候选研究、硬约束过滤、可审阅的采购提案、用户明确确认、本地 SQLite 草稿写入与独立读回；报价或库存变化会让旧提案失效并强制重新研究。规则型决策，不产生真实订单。v0.2.0 另附一个**可选、只给建议**的 Rinx 本地 Agent 审阅包。
+一个证据驱动、可确认、可读回的购物决策 Web 原型：把文字需求变成候选研究、硬约束过滤、可审阅的采购提案、用户明确确认、本地 SQLite 草稿写入与独立读回；报价或库存变化会让旧提案失效并强制重新研究。规则型决策，不产生真实订单。v0.2.1 另附一个**可选、只给建议**的 Rinx 本地 Agent 审阅包。
 
 ## 固定版本与一条命令启动
 
-固定源码版本：**v0.2.0**。它保留 v0.1.1（提交 `dcf40f3c`）的确定性 Web 工作流，新增 Web 的“复制给 Agent 审阅”入口、[`native/agent-review/`](native/agent-review/) 导入包与原生实测证据；Web 核心逻辑不变。
+固定源码版本：**v0.2.1**。它保留 v0.1.1（提交 `dcf40f3c`）的确定性 Web 工作流，以及 v0.2.0 新增的“复制给 Agent 审阅”入口与 [`native/agent-review/`](native/agent-review/) 导入包；v0.2.1 在 Web 导出中加入提案创建时间 `time_context.proposal_created_at_utc`（UTC、秒）并显式标注 `current_time_utc: null`，同时修正原生审阅提示对创建/截止/当前时间与空数组的表述。Web 决策与后端逻辑不变。
 
 需要 Python 3.10 或更新版本，仅使用标准库：
 
 ```bash
-git clone --branch v0.2.0 --depth 1 https://github.com/prettygirlisnotme/TraceShop.git
+git clone --branch v0.2.1 --depth 1 https://github.com/prettygirlisnotme/TraceShop.git
 cd TraceShop
 python3 -m shop_agent.server
 ```
@@ -44,13 +44,14 @@ python3 -m shop_agent.server
 
 ## 可选原生 Agent 审阅
 
-Web 页面在研究会话中提供“复制给 Agent 审阅”。用户把复制出的候选、硬/软约束、证据、报价版本和有效期粘贴进 Rinx 导入的 [`native/agent-review/`](native/agent-review/) 包，由用户点击“发起审阅”，得到宿主 `octos` 的**只读文字建议**；之后仍需回到 Web 由用户自己确认或拒绝。
+Web 页面在研究会话中提供“复制给 Agent 审阅”。用户把复制出的候选、硬/软约束、证据、报价版本、有效期与时间上下文粘贴进 Rinx 导入的 [`native/agent-review/`](native/agent-review/) 包，由用户点击“发起审阅”，得到宿主 `octos` 的**只读文字建议**；之后仍需回到 Web 由用户自己确认或拒绝。
 
-固定 `octos` 内核 `fe08d8e`（`2.0.3-rc.13`）与固定 Rinx `5a9e2af` 已在受限测试环境跑通：导入 stamped bundle（**0.2.0**，BLAKE3 `41410f5e18dd36018aa223249afafb91122a33e6c9a53b705853f3f4f87027a9`），Review 的能力恰为 `octos.session.open`、`octos.turn.start`、`octos.turn.interrupt` 且无 room；assistant 关闭时返回真实错误；配置本机 provider 后 `session.open` 与 `turn.start` 经真实 Splash 回调完成，显示“审阅完成（建议未执行）”并返回非空建议。
+固定 `octos` 内核 `fe08d8e`（`2.0.3-rc.13`）与固定 Rinx `5a9e2af` 已在受限测试环境跑通：导入 stamped bundle（**0.2.1**，BLAKE3 `3051f8f0f988d79f5a275b90d98a4ce1fde3b317b84cc5f4737e5410e6f807e0`），Review 的能力恰为 `octos.session.open`、`octos.turn.start`、`octos.turn.interrupt` 且无 room；assistant 关闭时返回真实错误；配置本机 provider 后 `session.open` 与 `turn.start` 经真实 Splash 回调完成，显示“审阅完成（建议未执行）”并返回非空建议。
 
+- 导出含 `time_context`：`proposal_created_at_utc` 是服务端已有的提案创建时间（UTC、秒），`current_time_utc` 显式为 `null`，不伪造当前时钟。审阅提示区分**创建时间、截止时间与当前时间**，并说明空数组表示“用户未设置该项”，不是资料缺失。
 - 这是 **standalone Rinx 自己的本地 Agent peer**，**不是**宿主注入的 OctoSense System Agent，也不是 Web URL 卡片的自动 bridge，未经签名或 App Hub 上架。
 - Web 核心保持确定性、默认零出站；只有用户明确确认才会写入本地草稿，不存在自动批准。
-- 模型建议可能出错：实测中它把一个 02:44:05Z 才到期、且作业运行于 02:28–02:30Z 的提案描述为“已过期”，也把明确为空的字段描述为缺失。这是**建议文本的已知局限**，不是质量或准确率成功。权威判断仍是 Web 的确定性时钟/版本检查。
+- 模型建议仍可能出错：v0.2.1 提示修正后，本次实测不再把未过期提案判为“已过期”，也不再把明确为空的字段说成缺失，回复还提示用户回 Web 用实时时钟与报价版本核对后再确认。但这是**单次用例改善，不是稳定的准确率成功**，且回复仍长于请求的 300 字。权威判断始终是 Web 的确定性时钟/版本检查。历史 v0.2.0 的误判保留在[不可变标签](https://github.com/prettygirlisnotme/TraceShop/blob/v0.2.0/evidence/agent-review-checks.json)。
 
 证据：[原生审阅结果](evidence/agent-review-result.png) · [assistant 关闭的真实错误](evidence/agent-review-off.png) · [导出截图](evidence/agent-review-export.png) · [浏览器导出检查 JSON](evidence/agent-review-browser-checks.json) · [原生审阅 aggregate JSON](evidence/agent-review-checks.json)。
 
@@ -83,8 +84,8 @@ Web 卡片使用 `rs.robius.robrix.mini_app` 消息类型，内容示例见 [dem
 
 ## 验证证据
 
-- 原生 Agent 审阅（作业 **180045**，2026-10-02，CPU-only，约 2 分钟，COMPLETED 0:0）：固定 Rinx SHA-256 `60431b16…29a720` 与固定 `octos` 内核；Web 导出字段逐项匹配、复制不新增草稿；原生导入 stamped bundle、能力与无 room 校验、assistant OFF 真实错误、本机 provider 下 `session.open`/`turn.start` 真实回调完成、源码与锁未改。脱敏 aggregate 见 [evidence/agent-review-checks.json](evidence/agent-review-checks.json)。汇总见 [docs/VALIDATION.md](docs/VALIDATION.md)。
-- 公开目录复验（作业 **180053**，2026-10-02，CPU-only，6 秒，COMPLETED 0:0）：对 **v0.2.0 公开检出**以 `python -I -S -B` 运行标准库 11 项检查与回环 HTTP 闭环（研究 / 显式确认 / 独立读回 / 幂等 / 拒绝 409 / 报价变化 409），全部通过。见 [evidence/public-checks.json](evidence/public-checks.json)。此前 v0.1.1 的同一复验为作业 **178861**（2026-10-01，12 秒），结果一致。
+- 原生 Agent 审阅（作业 **180063**，2026-10-02，v0.2.1，CPU-only，1 分 52 秒，COMPLETED 0:0）：沿用未修改的固定 Rinx SHA-256 `60431b16…29a720` 与固定 `octos` 内核（`2.0.3-rc.13`）；Web 导出字段逐项匹配并新增 `time_context` 检查（`export_time_context_created_matches`、`export_time_context_current_null`）、复制不新增草稿；原生导入 stamped bundle `0.2.1`、能力与无 room 校验、assistant OFF 真实错误、本机 provider 下 `session.open`/`turn.start` 真实回调完成、源码与锁未改。脱敏 aggregate 见 [evidence/agent-review-checks.json](evidence/agent-review-checks.json)。此前同组合的 v0.2.0 运行为作业 180045。汇总见 [docs/VALIDATION.md](docs/VALIDATION.md)。
+- 公开目录复验（作业 **180053**，2026-10-02，CPU-only，6 秒，COMPLETED 0:0）：对 **v0.2.0 公开检出**以 `python -I -S -B` 运行标准库 11 项检查与回环 HTTP 闭环（研究 / 显式确认 / 独立读回 / 幂等 / 拒绝 409 / 报价变化 409），全部通过。v0.2.1 仅改 Web 导出与原生包、后端与 `vendor/` 未变，故沿用该基线，未新跑单元作业。见 [evidence/public-checks.json](evidence/public-checks.json)。此前 v0.1.1 的同一复验为作业 **178861**（2026-10-01，12 秒），结果一致。
 - 私有集群宿主工作流实测（作业 **178695**）：固定旧宿主独立编译，私有回环合成 fixture，10 项结构化检查通过。见 [evidence/workflow-checks.json](evidence/workflow-checks.json)。
 - 汇总说明：[docs/VALIDATION.md](docs/VALIDATION.md)。
 
