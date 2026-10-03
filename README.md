@@ -29,12 +29,13 @@ tools/octo run /path/to/TraceShop/bundle --port 8141 --hidden --detach
 
 `--hidden` 用于开发时后台操作；需要可见窗口时去掉它。应用数据由宿主放在自身分配的私有目录中。
 
-官方 `card-host` 当前不提供 `octos` 审阅服务，应用会显示真实的服务不可用提示；手动选择、确认和存储仍可使用。支持这些服务的宿主可以返回模型建议；**本版尚未验证真实模型建议采纳**。
+官方 `card-host` 当前不提供 `octos` 审阅服务，应用会显示真实的服务不可用提示；手动选择、确认和存储仍可使用。支持这些服务的宿主可以返回模型建议；本版已在固定 Rinx / octos / MiniMax-M3 下完成一条真实建议采纳、人工确认与存储读回流程；[实测证据](evidence/native-agent-workflow.json)。OctoSense 桌面 Shell 和手机尚未验证。
 
 ## 演示与验证
 
 - [原生购物操作录屏](evidence/native-shopping.webm)
 - [重启恢复录屏](evidence/native-restart.webm)
+- [真实 Agent 回复与采纳截图](evidence/native-agent-review.png) · [采纳状态](evidence/native-agent-adoption.png) · [保存结果](evidence/native-agent-draft.png)
 - [验证范围与固定宿主版本](docs/VALIDATION.md)
 - [官方包检查输出](evidence/native-hub-check.txt)
 - [初赛材料入口](SUBMISSION.md)

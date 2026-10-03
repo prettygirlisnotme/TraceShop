@@ -10,7 +10,7 @@
 - [原生购物操作录屏](evidence/native-shopping.webm) · [重启恢复录屏](evidence/native-restart.webm)。
 - [官方预检](evidence/native-hub-check.txt) · [实际运行范围](docs/VALIDATION.md)。
 
-独立 OctoScript 应用完成候选比较、提案、人工确认、本地草稿写入和独立读回。模型审阅是可选宿主能力；当前真实验证覆盖服务缺失后的完整人工流程。
+独立 OctoScript 应用完成候选比较、提案、人工确认、本地草稿写入和独立读回。模型审阅是可选宿主能力；已验证 card-host 服务缺失后的完整人工流程，并在固定 Rinx / octos / MiniMax-M3 下验证一条真实建议采纳、人工确认和保存读回流程。见[实际回复与结果](evidence/native-agent-workflow.json)。OctoSense Shell 和手机仍未验证。
 
 ## 提交状态
 

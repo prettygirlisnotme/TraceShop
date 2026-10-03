@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-03",
+  "job_id": "182276",
+  "bundle_blake3": "051d4389897e6e9f90ef2e88bb3c7455d73197b1b5a1adfa7798f1902912f77c",
+  "bundle_sha256": {
+    "assets/icon.svg": "c3dc4f8af970087ece5e31e0445df02e614fd28898fa946981d4d89c0c6d2996",
+    "listing.json": "64268e9da62d3c1f5bcb2e6d59cd9a7ce74425ab88674f2ab6bf474695a5ba24",
+    "main.splash": "698acb3aaeeae71d27eb28ee5e53ae2b54d2cbbecdb47b0b86541a80661e482b",
+    "manifest.json": "1ec7f850a2758c2db7858e9a1fdf96605485c2c3fc0f64406d87248abaa11ec5",
+    "screenshots/01-main.png": "d0ee1248fad49567b33f5931b18f9ecda9c84226eee172e73c2ebfd5961a4f98"
+  },
+  "scope": "One native shopping workflow in unmodified standalone Rinx with its own local octos peer and a real MiniMax-M3 provider. No Web or manual paste. Not an injected OctoSense System Agent or official shell verification.",
+  "host": {
+    "rinx_commit": "5a9e2af2433a04129f2ad0c11acafb187c66f649",
+    "rinx_binary_sha256": "60431b16b8e67f2167eae951bec306ca0a554f02264c798e3cf1ef78ec29a720",
+    "model": "MiniMax-M3",
+    "provider_family": "minimax-cn"
+  },
+  "input": {
+    "need": "办公用无线鼠标，安静",
+    "budget_usd": 30,
+    "hard_keywords": "wireless"
+  },
+  "assistant_off_status": "宿主审阅服务不可用：The assistant is off. Choose this device or a server in the assistant settings.（完整人工流程仍可使用）",
+  "review_terminal_status": "审阅完成（只读建议，未创建草稿，未自动批准）。可点击采纳生成新提案。",
+  "model_reply": {
+    "schema_version": 1,
+    "proposal_id": "p-1791034240-1",
+    "revision": 1,
+    "merchant_version": 1,
+    "selected_item_id": 4,
+    "reason": "候选1 VicTsing 是三款中唯一明确标注 Silent click 的产品，直接满足办公安静的核心需求；具备 2.4GHz 无线连接，符合硬关键词；价格 12.99 美元远低于 30 美元预算。"
+  },
+  "model_reply_sha256": "0221b07d47098acd075b0739787ad621f14690d190cb2dab272ca48513884f21",
+  "adoption_status": "已采纳建议并生成新提案（v2），仍需你明确确认；不会自动创建草稿。",
+  "draft_absent_before_confirmation": true,
+  "draft_save_readback_status": "已保存采购草稿，并从存储独立读回核验：字段一致。",
+  "runtime_source_unchanged": true,
+  "limitations": "Single synthetic-catalog case; does not establish recommendation accuracy, other hosts/platforms or real merchant operations."
+}
