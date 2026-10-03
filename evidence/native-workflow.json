@@ -1,0 +1,174 @@
+{
+  "job_id": "182121",
+  "scope": "Official card-host on Linux; synthetic catalog; no model call.",
+  "source_sha256": "698acb3aaeeae71d27eb28ee5e53ae2b54d2cbbecdb47b0b86541a80661e482b",
+  "hub_check": "traceshop.shopping 0.4.0 — PASSED\n  [warning] publisher-signature: unsigned: accountability rests on the hub alone\n  grants: capabilities {\"octos.session.open\", \"octos.turn.interrupt\", \"octos.turn.start\", \"storage\"}, hosts {}, storage 16777216 bytes, agent none\n",
+  "steps": [
+    {
+      "step": "app_ready",
+      "at": 1791025701.946,
+      "ready": true
+    },
+    {
+      "step": "invalid_budget",
+      "at": 1791025705.816,
+      "research_status": "预算无效：请输入大于 0 的美元数字。不生成候选，也不编造商品。",
+      "draft_exists": false
+    },
+    {
+      "step": "no_result",
+      "at": 1791025717.6,
+      "research_status": "没有符合预算与硬关键词的商品。请调整预算或关键词；不会编造商品。",
+      "draft_exists": false
+    },
+    {
+      "step": "preset_office",
+      "at": 1791025719.288,
+      "need": "办公用无线鼠标，安静",
+      "budget": "30",
+      "keywords": "wireless"
+    },
+    {
+      "step": "research",
+      "at": 1791025720.544,
+      "stage_info": "2 / 4 · 比较候选与证据",
+      "cand0": "1. VicTsing Wireless Mouse（VicTsing）\n价格 $12.99 ｜ 预算余量 $17.01\n类别：Electronics、Computer Accessories、Mice\n事实特征：2.4 GHz wireless、Three adjustable DPI levels、Silent click\n参数：connectivity=2.4 GHz wireless；dpi=1600；battery=1 AA\n约束证据：命中关键词 wireless、mouse、office、quiet、silent",
+      "cand1": "2. Amazon Basics Wireless Mouse（Amazon Basics）\n价格 $11.99 ｜ 预算余量 $18.01\n类别：Electronics、Computer Accessories、Mice\n事实特征：2.4 GHz wireless、1600 DPI、Ambidextrous shape\n参数：connectivity=2.4 GHz wireless；dpi=1600；battery=1 AA\n约束证据：命中关键词 wireless、mouse",
+      "cand2": null
+    },
+    {
+      "step": "pick_cand0",
+      "at": 1791025721.808,
+      "stage_info": "3 / 4 · 审阅提案，由你确认",
+      "proposal_info": "提案 p-1791025664-1（v1）\n商品：VicTsing Wireless Mouse（item_id 4）\n商品证据：2.4 GHz wireless、Three adjustable DPI levels、Silent click\n价格 $12.99 ｜ 商户版本 1\n有效期至 2026-10-03 11:18（宿主时间） ｜ 状态：pending",
+      "proposal_status": "已生成待确认提案（候选 1）。确认前不会创建草稿。",
+      "draft_exists": false
+    },
+    {
+      "step": "review_no_service",
+      "at": 1791025722.864,
+      "review_clicked": true,
+      "agent_status": "宿主审阅服务不可用：no service answers \"octos\" on this device（完整人工流程仍可使用）",
+      "agent_answer": " ",
+      "draft_exists": false,
+      "proposal_status": null
+    },
+    {
+      "step": "price_change",
+      "at": 1791025724.128,
+      "proposal_status": null,
+      "proposal_info": null
+    },
+    {
+      "step": "confirm_stale",
+      "at": 1791025725.376,
+      "proposal_status": null,
+      "draft_exists": false
+    },
+    {
+      "step": "re_research",
+      "at": 1791025727.608,
+      "stage_info": "2 / 4 · 比较候选与证据",
+      "cand0": "1. VicTsing Wireless Mouse（VicTsing）\n价格 $14.94 ｜ 预算余量 $15.06\n类别：Electronics、Computer Accessories、Mice\n事实特征：2.4 GHz wireless、Three adjustable DPI levels、Silent click\n参数：connectivity=2.4 GHz wireless；dpi=1600；battery=1 AA\n约束证据：命中关键词 wireless、mouse、office、quiet、silent"
+    },
+    {
+      "step": "re_pick",
+      "at": 1791025728.848,
+      "proposal_info": "提案 p-1791025664-2（v2）\n商品：VicTsing Wireless Mouse（item_id 4）\n商品证据：2.4 GHz wireless、Three adjustable DPI levels、Silent click\n价格 $14.94 ｜ 商户版本 2\n有效期至 2026-10-03 11:18（宿主时间） ｜ 状态：pending",
+      "proposal_status": "已生成待确认提案（候选 1）。确认前不会创建草稿。"
+    },
+    {
+      "step": "confirm_saved",
+      "at": 1791025730.288,
+      "draft_status": "已保存采购草稿，并从存储独立读回核验：字段一致。",
+      "draft_info": "草稿编号：d-p-1791025664-2\n来源提案：p-1791025664-2（v2，商户版本 2）\n商品：VicTsing Wireless Mouse（item_id 4）\n价格：$14.94 USD\n确认时间：2026-10-03 11:08（宿主时间）\n说明：本地采购草稿；无真实下单、支付或物流。",
+      "draft_exists": true,
+      "draft_json": {
+        "schema_version": 1,
+        "draft_id": "d-p-1791025664-2",
+        "proposal_id": "p-1791025664-2",
+        "revision": 2,
+        "merchant_version": 2,
+        "selected_item_id": 4,
+        "title": "VicTsing Wireless Mouse",
+        "brand": "VicTsing",
+        "price_usd": 14.94,
+        "currency": "USD",
+        "confirmed_at": 1791025728.8637986,
+        "note": "本地采购草稿；无真实下单、支付或物流。"
+      }
+    },
+    {
+      "step": "readback",
+      "at": 1791025731.544,
+      "draft_status": "已从本地存储独立读回草稿。",
+      "draft_info": "草稿编号：d-p-1791025664-2\n来源提案：p-1791025664-2（v2，商户版本 2）\n商品：VicTsing Wireless Mouse（item_id 4）\n价格：$14.94 USD\n确认时间：2026-10-03 11:08（宿主时间）\n说明：本地采购草稿；无真实下单、支付或物流。"
+    },
+    {
+      "step": "nav_stages",
+      "at": 1791025733.264,
+      "stage_info": "4 / 4 · 查看已保存的采购草稿"
+    },
+    {
+      "step": "run1_done",
+      "at": 1791025733.285,
+      "frames": 79,
+      "draft_exists": true
+    }
+  ],
+  "restart": [
+    {
+      "step": "restart_ready",
+      "at": 1791025736.258,
+      "ready": true,
+      "draft_status": "应用启动：已从本地存储读回上次保存的采购草稿。",
+      "draft_info": "草稿编号：d-p-1791025664-2\n来源提案：p-1791025664-2（v2，商户版本 2）\n商品：VicTsing Wireless Mouse（item_id 4）\n价格：$14.94 USD\n确认时间：2026-10-03 11:08（宿主时间）\n说明：本地采购草稿；无真实下单、支付或物流。",
+      "stage_info": "4 / 4 · 查看已保存的采购草稿",
+      "draft_exists": true,
+      "draft_json": {
+        "schema_version": 1,
+        "draft_id": "d-p-1791025664-2",
+        "proposal_id": "p-1791025664-2",
+        "revision": 2,
+        "merchant_version": 2,
+        "selected_item_id": 4,
+        "title": "VicTsing Wireless Mouse",
+        "brand": "VicTsing",
+        "price_usd": 14.94,
+        "currency": "USD",
+        "confirmed_at": 1791025728.8637986,
+        "note": "本地采购草稿；无真实下单、支付或物流。"
+      }
+    },
+    {
+      "step": "restart_done",
+      "at": 1791025742.278,
+      "frames": 33
+    }
+  ],
+  "media_job_id": "182141",
+  "media": {
+    "native-shopping": {
+      "mime": "video/webm;codecs=vp9",
+      "width": 412,
+      "height": 892,
+      "frames": 79,
+      "fps": 4,
+      "elapsed": 19.78,
+      "bytes": 432742,
+      "source": "Continuous real card-host window PNG frames from job 182121; no drawn UI or replacement frames."
+    },
+    "native-restart": {
+      "mime": "video/webm;codecs=vp9",
+      "width": 412,
+      "height": 892,
+      "frames": 33,
+      "fps": 4,
+      "elapsed": 8.2685,
+      "bytes": 80649,
+      "source": "Continuous real card-host window PNG frames from job 182121; no drawn UI or replacement frames."
+    }
+  },
+  "app_hub_submitted": false,
+  "publisher_details_finalized": false
+}

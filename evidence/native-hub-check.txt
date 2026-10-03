@@ -1,0 +1,3 @@
+traceshop.shopping 0.4.0 — PASSED
+  [warning] publisher-signature: unsigned: accountability rests on the hub alone
+  grants: capabilities {"octos.session.open", "octos.turn.interrupt", "octos.turn.start", "storage"}, hosts {}, storage 16777216 bytes, agent none

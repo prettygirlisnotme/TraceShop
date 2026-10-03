@@ -1,0 +1,19 @@
+{
+  "capabilities": [
+    "storage",
+    "octos.session.open",
+    "octos.turn.start",
+    "octos.turn.interrupt"
+  ],
+  "compute": {
+    "instruction_budget": 4000000,
+    "memory_bytes": 33554432
+  },
+  "id": "traceshop.shopping",
+  "integrity": {
+    "bundle_blake3": "870b1c3637580a893e53dcadbbbcf83a00a6002caf3aafaff1eaa7ce863e867f"
+  },
+  "name": "TraceShop 采购助手",
+  "schema": 1,
+  "version": "0.4.0"
+}
