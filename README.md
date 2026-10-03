@@ -4,7 +4,7 @@
 
 主程序使用 **OctoScript / Splash**，位于 [`bundle/main.splash`](bundle/main.splash)。商品检索、提案状态、用户确认和草稿存储都在脚本应用内完成。
 
-当前应用版本为 **0.4.0**：已在官方 `card-host` 的 Linux 环境实际运行，核心流程已验证；发布者、支持与隐私资料已补齐，**App Hub 提交准备中**。
+当前应用版本为 **0.4.0**：已在官方 `card-host` 的 Linux 环境实际运行，核心流程已验证；发布者、支持与隐私资料已补齐，**已提交 [App Hub 审核 #71](https://github.com/OctoSense-org/OctoSense-App-Hub/issues/71)，等待维护者审核**。
 
 ![商品候选与证据](bundle/screenshots/01-main.png)
 

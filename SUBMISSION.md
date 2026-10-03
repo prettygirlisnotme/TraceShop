@@ -16,6 +16,6 @@
 
 仓库已按官方 issue #13 登记。2026-10-03 群通知要求 10 月 6 日提交代码仓库、App Hub 材料与应用录屏，具体截止时刻未说明。
 
-发布者、支持入口和[隐私说明](PRIVACY.md)已补齐。**App Hub 提交准备中**，将按 App Hub 当前官方的 issue 路径提交固定版本；提交结果会记录在此。活动方如提供额外的初赛登记入口，再按通知补齐。
+发布者、支持入口和[隐私说明](PRIVACY.md)已补齐。**已提交 [App Hub #71](https://github.com/OctoSense-org/OctoSense-App-Hub/issues/71)**，固定 [v0.4.0](https://github.com/prettygirlisnotme/TraceShop/releases/tag/v0.4.0)，commit `4cf35ca84c04a7549b8adad9e621860b57d53ebf`。等待维护者审核，尚未获得上架或比赛验收结论。活动方如提供额外的初赛登记入口，再按通知补齐。
 
 未生成发布者密钥，未签名，未宣称主办方受理或晋级。
