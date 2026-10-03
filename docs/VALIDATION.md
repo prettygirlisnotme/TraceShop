@@ -30,4 +30,6 @@
 
 视频来自该作业连续捕获的真实原生窗口帧，素材作业 182141 使用已有浏览器编码器输出；以 4fps 编码，播放速度与现场操作时间不同。
 
-包检查通过只代表基础预检通过。`tools/octo check` 另提示 `listing.json` 的发布者占位待替换；这不是 App Hub 人工审核通过或比赛受理。
+发布者、支持入口和隐私说明定稿后，仅因 listing 变化执行必要包检查：CPU 作业 **182240 COMPLETED 0:0**，hub stamp/check、tools/octo check 和 hub scan 均退出 0。占位已清除，只剩首次未签名警告。源码与上述原生流程/录屏一致，没有重复业务或调用模型。最终摘要见 [native-gate.json](../evidence/native-gate.json)，作者答复见 [APP_HUB_REVIEW.md](APP_HUB_REVIEW.md)。
+
+包检查通过不代表 App Hub 人工审核通过或比赛受理。

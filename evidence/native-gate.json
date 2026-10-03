@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-03",
+  "job_id": "182240",
+  "gate_exit_status": "0:0",
+  "bundle_blake3": "051d4389897e6e9f90ef2e88bb3c7455d73197b1b5a1adfa7798f1902912f77c",
+  "bundle_sha256": {
+    "main.splash": "698acb3aaeeae71d27eb28ee5e53ae2b54d2cbbecdb47b0b86541a80661e482b",
+    "manifest.json": "1ec7f850a2758c2db7858e9a1fdf96605485c2c3fc0f64406d87248abaa11ec5",
+    "listing.json": "64268e9da62d3c1f5bcb2e6d59cd9a7ce74425ab88674f2ab6bf474695a5ba24",
+    "assets/icon.svg": "c3dc4f8af970087ece5e31e0445df02e614fd28898fa946981d4d89c0c6d2996",
+    "screenshots/01-main.png": "d0ee1248fad49567b33f5931b18f9ecda9c84226eee172e73c2ebfd5961a4f98"
+  },
+  "hub_check": "traceshop.shopping 0.4.0 — PASSED\n  [warning] publisher-signature: unsigned: accountability rests on the hub alone\n  grants: capabilities {\"octos.session.open\", \"octos.turn.interrupt\", \"octos.turn.start\", \"storage\"}, hosts {}, storage 16777216 bytes, agent none\n",
+  "publisher_placeholders_removed": true,
+  "scope": "Final metadata-only package check; application source unchanged from the actual native workflow and recording."
+}

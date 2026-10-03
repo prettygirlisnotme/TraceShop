@@ -4,7 +4,7 @@
 
 主程序使用 **OctoScript / Splash**，位于 [`bundle/main.splash`](bundle/main.splash)。商品检索、提案状态、用户确认和草稿存储都在脚本应用内完成。
 
-当前为 **0.4.0 候选版本**：已在官方 `card-host` 的 Linux 环境实际运行，应用包预检通过；**App Hub 尚未提交，发布资料仍待定稿**。
+当前应用版本为 **0.4.0**：已在官方 `card-host` 的 Linux 环境实际运行，核心流程已验证；发布者、支持与隐私资料已补齐，**App Hub 提交准备中**。
 
 ![商品候选与证据](bundle/screenshots/01-main.png)
 
@@ -54,5 +54,7 @@ tools/octo run /path/to/TraceShop/bundle --port 8141 --hidden --detach
 应用包只申请存储和三个 `octos` 宿主服务，不持有模型密钥。主动请求审阅时，需求和候选资料可能经宿主发送到其配置的模型服务。
 
 既有网页原型和辅助审阅器的历史发布见 [v0.3.0](https://github.com/prettygirlisnotme/TraceShop/releases/tag/v0.3.0)。当前应用入口是 `bundle/`。
+
+发布者：TraceShop-Felix。支持：[GitHub Issues](https://github.com/prettygirlisnotme/TraceShop/issues)；[隐私说明](PRIVACY.md)。
 
 许可证：[Apache-2.0](LICENSE)。

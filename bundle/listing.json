@@ -3,16 +3,26 @@
   "subtitle": "规则检索候选，确认后保存本地采购草稿",
   "description": "TraceShop 采购助手是一个 contained OctoScript/Splash 应用。输入文字需求、美元预算和可选硬关键词（或使用办公/游戏/便携预设），应用用脚本内嵌的小型合成演示目录做规则检索，展示最多 3 个候选及价格、事实特征、约束证据和预算余量。选择候选后生成待确认提案；只有用户明确确认才会 fs.write 保存本地采购草稿，并立即 fs.read 独立读回核验，应用重启后也能读回。可选地调用宿主 octos 服务做只读审阅并显示真实建议，采纳后仍需用户确认。应用不直接发起网络请求；可选审阅通过宿主配置的模型服务处理需求和候选资料。它不下单、不支付、不接入物流，也不声称真实多模态或模型推荐质量。",
   "category": "shopping",
-  "keywords": ["shopping", "octoscript", "purchase draft", "demo catalog", "shopping decision"],
-  "screenshots": ["screenshots/01-main.png"],
+  "keywords": [
+    "shopping",
+    "octoscript",
+    "purchase draft",
+    "demo catalog",
+    "shopping decision"
+  ],
+  "screenshots": [
+    "screenshots/01-main.png"
+  ],
   "icon": "assets/icon.svg",
-  "platforms": ["linux"],
+  "platforms": [
+    "linux"
+  ],
   "publisher": {
-    "name": "PENDING — TraceShop-Felix (待用户确认)",
-    "support": "https://example.com/support-placeholder-pending",
-    "privacy_policy_url": "https://example.com/privacy-placeholder-pending"
+    "name": "TraceShop-Felix",
+    "support": "https://github.com/prettygirlisnotme/TraceShop/issues",
+    "privacy_policy_url": "https://github.com/prettygirlisnotme/TraceShop/blob/main/PRIVACY.md"
   },
-  "release_notes": "首个 contained OctoScript 购物应用（0.4.0）：规则检索 + 提案确认 + 本地草稿写入/读回；已在真实 card-host（Linux）运行；发布者信息待用户确认。",
+  "release_notes": "首个独立 OctoScript 购物应用：规则检索、候选证据、提案确认、本地采购草稿写入与独立读回；已在官方 Linux card-host 实际运行。宿主 Agent 审阅为可选功能。",
   "age_rating": "all",
   "license": "Apache-2.0"
 }

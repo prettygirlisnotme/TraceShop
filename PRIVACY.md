@@ -1,102 +1,27 @@
-# Privacy Notes · Shopping Decision Agent (local prototype)
+# TraceShop 采购助手隐私说明
 
-This document describes what the **local web prototype** actually does with data.
-It is a factual description of the shipped source, not a legal policy and not a
-claim that the app is publicly hosted or certified.
+日期：2026-10-03。应用：traceshop.shopping，版本 0.4.0。
+本说明适用于公开发布的 TraceShop OctoScript 采购助手。
 
-## What this app is
+## 本地采购草稿
 
-- A loopback-only prototype. It binds `127.0.0.1` by default and is meant to be
-  run on the same machine as the reviewer/host. It has no authentication and is
-  **not** a public multi-user service.
-- It performs no outbound network calls, no telemetry, no analytics, no account
-  sign-up and no real payment. "Owner" is just a local label used to scope rows in
-  the local database; it is not an identity or a login. (The separate, opt-in
-  native review bundle is described below.)
+应用使用内嵌的 14 条合成演示商品。用户明确确认提案后，应用在宿主分配的私有存储目录写入 purchase_draft.json，并读回核验。文件包含草稿编号、来源提案编号与版本、商品编号/标题/品牌、价格、USD 币种、确认时间和草稿说明；不包含原始需求文本或模型回复。再次确认会替换当前保存的草稿。
 
-## Data stored locally (SQLite)
+应用启动时可以恢复该草稿。存储目录与清理方式由宿主管理；本应用不承诺卸载后宿主一定自动清除所有数据。
 
-All durable state lives in a single local SQLite file. The default path is
-`shop_agent_runs/agent.sqlite3` under the project root, overridable with
-`--db PATH` (for example `.local-state/demo.sqlite3`). The tables are:
+## 可选 Agent 审阅
 
-- `sessions` — owner label, session id, revision, parsed requirement/state JSON,
-  the user's utterance history text, `top_k`, simulated merchant version, source
-  label and catalog path, and an updated timestamp.
-- `proposals` — proposed item fields (title, brand, price, availability), the
-  evidence and rationale used, status and expiry. For a candidate selection
-  (human or adopted Agent suggestion) the evidence also holds the server-side
-  candidate snapshot and a `selection` block (`selection_source`, optional
-  `reason`, and the source proposal id); the source proposal is marked
-  superseded, and no draft row is written by this step.
-- `merchant_quotes` — **simulated** demo price/availability overrides. These are
-  demo events, not real merchant facts.
-- `reservations` — the "local purchase draft" rows created only after an explicit
-  user confirmation (item, quantity, note, status). No order is placed.
-- `events` — an append-only local action/audit log.
+用户点击“请求只读审阅”时，应用将需求文本、预算、硬关键词、提案编号与版本、候选商品事实交给宿主的 octos 服务。宿主可能将这些资料发送到它配置的远程模型提供方；提供方的数据处理遵循用户在宿主选择的服务设置与政策。请求取消后，已经发送到提供方的资料不能由本应用收回。
 
-The browser also stores one preference key, `sdagent_owner`, in `localStorage` so
-the owner label persists between page loads.
+应用不持有模型 API 密钥，也不读取宿主的提供方凭据。模型建议只作参考；用户点击采纳后仍须明确确认，应用才会保存采购草稿。没有宿主审阅服务时，用户仍可手动选择与确认。
 
-## Reference images
+## 应用权限与其他处理
 
-If the optional image path is enabled, an uploaded reference image is decoded
-**in memory** for that request. Raw bytes and base64 are **not persisted**; only
-the derived embedding and a SHA-256 digest are kept for the request/session. Image
-context is not durable: after a server restart the session requires the image to be
-re-uploaded. This is enforced in the vendored pipeline
-(`vendor/project_a/online_api.py`, `raw_images_persisted: false`).
+应用仅申请自己的存储和三个审阅宿主服务权限；不申请 net，不直接发起网络请求。应用代码没有账号登录、广告、遥测、分析、后台采集或跨应用数据读取，也没有真实支付、订单或物流操作。宿主及模型服务自身的数据处理不由本应用控制。
 
-## Optional real catalog / models
+## 发布者与支持
 
-- The default catalog is a small hand-authored demo fixture
-  (`demo/catalog.jsonl`). It contains no real customer or catalog data.
-- An optional CLIP image encoder and a learned re-ranker are only wired in when
-  their local asset paths and checkpoints are supplied at launch. They are **not**
-  bundled, and no real catalog data or trained weights are distributed. When
-  disabled, the image-upload control stays off and text search uses the fixture.
+发布者：TraceShop-Felix。
+支持与隐私问题：https://github.com/prettygirlisnotme/TraceShop/issues
 
-## Optional native Agent review (separate from the web app)
-
-The repository also contains an optional Rinx mini-app bundle,
-[`native/agent-review/`](native/agent-review/). It is **not part of the local web
-prototype** and the web server never loads or calls it. The distinction matters:
-
-- **The web app makes zero outbound calls.** It does not contact any model or
-  provider. The web app only ever writes the local draft after an explicit user
-  confirmation.
-- **The native bundle only does something when you opt in.** You must copy the
-  review export out of the web app, paste it into the bundle in a Rinx host, and
-  click to start a review. Only then does the host send the pasted evidence and
-  query to the **provider configured inside that host**. The bundle itself stores
-  no data and never contacts a provider on its own.
-- The native bundle is **advisory only**: it returns text suggestions. It does not
-  approve proposals, edit the catalog, relax constraints, write drafts, place
-  orders, or send messages. There is no automatic approval path. In bundle
-  **0.3.0** the suggestion includes a fixed six-field JSON
-  (`schema_version`, `proposal_id`, `revision`, `merchant_version`,
-  `selected_item_id`, `reason`). If the user chooses to copy it back and paste it
-  into the web app, the web backend re-validates it against the server-side
-  candidate snapshot, revision, merchant version, expiry and live quote, and only
-  creates a new **pending** proposal; it still requires an explicit confirmation
-  click before any draft is written. The pasted `reason` is stored and shown as
-  an Agent suggestion, not as a catalog fact.
-- Provider credentials and the model profile are managed by the **host profile,
-  outside this app**. This app does not receive, store, or forward the key.
-
-## No real transactions
-
-Confirming a proposal writes a **local draft row only**. No order is created, no
-payment is taken, and no merchant is contacted. "Stock" and "price changes" are
-simulated demo events.
-
-## How to delete your local data
-
-1. Stop the server (Ctrl-C).
-2. Delete the SQLite database file, e.g. `shop_agent_runs/agent.sqlite3` (also
-   remove any `-wal` / `-shm` sidecar files), or delete the whole
-   `shop_agent_runs/` directory.
-3. Optionally clear the `sdagent_owner` key from your browser's local storage.
-
-Deleting the database removes all sessions, proposals, simulated quotes, drafts and
-events. It cannot be recovered by the app.
+隐私说明：https://github.com/prettygirlisnotme/TraceShop/blob/main/PRIVACY.md
