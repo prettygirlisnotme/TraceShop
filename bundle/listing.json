@@ -11,7 +11,9 @@
     "shopping decision"
   ],
   "screenshots": [
-    "screenshots/01-main.png"
+    "screenshots/01-main.png",
+    "screenshots/02-proposal.png",
+    "screenshots/03-readback.png"
   ],
   "icon": "assets/icon.svg",
   "platforms": [
@@ -22,7 +24,7 @@
     "support": "https://github.com/prettygirlisnotme/TraceShop/issues",
     "privacy_policy_url": "https://github.com/prettygirlisnotme/TraceShop/blob/main/PRIVACY.md"
   },
-  "release_notes": "首个独立 OctoScript 购物应用：规则检索、候选证据、提案确认、本地采购草稿写入与独立读回；已在官方 Linux card-host 实际运行。宿主 Agent 审阅为可选功能。",
+  "release_notes": "补充提案确认与草稿独立读回的真实截图；统一 Rinx / MiniMax-M3 单条审阅实测说明，补齐中文作者答复；采用官方 GitHub 发布配置。采购与确认逻辑沿用 0.4.0。",
   "age_rating": "all",
   "license": "Apache-2.0"
 }

@@ -11,9 +11,9 @@
   },
   "id": "traceshop.shopping",
   "integrity": {
-    "bundle_blake3": "051d4389897e6e9f90ef2e88bb3c7455d73197b1b5a1adfa7798f1902912f77c"
+    "bundle_blake3": "e83fe68f14ec73377fb8f4d4de3c037167f864a05cdb693ff22cec726e0e8ed1"
   },
   "name": "TraceShop 采购助手",
   "schema": 1,
-  "version": "0.4.0"
+  "version": "0.4.1"
 }

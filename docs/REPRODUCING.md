@@ -1,5 +1,27 @@
 # 运行与宿主复现
 
+## 当前比赛应用：独立 OctoScript / Splash
+
+仓库根 [bundle/](../bundle/) 是当前应用。0.4.1 源码待发布，逻辑沿用已实测的 v0.4.0。按[官方 App Flow](https://github.com/OctoSense-org/OctoScript-App-Design-Flow/blob/main/README.zh-CN.md)准备 tools/octo、hub 和 card-host，在官方流程工作区运行：
+
+    tools/octo run /absolute/path/to/TraceShop/bundle --port 8141 --detach
+
+开发检查使用：
+
+    tools/octo check /absolute/path/to/TraceShop/bundle
+
+检查会为可编辑源 bundle 更新摘要并调用官方检查；不要对已封存的发布包重新盖章。
+
+- 在 card-host 选择办公预设，研究、选择、确认并检查草稿读回。固定 card-host 没有 octos 服务，审阅会如实显示不可用，人工流程仍可完成。
+- 真实模型建议使用下方固定 standalone Rinx / packaged octos 环境，导入 **根目录 bundle/**。下方 native/agent-review/ 是历史辅助审阅器。模型提供方由宿主配置，应用不接收密钥；实测见 [VALIDATION.md](VALIDATION.md)。
+- 后续封存发布包须使用支持 publisher-github-v1 的宿主。固定老宿主的业务证据来自可编辑源 bundle，不代表封存包已安装通过。
+
+0.4.1 的 .github/workflows/publish-app.yml 来自官方发布工具，推送匹配版本的新 tag 后才会在 GitHub 检查、生成证明并创建 Release。当前尚未执行公开发布。
+
+## 历史 Web 原型与辅助审阅器（v0.3.0）
+
+以下步骤用于历史资产；当前独立应用不需要 Python Web 服务。
+
 ## 应用
 
 Python 3.10+，仅标准库。在仓库根目录运行：

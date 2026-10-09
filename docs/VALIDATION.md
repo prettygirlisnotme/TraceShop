@@ -45,3 +45,14 @@ CPU 作业 **182276 COMPLETED 0:0**：固定且未修改的 Rinx `5a9e2af2433a04
 首次 182258 因审阅控件位于裁剪范围外，未正确触发或观察服务；修正驱动的滚动后 182276 成功，应用源码与固定宿主未修改。该次失败不能作为模型失败证据。
 
 这是 standalone Rinx 自己的本地 Agent peer，未验证 OctoSense Shell 注入的 System Agent。只有一个合成目录用例，不代表推荐准确率或总体效果。
+
+## 0.4.1 发布准备（2026-10-09）
+
+0.4.1 业务脚本与 v0.4.0 相同。新增 listing 截图来自作业182121的原生 card-host 素材，未重新生成画面：
+
+| 新文件 | 原始状态 | SHA-256 |
+| --- | --- | --- |
+| screenshots/02-proposal.png | run1/04-proposal.png，待确认提案 | 26293c655d5561fe07afc5329e751f2c871160bad95bd449198cb6069234b7f2 |
+| screenshots/03-readback.png | run1/08-readback.png，独立读回 | 0ef0bedc94e20cdb46e1964583cf6a9ff7044ab47a61087b5e1ab0525604de14 |
+
+本轮只新增包元数据检查，没有重跑业务或模型。集群 CPU 作业195388已完成（0:0，2秒）：现有固定hub对源包stamp/check/scan通过；包内文件与本地逐项核对一致，工作流与官方生成内容一致。源包BLAKE3为e83fe68f14ec73377fb8f4d4de3c037167f864a05cdb693ff22cec726e0e8ed1。官方发布流程固定 App Flow 049bc6b4010aa3660bab4ad632857d6ed4612151，GitHub 工作流固定 App Hub 655114c4943cd2490daaefa2173e7b5aaa20669f。GitHub工作流尚未运行，封存包、证明和兼容宿主安装均未验证。

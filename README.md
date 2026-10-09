@@ -4,9 +4,43 @@
 
 主程序使用 **OctoScript / Splash**，位于 [`bundle/main.splash`](bundle/main.splash)。商品检索、提案状态、用户确认和草稿存储都在脚本应用内完成。
 
-当前应用版本为 **0.4.0**：已在官方 `card-host` 的 Linux 环境实际运行，核心流程已验证；发布者、支持与隐私资料已补齐，**已提交 [App Hub 审核 #71](https://github.com/OctoSense-org/OctoSense-App-Hub/issues/71)，等待维护者审核**。
+当前源码版本为 **0.4.1（待发布）**：与 v0.4.0 应用逻辑相同，仅补充中文文档、真实状态截图和官方 `tools/octo publish-github` 发布配置。v0.4.0 已在官方 `card-host` 的 Linux 环境实际运行，核心流程已验证。**已提交 [App Hub #71](https://github.com/OctoSense-org/OctoSense-App-Hub/issues/71)，2026-10-09 初赛评审结果为入围、86/100，评审版本 v0.4.0（`4cf35ca8`）**；App Hub 上架与奖项待后续流程。
 
 ![商品候选与证据](bundle/screenshots/01-main.png)
+
+## 评审结果（初赛）
+
+2026-10-09，官方维护者 ZhangHanDong 在 [App Hub #71 评论](https://github.com/OctoSense-org/OctoSense-App-Hub/issues/71#issuecomment-6077956506) 给出结果：**入围，86/100，评审版本 v0.4.0（`4cf35ca8`）**。App Hub 上架、人工审核与奖项待后续流程。评审建议已在本轮 0.4.1 的文档、截图与发布配置中回应。
+
+## 提案确认与草稿读回
+
+两张关键状态图来自 v0.4.0 官方 `card-host` 真实运行素材，0.4.1 直接复用：
+
+| 提案确认 | 草稿读回 |
+| --- | --- |
+| ![提案确认](bundle/screenshots/02-proposal.png) | ![草稿读回](bundle/screenshots/03-readback.png) |
+
+## 文档导航
+
+| 文档 | 内容 |
+| --- | --- |
+| [README.md](README.md) | 本页：概览、运行方式与证据入口 |
+| [SUBMISSION.md](SUBMISSION.md) | 初赛提交材料、下一轮安排与发布配置 |
+| [docs/VALIDATION.md](docs/VALIDATION.md) | 实际运行范围与固定宿主版本 |
+| [docs/APP_HUB_REVIEW.md](docs/APP_HUB_REVIEW.md) | 作者对 Hub 扫描的答复（中英对照） |
+| [PRIVACY.md](PRIVACY.md) | 隐私说明 |
+| [docs/DEMO.zh-CN.md](docs/DEMO.zh-CN.md) | 中文演示提纲、设计取舍与答辩问题 |
+| [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) · [docs/REPRODUCING.md](docs/REPRODUCING.md) | 开发与复现说明 |
+
+## 模型验证口径
+
+以下口径在 [README](README.md)、[SUBMISSION](SUBMISSION.md) 和 [作者答复](docs/APP_HUB_REVIEW.md) 三处保持一致。
+
+- 模型实测针对 v0.4.0 的同一业务脚本；0.4.1 只改文档、截图与发布配置，没有新的模型验证。
+- 官方 Linux `card-host`（固定版本）实测了人工状态流转、人工确认与独立读回；宿主不提供 `octos` 审阅服务，应用如实显示不可用。
+- 未修改的 standalone Rinx（固定 `5a9e2af`）使用其打包 octos 与 CN MiniMax-M3，在同一个 v0.4.0 bundle 上完成一条真实 JSON 审阅：模型建议 → 采纳生成 v2 待确认提案 → 明确人工确认 → 写入文件并独立读回一致。
+- 未验证注入式 OctoSense Shell System Agent，也未验证手机/移动端。
+- 该证据在 main 分支 `f07434ff` 收录，对应 v0.4.0（`4cf35ca8`）的 bundle BLAKE3；0.4.1 的 bundle 摘要以发布工作流产出为准，目前尚未发布。
 
 ## 使用
 
@@ -29,7 +63,7 @@ tools/octo run /path/to/TraceShop/bundle --port 8141 --hidden --detach
 
 `--hidden` 用于开发时后台操作；需要可见窗口时去掉它。应用数据由宿主放在自身分配的私有目录中。
 
-官方 `card-host` 当前不提供 `octos` 审阅服务，应用会显示真实的服务不可用提示；手动选择、确认和存储仍可使用。支持这些服务的宿主可以返回模型建议；本版已在固定 Rinx / octos / MiniMax-M3 下完成一条真实建议采纳、人工确认与存储读回流程；[实测证据](evidence/native-agent-workflow.json)。OctoSense 桌面 Shell 和手机尚未验证。
+官方 `card-host` 当前不提供 `octos` 审阅服务，应用会显示真实的服务不可用提示；手动选择、确认和存储仍可使用。支持这些服务的宿主可以返回模型建议；v0.4.0 已完成一条真实建议采纳、人工确认与存储读回流程，[实测证据](evidence/native-agent-workflow.json)。完整、且与另外两份提交文档一致的口径见[模型验证口径](#模型验证口径)。
 
 ## 演示与验证
 
