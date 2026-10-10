@@ -1,4 +1,8 @@
-// TraceShop 采购助手 · OctoScript/Splash
+// TraceShop 采购助手 · script-tools-v1 候选（隔离实验，未发布）
+// 业务规则、目录与确认/读回逻辑复用 native/traceshop-app v0.4.0 的同一套函数；
+// 本候选只新增声明式工具入口 fn app_tool(name, call_id) 与 mod.app_tools.*。
+// 官方 ABI：tools.json（schema 1）+ manifest requires:["script-tools-v1"] +
+// HOST-API-V1 §5。宿主为打开该应用的完整 Shell RC1；旧 card-host 不支持。
 // 仅使用官方 SCRIPT-API 已记录的 API：fs.*、host.request、time_now/local_time、
 // regex().test、parse_json/to_json、字符串 split/search、数组 push/len、for 循环。
 // 无 net；无 Web/Python 依赖；状态由脚本与 app 私有 storage 持有。
@@ -38,6 +42,23 @@ let agent_request_proposal = ""
 let agent_request_revision = -1
 let agent_request_merchant = -1
 let review_token = 0
+// “交给 Agent 办理采购草稿”是独立于只读审阅的任务：单独 token + active 状态，
+// 防止重复启动，并让取消使旧回调失效；工具会新建提案，因此不复用 review_token/proposal 判断。
+let agent_task_token = 0
+let agent_task_active = false
+let agent_task_reply_text = ""
+let agent_task_proposal_id = ""
+// 本次任务写入 payload 的唯一标记，供“同步回复”在宿主历史中定位；取消后保留以便回看。
+let agent_task_id = ""
+// 防止历史同步重复刷新；新任务启动或结束后重置。
+let history_pending = false
+// 最近一次研究使用的请求快照（UI 与 app_tool 共用同一份业务状态）。
+let last_need_text = ""
+let last_budget_text = ""
+let last_hard_list = []
+let last_hard_text = ""
+let last_research_merchant = -1
+let research_revision = 0
 
 fn fmt_money(n){ "$" + ("" + (round(n * 100) / 100)) }
 
@@ -99,6 +120,65 @@ fn need_terms(text){
     if regex("便携|旅行|笔记本", "i").test(text) { terms.push("slim") terms.push("compact") terms.push("travel") }
     terms
 }
+
+// 软偏好小词典：只覆盖 3 个预设中明确写出的偏好，不是完整语义理解。
+// triggers 判断 need 是否真的提到该组；evidence_terms 是目录原始字段中可接受的证据别名。
+// 词典范围仅限本演示目录；未列出不等于语义上不相关，也不代表商品一定不支持。
+let preference_dict = [
+    {preference: "quiet" label: "静音" triggers: ["安静", "静音", "quiet", "silent"] evidence_terms: ["quiet", "silent"]}
+    {preference: "gaming" label: "游戏" triggers: ["游戏", "电竞", "gaming"] evidence_terms: ["gaming"]}
+    {preference: "portable" label: "便携" triggers: ["便携", "旅行", "笔记本", "portable", "slim", "compact", "travel"] evidence_terms: ["portable", "slim", "compact", "travel"]}
+]
+
+// 目录原始字段的 field/value 对；value 保持原样（数组逐元素、technical_details 逐键）。
+fn item_field_pairs(it){
+    let out = []
+    out.push({field: "title" value: it.title})
+    out.push({field: "brand" value: it.brand})
+    out.push({field: "description" value: it.description})
+    for c in it.categories { out.push({field: "categories" value: c}) }
+    for f in it.features { out.push({field: "features" value: f}) }
+    for k v in it.technical_details {
+        if v != nil { out.push({field: "technical_details." + k value: "" + v}) }
+    }
+    out
+}
+
+// 对给定 term 列表，在真实目录字段中 literal_match 命中的位置逐条记录 term/field/value；
+// 只输出原始字段值，不生成“已满足”之类的合成引文。
+fn build_evidence(it, terms){
+    let out = []
+    let pairs = item_field_pairs(it)
+    for t in terms {
+        if t != "" {
+            for p in pairs {
+                if literal_match(t, p.value) {
+                    out.push({term: t field: p.field value: p.value})
+                }
+            }
+        }
+    }
+    out
+}
+
+// 仅当 need 真的提到某组软偏好时，才为该候选生成一条核对（多个 aliases 只算一组）。
+fn pref_checks(it, need_text){
+    let out = []
+    for g in preference_dict {
+        let triggered = false
+        for trig in g.triggers {
+            if literal_match(trig, need_text) { triggered = true }
+        }
+        if triggered {
+            let ev = build_evidence(it, g.evidence_terms)
+            let status = "not_documented"
+            if ev.len() > 0 { status = "documented" }
+            out.push({preference: g.preference label: g.label evidence_status: status evidence: ev})
+        }
+    }
+    out
+}
+
 fn clear_suggestion(){
     review_token = review_token + 1
     agent_answer_text = ""
@@ -174,6 +254,8 @@ fn cand_text(i){
     s = s + "类别：" + join_list(it.categories) + "\n"
     s = s + "事实特征：" + join_list(it.features) + "\n"
     s = s + "参数：" + td_text(it.technical_details) + "\n"
+    let pc = checks_text(results[i].checks)
+    if pc != "" { s = s + "软偏好核对：" + pc + "\n" }
     s = s + "约束证据：" + evidence_text(r)
     s
 }
@@ -181,6 +263,29 @@ fn evidence_text(r){
     let s = ""
     for m in r.matched { if s != "" { s = s + "、" } s = s + m }
     if s == "" { "无关键词命中，按预算与硬关键词过滤" } else { "命中关键词 " + s }
+}
+fn evidence_brief(ev){
+    let s = ""
+    for x in ev {
+        if s != "" { s = s + "；" }
+        s = s + x.field + "：" + x.value
+    }
+    s
+}
+fn checks_text(checks){
+    let s = ""
+    for c in checks {
+        if s != "" { s = s + "；" }
+        s = s + c.label + "："
+        if c.evidence_status == "documented" {
+            s = s + "目录有证据"
+            let eb = evidence_brief(c.evidence)
+            if eb != "" { s = s + "（" + eb + "）" }
+        } else {
+            s = s + "目录未证实（本演示目录未见相关字段，不代表商品不支持）"
+        }
+    }
+    s
 }
 
 fn proposal_text(){
@@ -191,9 +296,23 @@ fn proposal_text(){
     let s = "提案 " + proposal.proposal_id + "（v" + ("" + proposal.revision) + "）\n"
     s = s + "商品：" + title + "（item_id " + ("" + proposal.selected_item_id) + "）\n"
     if it != nil { s = s + "商品证据：" + join_list(it.features) + "\n" }
+    let pc = proposal_checks_text()
+    if pc != "" { s = s + "软偏好核对：" + pc + "\n" }
     s = s + "价格 " + fmt_money(proposal.price_usd) + " ｜ 商户版本 " + ("" + proposal.merchant_version) + "\n"
     s = s + "有效期至 " + time_text(proposal.expires_at) + " ｜ 状态：" + proposal.status
     if proposal.agent_reason != nil { s = s + "\n采纳理由：" + proposal.agent_reason }
+    s
+}
+// 提案摘要复用同一次研究结果里的 preference_checks；重启后无结果时留空。
+fn proposal_checks_text(){
+    if proposal == nil { return "" }
+    if results.len() == 0 { return "" }
+    let s = ""
+    for i in results.len() {
+        if results[i].item.item_id == proposal.selected_item_id {
+            s = checks_text(results[i].checks)
+        }
+    }
     s
 }
 
@@ -261,26 +380,54 @@ fn fill_portable(){
     ui.research_status.set_text("已填入便携预设，请点击研究商品。")
 }
 
-fn research(){
-    ui.proposal_status.set_text("尚未选择候选，未生成提案。")
-    proposal = nil
-    selected_index = -1
+// 共享研究核心：UI 按钮与 app_tool 走同一份规则，不复制第二套算法。
+fn hard_input_text(terms){
+    let text = ""
+    for term in terms {
+        if text != "" { text = text + "," }
+        text = text + term
+    }
+    text
+}
+
+fn research_inputs_match(){
+    if results.len() == 0 { return false }
+    last_research_merchant == merchant_version &&
+        last_need_text == ui.need_input.text() &&
+        last_budget_text == ui.budget_input.text() &&
+        last_hard_text == ui.keywords_input.text()
+}
+
+fn research_core(need_text, budget_text, hard_list, sync_ui){
+    if sync_ui {
+        ui.need_input.set_text(need_text)
+        ui.budget_input.set_text(budget_text)
+        ui.keywords_input.set_text(hard_input_text(hard_list))
+    }
     clear_suggestion()
-    let budget = ui.budget_input.text().to_f64()
+    proposal = nil
+    ui.proposal_status.set_text("尚未选择候选，未生成提案。")
+    selected_index = -1
+    budget_value = 0.0
+    results = []
+    last_need_text = need_text
+    last_budget_text = budget_text
+    last_hard_list = hard_list
+    last_hard_text = ui.keywords_input.text()
+    last_research_merchant = merchant_version
+    research_revision = research_revision + 1
+    let budget = budget_text.to_f64()
     if !(budget > 0) {
-        budget_value = 0.0
-        results = []
-        selected_index = -1
         ui.research_status.set_text("预算无效：请输入大于 0 的美元数字。不生成候选，也不编造商品。")
         ui.proposal_status.set_text("没有有效预算，未生成提案。")
-        render_candidates()
-        refresh_proposal()
-        show_page(1)
-        return
+        render_candidates(); refresh_proposal(); show_page(1)
+        return {is_ok: false error_code: "invalid_budget"
+            message: "预算无效：请输入大于 0 的美元数字。不生成候选，也不编造商品。"
+            currency: "USD" budget_usd: 0.0 candidate_count: 0 candidates: []}
     }
     budget_value = budget
-    query_tokens = need_terms(ui.need_input.text())
-    hard_keywords = split_words(ui.keywords_input.text())
+    query_tokens = need_terms(need_text)
+    hard_keywords = hard_list
     let pool = []
     for it in catalog {
         let price = price_of(it)
@@ -303,32 +450,51 @@ fn research(){
                         }
                     }
                 }
-                pool.push({item: it score: score matched: matched})
+                pool.push({item: it score: score matched: matched
+                    facts: {features: it.features description: it.description}
+                    evidence: build_evidence(it, matched)
+                    checks: pref_checks(it, need_text)})
             }
         }
     }
     if pool.len() == 0 {
-        results = []
-        selected_index = -1
         ui.research_status.set_text("没有符合预算与硬关键词的商品。请调整预算或关键词；不会编造商品。")
         ui.proposal_status.set_text("没有候选，未生成提案。")
-        render_candidates()
-        refresh_proposal()
-        show_page(1)
-        return
+        render_candidates(); refresh_proposal(); show_page(1)
+        return {is_ok: false error_code: "no_candidates"
+            message: "没有符合预算与硬关键词的商品。请调整预算或关键词；不会编造商品。"
+            currency: "USD" budget_usd: budget candidate_count: 0 candidates: []}
     }
     results = top3(pool)
     selected_index = -1
     let kw_text = ""
     if hard_keywords.len() > 0 { kw_text = "，硬关键词：" + join_list(hard_keywords) }
     ui.research_status.set_text("规则检索：符合预算与硬关键词共 " + ("" + pool.len()) + " 个，展示前 " + ("" + results.len()) + " 个候选" + kw_text + "。选择候选以生成待确认提案。")
-    render_candidates()
-    refresh_proposal()
-    show_page(2)
+    let cands = []
+    for i in results.len() {
+        let it = results[i].item
+        cands.push({item_id: it.item_id title: it.title brand: it.brand
+            price_usd: price_of(it)
+            budget_remaining_usd: round((budget - price_of(it)) * 100) / 100
+            matched_terms: results[i].matched
+            facts: results[i].facts
+            evidence: results[i].evidence
+            preference_checks: results[i].checks})
+    }
+    render_candidates(); refresh_proposal(); show_page(2)
+    {is_ok: true error_code: "" message: "" currency: "USD" budget_usd: budget
+        candidate_count: results.len() candidates: cands
+        research_revision: research_revision merchant_version: merchant_version}
 }
 
-fn pick(i){
-    if i < 0 || i >= results.len() { return }
+fn research(){
+    let hard = split_words(ui.keywords_input.text())
+    research_core(ui.need_input.text(), ui.budget_input.text(), hard, false)
+}
+
+// 共享提案核心：绑定 revision、商户版本与请求快照；确认前绝不写草稿。
+fn create_proposal_at(i){
+    if i < 0 || i >= results.len() || !research_inputs_match() { return nil }
     clear_suggestion()
     selected_index = i
     revision_counter = revision_counter + 1
@@ -336,15 +502,16 @@ fn pick(i){
     proposal = {
         proposal_id: "p-" + ("" + floor(time_now())) + "-" + ("" + revision_counter)
         revision: revision_counter
+        research_revision: research_revision
         merchant_version: merchant_version
         selected_item_id: it.item_id
         price_usd: price_of(it)
         expires_at: time_now() + proposal_ttl
         status: "pending"
         agent_reason: nil
-        need_text: ui.need_input.text()
-        budget_text: ui.budget_input.text()
-        hard_text: ui.keywords_input.text()
+        need_text: last_need_text
+        budget_text: last_budget_text
+        hard_text: last_hard_text
     }
     agent_answer_text = ""
     ui.agent_answer.set_text("")
@@ -352,6 +519,15 @@ fn pick(i){
     ui.agent_status.set_text("未请求审阅。")
     render_candidates()
     refresh_proposal()
+    proposal
+}
+
+fn pick(i){
+    let p = create_proposal_at(i)
+    if p == nil {
+        ui.proposal_status.set_text("候选已失效或编号无效；需求、预算或报价改变后请重新研究。")
+        return
+    }
     ui.proposal_status.set_text("已生成待确认提案（候选 " + ("" + (i + 1)) + "）。确认前不会创建草稿。")
     show_page(3)
 }
@@ -366,6 +542,7 @@ fn verify_draft(back, expect){
     if back.currency != expect.currency { return false }
     if back.price_usd != expect.price_usd { return false }
     if back.merchant_version != expect.merchant_version { return false }
+    if back.research_revision != expect.research_revision { return false }
     true
 }
 fn draft_text(d){
@@ -387,45 +564,44 @@ fn draft_text(d){
     s
 }
 
-fn confirm_draft(){
+// 共享确认核心：UI 与 shopping.draft.save 走同一套校验、写入与读回，不复制第二份算法。
+// 每个失败分支返回结构化 {is_ok:false, error_code, message}，绝不把 set_text 当结果。
+// guard_call_id 非空（工具调用）时，在写入前再次检查 mod.app_tools.active，取消后不再写入。
+fn confirm_draft_core(guard_call_id){
     if proposal == nil {
-        ui.proposal_status.set_text("没有待确认提案，无法创建草稿。")
-        return
+        return {is_ok: false error_code: "no_proposal" message: "没有待确认提案，无法创建草稿。"}
     }
     if proposal.status != "pending" {
-        ui.proposal_status.set_text("该提案状态为 " + proposal.status + "，不能再次确认。")
-        return
+        return {is_ok: false error_code: "not_pending" message: "该提案状态为 " + proposal.status + "，不能再次确认。"}
     }
     if !proposal_inputs_match() {
-        ui.proposal_status.set_text("需求或约束已改变，旧提案不能确认，请重新研究。")
-        return
+        return {is_ok: false error_code: "inputs_changed" message: "需求或约束已改变，旧提案不能确认，请重新研究。"}
     }
     if proposal.merchant_version != merchant_version {
-        ui.proposal_status.set_text("报价已变化（当前商户版本 " + ("" + merchant_version) + "，提案记录 " + ("" + proposal.merchant_version) + "），旧提案不能确认，请重新研究。")
-        return
+        return {is_ok: false error_code: "merchant_changed" message: "报价已变化（当前商户版本 " + ("" + merchant_version) + "，提案记录 " + ("" + proposal.merchant_version) + "），旧提案不能确认，请重新研究。"}
     }
     if time_now() > proposal.expires_at {
-        ui.proposal_status.set_text("提案已过期，不能确认，请重新研究。")
-        return
+        return {is_ok: false error_code: "expired" message: "提案已过期，不能确认，请重新研究。"}
     }
     let it = find_item(proposal.selected_item_id)
     if it == nil {
-        ui.proposal_status.set_text("候选已失效，不能确认。")
-        return
+        return {is_ok: false error_code: "item_missing" message: "候选已失效，不能确认。"}
     }
     let current = price_of(it)
     if current != proposal.price_usd {
-        ui.proposal_status.set_text("当前价格与提案不一致，旧提案不能确认，请重新研究。")
-        return
+        return {is_ok: false error_code: "price_changed" message: "当前价格与提案不一致，旧提案不能确认，请重新研究。"}
     }
     if current > budget_value {
-        ui.proposal_status.set_text("价格已超出预算，不能确认，请重新研究。")
-        return
+        return {is_ok: false error_code: "over_budget" message: "价格已超出预算，不能确认，请重新研究。"}
     }
     for kw in hard_keywords {
         if !literal_match(kw, item_text(it)) {
-            ui.proposal_status.set_text("商品不再符合硬关键词，不能确认，请重新研究。")
-            return
+            return {is_ok: false error_code: "hard_keyword_mismatch" message: "商品不再符合硬关键词，不能确认，请重新研究。"}
+        }
+    }
+    if guard_call_id != "" {
+        if !mod.app_tools.active(guard_call_id) {
+            return {is_ok: false error_code: "call_inactive" message: "宿主调用已取消，未写入草稿。"}
         }
     }
     let draft = {
@@ -433,6 +609,7 @@ fn confirm_draft(){
         draft_id: "d-" + proposal.proposal_id
         proposal_id: proposal.proposal_id
         revision: proposal.revision
+        research_revision: proposal.research_revision
         merchant_version: merchant_version
         selected_item_id: it.item_id
         title: it.title
@@ -444,25 +621,61 @@ fn confirm_draft(){
     }
     let written = fs.write("purchase_draft.json", draft.to_json())
     if written != nil {
+        return {is_ok: false error_code: "write_failed" message: "存储写入失败，无法确认采购草稿已保存。"
+            proposal_id: draft.proposal_id revision: draft.revision research_revision: draft.research_revision
+            merchant_version: draft.merchant_version selected_item_id: draft.selected_item_id
+            price_usd: draft.price_usd currency: draft.currency readback_ok: false}
+    }
+    let back = fs.read("purchase_draft.json").parse_json()
+    let matched = verify_draft(back, draft)
+    if matched {
+        proposal.status = "saved"
+        clear_suggestion()
+        return {is_ok: true error_code: "" message: "已确认并保存采购草稿（未下单）。"
+            draft_id: draft.draft_id proposal_id: draft.proposal_id revision: draft.revision
+            research_revision: draft.research_revision merchant_version: draft.merchant_version
+            selected_item_id: draft.selected_item_id price_usd: draft.price_usd currency: draft.currency
+            confirmed_at: floor(draft.confirmed_at) readback_ok: true}
+    } else {
+        proposal.status = "verification_failed"
+        return {is_ok: false error_code: "readback_mismatch" message: "写入已返回，但独立读回核验不一致；不能确认保存成功。"
+            draft_id: draft.draft_id proposal_id: draft.proposal_id revision: draft.revision
+            research_revision: draft.research_revision merchant_version: draft.merchant_version
+            selected_item_id: draft.selected_item_id price_usd: draft.price_usd currency: draft.currency
+            readback_ok: false}
+    }
+}
+
+// UI 版确认：保持原有界面文案与跳转，只按核心结果渲染到 ui.*。
+fn render_save_result(res){
+    if res.is_ok {
+        let back = fs.read("purchase_draft.json").parse_json()
+        ui.draft_info.set_text(draft_text(back))
+        ui.draft_status.set_text("已保存采购草稿，并从存储独立读回核验：字段一致。")
+        ui.proposal_status.set_text("已确认并保存采购草稿（未下单）。")
+        show_page(4)
+        refresh_proposal()
+        return
+    }
+    if res.error_code == "write_failed" {
         ui.draft_status.set_text("存储写入失败，无法确认采购草稿已保存。")
         ui.proposal_status.set_text("保存失败；提案尚未完成。")
         return
     }
-    let back = fs.read("purchase_draft.json").parse_json()
-    let matched = verify_draft(back, draft)
-    ui.draft_info.set_text(draft_text(back))
-    if matched {
-        proposal.status = "saved"
-        clear_suggestion()
-        ui.draft_status.set_text("已保存采购草稿，并从存储独立读回核验：字段一致。")
-        ui.proposal_status.set_text("已确认并保存采购草稿（未下单）。")
-        show_page(4)
-    } else {
-        proposal.status = "verification_failed"
+    if res.error_code == "readback_mismatch" {
+        let back = fs.read("purchase_draft.json").parse_json()
+        ui.draft_info.set_text(draft_text(back))
         ui.draft_status.set_text("写入已返回，但独立读回核验不一致；不能确认保存成功。")
         ui.proposal_status.set_text("保存结果未通过核验。")
+        refresh_proposal()
+        return
     }
-    refresh_proposal()
+    ui.proposal_status.set_text(res.message)
+}
+
+fn confirm_draft(){
+    let res = confirm_draft_core("")
+    render_save_result(res)
 }
 
 fn reject_proposal(){
@@ -510,8 +723,13 @@ fn review_payload(){
     s = s + "需求：" + ui.need_input.text() + "\n"
     for i in results.len() {
         let it = results[i].item
-        s = s + "候选" + ("" + (i + 1)) + " item_id=" + ("" + it.item_id) + " 标题=" + it.title + " 价格USD=" + ("" + price_of(it)) + " 特征=" + join_list(it.features) + "\n"
+        let line = "候选" + ("" + (i + 1)) + " item_id=" + ("" + it.item_id) + " 标题=" + it.title + " 价格USD=" + ("" + price_of(it)) + " 特征=" + join_list(it.features)
+        let pc = checks_text(results[i].checks)
+        if pc != "" { line = line + " 软偏好核对=" + pc }
+        s = s + line + "\n"
     }
+    s = s + "软偏好只认目录原始字段证据：documented 才可优先，not_documented 只能说本演示目录未证实；不得把品牌或常识当功能证据，未证实不得称满足全部需求。\n"
+    s = s + "需要价格取舍时逐项列出候选 item_id 与工具原始 price_usd，不得笼统概括“其余更便宜/更贵”；没有已核实的比较不做比较性陈述。\n"
     s = s + "只返回一个 JSON 对象，不加代码围栏或额外文字：{schema_version:1, proposal_id:\"" + proposal.proposal_id + "\", revision:" + ("" + proposal.revision) + ", merchant_version:" + ("" + merchant_version) + ", selected_item_id:<候选数字>, reason:\"不超过160字的中文理由\"}。"
     s
 }
@@ -578,6 +796,276 @@ fn interrupt_review(){
     })
 }
 
+// ---- 需求页“交给 Agent 办理采购草稿”入口（独立于只读审阅）----
+// 只读取用户已输入的 need/预算/硬关键词，生成清楚 JSON 任务；仅在按钮触发时才开启宿主对话。
+// 不预先研究、不代选候选；候选、提案、保存全部由模型经 tools.json 已声明的工具完成，
+// 保存必须经宿主用户确认。业务核心仍复用 research_core/create_proposal_at/confirm_draft_core。
+fn agent_task_payload(need_text, budget_value, hard_list, task_id){
+    let flow = []
+    flow.push("先调用 shopping.status.read 读取真实状态。")
+    flow.push("调用 shopping.catalog.research，原样传入 need、budget_usd 与 hard_keywords。")
+    flow.push("只从该次返回的 candidates 中选择一个 item_id；不得编造候选、价格或特征。")
+    flow.push("逐项查看 candidates 的 facts/evidence 与 preference_checks：preference 表示需求里的软偏好。evidence_status=documented 表示该候选目录原始字段有 literal 证据，应优先并在理由中引用原始 field/value；not_documented 只能说“本演示目录未证实”，不得断言商品不支持，也不得把品牌、常识或型号当成功能证据。")
+    flow.push("软偏好只作取舍依据，不替代硬约束；不强制选固定编号，取舍要说明；未证实不得笼统声称满足全部需求。")
+    flow.push("调用 shopping.proposal.create，原样传入所选 item_id 与该次研究返回的 research_revision、merchant_version。")
+    flow.push("向用户说明待确认提案后立即调用 shopping.draft.save 来发起宿主确认请求。调用该工具不是批准；宿主会暂停并向用户显示批准或拒绝，只有用户批准后才会执行写入。不要仅在文字里询问后结束任务，也不要在调用前额外等待聊天确认。不得自动批准，若用户拒绝则说明未保存。")
+    flow.push("保存返回 readback_ok=true 后再调用 shopping.draft.read，核对 read_ok、matches_current_proposal 与 verification_scope，然后才能说该草稿已保存。")
+    flow.push("最终结论写明所选 item_id、准确 price_usd、budget_remaining_usd 与 quiet 等软偏好的原始字段证据；需要价格取舍时逐项列出候选 item_id 与工具原始 price_usd，不得笼统概括“其余更便宜/更贵”，没有已核实的比较不做比较性陈述。")
+    flow.push("遇到 is_ok=false 时向用户说明 error_code 与 message，不要当成成功。")
+    let instructions = "你是 TraceShop 采购助手的执行 Agent，只能使用 tools.json 声明的应用工具。严格按用户原始需求、预算与硬关键词办理；预算与硬关键词是强约束，不得放宽、删除或代替。软偏好只在候选有目录原始字段证据（preference_checks.evidence_status=documented 且含 field/value）时才可据以优先；未证实只能说明“本演示目录未证实”，不得把品牌或常识当功能证据，也不得笼统声称“满足全部需求”。不强制选固定编号，有取舍要说明。不得编造商品、价格或特征；缺输入不要猜。所有事实以工具返回为准，保存必须经宿主用户确认，无真实下单、支付或物流。"
+    let task = {
+        schema_version: 1
+        kind: "traceshop.purchase_task"
+        task_id: task_id
+        goal: "按用户原始需求完成一次本地采购草稿：研究候选→创建待确认提案→宿主确认保存→独立读回核验；无真实下单。"
+        need: need_text
+        budget_usd: budget_value
+        hard_keywords: hard_list
+        must_not_relax: "不得放宽预算或删除硬关键词，不得编造预算、商品、价格或特征。"
+        tool_flow: flow
+        instructions: instructions
+        no_real_order: true
+    }
+    task.to_json()
+}
+
+// 按钮触发才启动；输入缺失直接提示，不编预算。独立 task token 使取消后的旧回调失效。
+fn agent_task_start(){
+    if agent_task_active {
+        ui.agent_task_status.set_text("已有 Agent 办理任务在进行；请先取消或等待完成，避免重复启动。")
+        return
+    }
+    let need_text = ui.need_input.text()
+    let budget_text = ui.budget_input.text()
+    if need_text == "" {
+        ui.agent_task_status.set_text("请先填写需求文本；不会替你编造需求。")
+        ui.agent_task_reply.set_text("")
+        return
+    }
+    let budget_value = budget_text.to_f64()
+    if !(budget_value > 0) {
+        ui.agent_task_status.set_text("请填写大于 0 的美元预算；不会替你编造预算。")
+        ui.agent_task_reply.set_text("")
+        return
+    }
+    let hard_list = split_words(ui.keywords_input.text())
+    // 先让旧回调失效，再生成唯一任务标记并写入 payload，供历史同步定位本次任务。
+    agent_task_token = agent_task_token + 1
+    let nonce = agent_task_token
+    let task_id = "TraceShopTask-" + ("" + time_now()) + "-" + ("" + nonce)
+    agent_task_id = task_id
+    history_pending = false
+    let payload = agent_task_payload(need_text, budget_value, hard_list, task_id)
+    agent_task_active = true
+    agent_task_reply_text = ""
+    agent_task_proposal_id = ""
+    ui.agent_task_reply.set_text("")
+    ui.agent_task_reply_panel.set_visible(false)
+    ui.agent_task_status.set_text("正在连接助手…")
+    host.request("octos.session.open", {}, fn(s){
+        // 独立 task token：取消后 nonce 失效，旧回调直接丢弃；工具新建提案不影响此判断。
+        if nonce != agent_task_token { return }
+        if !s.is_ok {
+            agent_task_active = false
+            ui.agent_task_status.set_text("助手暂时不可用：" + s.error)
+            return
+        }
+        ui.agent_task_status.set_text("助手正在研究与办理；保存前会请你确认，可随时取消。")
+        host.request("octos.turn.start", {text: payload}, fn(r){
+            if nonce != agent_task_token { return }
+            if r.is_ok {
+                agent_task_reply_text = r.data.text
+                ui.agent_task_reply.set_text(agent_task_reply_text)
+                ui.agent_task_reply_panel.set_visible(agent_task_reply_text != "")
+                ui.agent_task_status.set_text("助手已回复。请查看办理结果；草稿是否保存以独立核验结果为准。")
+                agent_task_active = false
+            } else {
+                // RC1 服务回复 60 秒超时可能早于仍在运行的 turn；不据此取消待确认保存。
+                // 保留 active 防重复启动；由用户明确取消，或由成功终态回调结束。
+                agent_task_reply_text = "暂未收到助手的最终回复：" + r.error + "。可点击“同步回复”从宿主会话历史读取本次任务的助手回复；历史回复不代表宿主任务已终态确认。再次办理前请先点“结束 / 取消”，结束后即可重新办理。"
+                ui.agent_task_reply.set_text(agent_task_reply_text)
+                ui.agent_task_reply_panel.set_visible(true)
+                let checked = draft_read_result()
+                if agent_task_proposal_id != "" && checked.is_ok && checked.matches_current_proposal &&
+                    checked.proposal_id == agent_task_proposal_id {
+                    ui.agent_task_status.set_text("采购草稿已保存并独立核验。助手回复等待已结束；可点“同步回复”查看文字回复，重新办理前请先点“结束 / 取消”。")
+                } else {
+                    ui.agent_task_status.set_text("助手回复等待已结束，任务可能仍在继续。可点“同步回复”查看历史回复，处理系统确认，或点“结束 / 取消”后重试。")
+                }
+            }
+        })
+    })
+}
+
+fn agent_task_cancel(){
+    if !agent_task_active {
+        ui.agent_task_status.set_text("当前没有正在进行的 Agent 办理任务。")
+        return
+    }
+    // 先让旧回调失效（含历史同步），再走真实 turn.interrupt。
+    agent_task_token = agent_task_token + 1
+    history_pending = false
+    let cancel_nonce = agent_task_token
+    let keep_id = agent_task_id
+    ui.agent_task_status.set_text("正在结束 / 取消 Agent 办理任务…")
+    host.request("octos.turn.interrupt", {}, fn(r){
+        if cancel_nonce != agent_task_token { return }
+        if r.is_ok {
+            agent_task_active = false
+            ui.agent_task_status.set_text("已结束本次办理（宿主确认已停止）。任务标记 " + keep_id + " 保留可回看；重新办理会使用新标记。")
+            return
+        }
+        let err = ""
+        if r.error != nil { err = "" + r.error }
+        // 仅已知“无仍在运行的回合”这一官方 broker 句子（可能被 host 包装）视为已结束，不广泛吞错。
+        if err.search("Nothing is running in this conversation") >= 0 {
+            agent_task_active = false
+            ui.agent_task_status.set_text("已结束，宿主没有仍在运行的办理。任务标记 " + keep_id + " 保留可回看；重新办理会使用新标记。")
+            return
+        }
+        ui.agent_task_status.set_text("取消失败，请重试：" + err)
+    })
+}
+
+// ---- 历史同步：仅在用户点击“同步回复”时读取一次宿主会话历史 ----
+// 只读、不轮询、不开新 turn、不自动批准/保存/打断；宿主只 hydrate messages、不含 turn 终态，
+// 因此历史文字绝不作为宿主任务已结束的证据，界面保持 active。
+// 宿主历史会省略可选字段；Splash 的 obj.field 在字段缺失时会抛错。
+// 用脚本已有的对象遍历语法读取实际存在的字段，缺失才返回 nil。
+fn history_field(row, field_name){
+    for key value in row {
+        if key == field_name { return value }
+    }
+    nil
+}
+fn history_row_ref(m){
+    let t = history_field(m, "turn_id")
+    if t != nil {
+        let ts = "" + t
+        if ts != "" { return ts }
+    }
+    let th = history_field(m, "thread_id")
+    if th != nil {
+        let ths = "" + th
+        if ths != "" { return ths }
+    }
+    ""
+}
+// 行的 turn_id 或 thread_id 是否等于目标引用。
+fn history_row_matches_ref(m, wanted_id){
+    let t = history_field(m, "turn_id")
+    if t != nil {
+        if ("" + t) == wanted_id { return true }
+    }
+    let th = history_field(m, "thread_id")
+    if th != nil {
+        if ("" + th) == wanted_id { return true }
+    }
+    false
+}
+fn history_row_has(m, marker){
+    let c = history_field(m, "content")
+    if c != nil {
+        if ("" + c).search(marker) >= 0 { return true }
+    }
+    let d = history_field(m, "display_text")
+    if d != nil {
+        if ("" + d).search(marker) >= 0 { return true }
+    }
+    false
+}
+// 筛选可显示的已记录助手文字；不把没有工具调用当作宿主 turn 终态。
+fn history_row_is_final(m){
+    let calls = history_field(m, "tool_calls")
+    if calls != nil {
+        if calls.len() > 0 { return false }
+    }
+    let c = history_field(m, "content")
+    if c == nil { return false }
+    ("" + c) != ""
+}
+fn agent_task_sync_reply(){
+    if agent_task_id == "" {
+        ui.agent_task_status.set_text("尚无任务标记，无法同步回复；请先点击“交给 Agent 办理采购草稿”。")
+        return
+    }
+    if history_pending {
+        ui.agent_task_status.set_text("正在同步助手回复…请稍候再点。")
+        return
+    }
+    history_pending = true
+    let nonce = agent_task_token
+    let marker = agent_task_id
+    host.request("octos.session.history", {}, fn(h){
+        // 取消或新任务后 nonce 已变：直接丢弃，绝不覆盖当前状态或旧回复。
+        if nonce != agent_task_token { return }
+        history_pending = false
+        if !h.is_ok {
+            ui.agent_task_status.set_text("同步失败：无法读取宿主会话历史：" + h.error + "。未显示任何任务答案。")
+            return
+        }
+        if h.data == nil {
+            ui.agent_task_status.set_text("同步失败：宿主历史返回为空，无法定位本次任务。")
+            return
+        }
+        let messages = history_field(h.data, "messages")
+        if messages == nil {
+            ui.agent_task_status.set_text("同步失败：宿主历史没有 messages 数组，无法定位本次任务。")
+            return
+        }
+        // 1) 只在 user/person 行的 content/display_text 中定位本次任务标记，取非空 turn_id（否则 thread_id）。
+        let target_ref = ""
+        let ambiguous = false
+        for m in messages {
+            if history_field(m, "role") == "user" && history_field(m, "lane") == "person" {
+                if history_row_has(m, marker) {
+                    let wanted_id = history_row_ref(m)
+                    if wanted_id != "" {
+                        if target_ref == "" { target_ref = wanted_id }
+                        else {
+                            if wanted_id != target_ref { ambiguous = true }
+                        }
+                    }
+                }
+            }
+        }
+        if ambiguous {
+            ui.agent_task_status.set_text("同步失败：历史匹配到多个不同目标会话，无法唯一确定本次任务回复；未显示任何任务答案。请点“结束 / 取消”后重新办理。")
+            return
+        }
+        if target_ref == "" {
+            ui.agent_task_status.set_text("历史中暂未找到本任务（" + marker + "）的用户消息，可能尚未写入。未显示任何任务答案，也不代表任务已结束。")
+            return
+        }
+        // 2) 同一 person lane 且引用相同的 assistant 行中，取最后一条非空、无工具调用的最终回复。
+        let reply = ""
+        for m in messages {
+            if history_field(m, "role") == "assistant" && history_field(m, "lane") == "person" {
+                if history_row_matches_ref(m, target_ref) {
+                    if history_row_is_final(m) {
+                        reply = "" + history_field(m, "content")
+                    }
+                }
+            }
+        }
+        if reply == "" {
+            ui.agent_task_status.set_text("历史中暂未找到本任务的助手最终文字回复（可能仍在运行，或回复只含工具调用）。不要据此判断任务已结束；可稍后再点“同步回复”，或点“结束 / 取消”后重新办理。")
+            return
+        }
+        agent_task_reply_text = reply
+        ui.agent_task_reply.set_text(reply)
+        ui.agent_task_reply_panel.set_visible(true)
+        let status = "已同步本次助手回复（来自宿主历史）。"
+        if agent_task_active { status = status + " 继续办理前请点结束 / 取消。" }
+        let checked = draft_read_result()
+        if agent_task_proposal_id != "" && checked.is_ok && checked.matches_current_proposal &&
+            checked.proposal_id == agent_task_proposal_id {
+            status = status + " 草稿独立核验成功：已保存且与当前提案字段一致。"
+        }
+        ui.agent_task_status.set_text(status)
+    })
+}
+
 fn adopt_suggestion(){
     if agent_answer_text == "" {
         ui.agent_status.set_text("暂无可采纳建议。")
@@ -637,6 +1125,7 @@ fn adopt_suggestion(){
     proposal = {
         proposal_id: "p-" + ("" + floor(time_now())) + "-" + ("" + revision_counter)
         revision: revision_counter
+        research_revision: research_revision
         merchant_version: merchant_version
         selected_item_id: it.item_id
         price_usd: price_of(it)
@@ -650,6 +1139,228 @@ fn adopt_suggestion(){
     render_candidates()
     refresh_proposal()
     ui.agent_status.set_text("已采纳建议并生成新提案（v" + ("" + revision_counter) + "），仍需你明确确认；不会自动创建草稿。")
+}
+
+// ---- 声明式工具入口（HOST-API-V1 §5 / crates/appstore/src/script_tools.rs）
+// 本轮路径：读取状态、研究商品、创建/读取提案，并在宿主确认后保存草稿
+// （shopping.draft.save，见本文件末尾 app_tool 入口）。业务约束错误一律返回可解析的
+// {is_ok:false, error_code, message}，绝不把 UI set_text 当成功；保存不自动授权。
+fn status_result(){
+    let pid = ""
+    let prev = -1
+    let pstatus = ""
+    if proposal != nil {
+        pid = proposal.proposal_id
+        prev = proposal.revision
+        pstatus = proposal.status
+    }
+    {is_ok: true
+     catalog_size: catalog.len()
+     currency: "USD"
+     merchant_version: merchant_version
+     has_research: results.len() > 0
+     research_current: research_inputs_match()
+     research_revision: research_revision
+     research_merchant_version: last_research_merchant
+     candidate_count: results.len()
+     has_proposal: proposal != nil
+     proposal_id: pid
+     proposal_revision: prev
+     proposal_status: pstatus
+     has_draft: fs.exists("purchase_draft.json")
+     message: "TraceShop 本地状态；USD 合成演示目录，无真实下单。"}
+}
+
+fn proposal_result(){
+    if proposal == nil {
+        return {is_ok: false error_code: "no_proposal" message: "当前没有待确认提案。"}
+    }
+    let it = find_item(proposal.selected_item_id)
+    let title = ""
+    if it != nil { title = it.title }
+    {is_ok: true error_code: "" message: ""
+     proposal_id: proposal.proposal_id
+     revision: proposal.revision
+     research_revision: proposal.research_revision
+     merchant_version: proposal.merchant_version
+     selected_item_id: proposal.selected_item_id
+     title: title
+     price_usd: proposal.price_usd
+     currency: "USD"
+     expires_at: floor(proposal.expires_at)
+     need_snapshot: proposal.need_text
+     budget_snapshot: proposal.budget_text
+     hard_keywords_snapshot: proposal.hard_text
+     status: proposal.status}
+}
+
+// 独立读回：只依据本地存储内容，不读 UI 文字。显式区分不存在/读取失败/解析失败/
+// 字段不完整/与当前内存提案不匹配/已读到；重启后无内存提案时不声称与提案匹配。
+fn draft_read_result(){
+    if !fs.exists("purchase_draft.json") {
+        return {is_ok: false present: false error_code: "no_draft" read_ok: false
+            current_proposal_present: proposal != nil matches_current_proposal: false
+            verification_scope: "none" message: "本地存储中没有采购草稿。"}
+    }
+    try {
+        let raw = fs.read("purchase_draft.json")
+        if raw == nil {
+            return {is_ok: false present: true error_code: "read_failed" read_ok: false
+                message: "草稿存在但读取失败，无法核验内容。"}
+        }
+        let d = raw.parse_json()
+        if d == nil || d.to_json() != raw {
+            return {is_ok: false present: true error_code: "parse_failed" read_ok: false
+                message: "草稿不是应用写出的完整规范JSON，不能确认完整性。"}
+        }
+        let encoded = d.to_json()
+        if d.schema_version != 1 || encoded.search("\"draft_id\"") < 0 ||
+            encoded.search("\"proposal_id\"") < 0 || encoded.search("\"selected_item_id\"") < 0 ||
+            encoded.search("\"price_usd\"") < 0 || encoded.search("\"currency\"") < 0 ||
+            encoded.search("\"confirmed_at\"") < 0 || encoded.search("\"merchant_version\"") < 0 ||
+            encoded.search("\"revision\"") < 0 {
+            return {is_ok: false present: true error_code: "incomplete" read_ok: false
+                message: "草稿缺少必需字段，不能确认其为完整采购草稿。"}
+        }
+        let stored_research_revision = -1
+        if d.research_revision != nil { stored_research_revision = d.research_revision }
+        let matched = false
+        let verification_level = "stored_fields"
+        let message = "已从本地存储独立读取；当前没有内存提案，无法核验与当前提案是否一致。缺失的旧版research_revision以-1表示。"
+        let error = ""
+        if proposal != nil {
+            let expected = {
+                draft_id: "d-" + proposal.proposal_id
+                proposal_id: proposal.proposal_id
+                revision: proposal.revision
+                research_revision: proposal.research_revision
+                merchant_version: proposal.merchant_version
+                selected_item_id: proposal.selected_item_id
+                price_usd: proposal.price_usd
+                currency: "USD"
+            }
+            matched = verify_draft(d, expected)
+            verification_level = "proposal_fields"
+            if matched {
+                message = "独立读回并核对提案ID、草稿ID、修订、研究/报价版本、商品、价格与币种。"
+            } else {
+                error = "mismatch"
+                message = "已读到草稿，但它与当前提案字段不一致，不代表当前提案已确认。"
+            }
+        }
+        {is_ok: error == "" present: true error_code: error read_ok: true
+         current_proposal_present: proposal != nil matches_current_proposal: matched
+         verification_scope: verification_level
+         draft_id: d.draft_id proposal_id: d.proposal_id revision: d.revision
+         research_revision: stored_research_revision merchant_version: d.merchant_version
+         selected_item_id: d.selected_item_id price_usd: d.price_usd currency: d.currency
+         confirmed_at: floor(d.confirmed_at) message: message}
+    } catch {
+        {is_ok: false present: true error_code: "read_failed" read_ok: false
+         message: "草稿读取或字段解析失败，不能确认读取或匹配成功。"}
+    }
+}
+
+fn app_tool(name, call_id){
+    let req = mod.app_tools.request(call_id)
+    let args = req.args
+    if name == "shopping.status.read" {
+        mod.app_tools.complete(call_id, status_result())
+        return
+    }
+    if name == "shopping.proposal.read" {
+        mod.app_tools.complete(call_id, proposal_result())
+        return
+    }
+    if name == "shopping.catalog.research" {
+        let need = ""
+        if args.need != nil { need = "" + args.need }
+        let budget_text = ""
+        if args.budget_usd != nil { budget_text = "" + args.budget_usd }
+        let hard = []
+        if args.hard_keywords != nil {
+            for k in args.hard_keywords { hard.push("" + k) }
+        }
+        mod.app_tools.complete(call_id, research_core(need, budget_text, hard, true))
+        return
+    }
+    if name == "shopping.proposal.create" {
+        if !research_inputs_match() || args.research_revision != research_revision ||
+            args.merchant_version != merchant_version {
+            mod.app_tools.complete(call_id, {is_ok: false error_code: "stale_research"
+                message: "需求、预算、硬关键词、报价或研究版本已改变，请重新研究并使用新版本创建提案。"})
+            return
+        }
+        if args.item_id == nil {
+            mod.app_tools.complete(call_id, {is_ok: false error_code: "missing_item_id" message: "缺少 item_id 参数。"})
+            return
+        }
+        let iid = args.item_id
+        let idx = -1
+        for i in results.len() {
+            if results[i].item.item_id == iid { idx = i }
+        }
+        if idx < 0 {
+            mod.app_tools.complete(call_id, {is_ok: false error_code: "item_not_in_results" message: "该 item_id 不在最近一次研究结果中，请先调用 shopping.catalog.research。"})
+            return
+        }
+        let p = create_proposal_at(idx)
+        if p == nil {
+            mod.app_tools.complete(call_id, {is_ok: false error_code: "proposal_failed" message: "无法创建提案，请重新研究。"})
+            return
+        }
+        if agent_task_active { agent_task_proposal_id = p.proposal_id }
+        mod.app_tools.complete(call_id, proposal_result())
+        return
+    }
+    if name == "shopping.draft.read" {
+        let checked = draft_read_result()
+        if agent_task_active && agent_task_proposal_id != "" && checked.is_ok &&
+            checked.matches_current_proposal && checked.proposal_id == agent_task_proposal_id {
+            // 独立文件核验是业务完成证据；不把它冒充模型终态，也不放行重复 turn。
+            ui.agent_task_status.set_text("采购草稿已保存并独立核验；请在草稿页查看商品、价格与版本。")
+            show_page(4)
+        }
+        mod.app_tools.complete(call_id, checked)
+        return
+    }
+    if name == "shopping.draft.save" {
+        // 1) 入口先确认调用仍然有效；参数须显式绑定当前提案。
+        if !mod.app_tools.active(call_id) {
+            return
+        }
+        if proposal == nil {
+            mod.app_tools.complete(call_id, {is_ok: false error_code: "no_proposal"
+                message: "没有待确认提案。当前进程没有内存提案（可能已重启），请重新研究并创建提案；不能凭已存草稿推断当前提案。"})
+            return
+        }
+        if args.proposal_id == nil || args.revision == nil ||
+            args.research_revision == nil || args.merchant_version == nil {
+            mod.app_tools.complete(call_id, {is_ok: false error_code: "missing_binding"
+                message: "缺少 proposal_id/revision/research_revision/merchant_version 参数。"})
+            return
+        }
+        // 2) 核对 id/revision/研究版本/商户版本与当前请求快照；批准延迟导致的状态改变一律拒绝。
+        if ("" + args.proposal_id) != proposal.proposal_id ||
+            args.revision != proposal.revision ||
+            args.research_revision != proposal.research_revision ||
+            args.merchant_version != proposal.merchant_version ||
+            !proposal_inputs_match() ||
+            proposal.merchant_version != merchant_version {
+            mod.app_tools.complete(call_id, {is_ok: false error_code: "stale_proposal"
+                message: "提案 id/revision/研究版本/商户版本或当前请求快照与当前状态不一致，请重新研究。"})
+            return
+        }
+        // 3) 保存前再次检查 active，避免取消后写入；核心再走既有确认/写回读回。
+        if !mod.app_tools.active(call_id) {
+            return
+        }
+        let res = confirm_draft_core(call_id)
+        render_save_result(res)
+        mod.app_tools.complete(call_id, res)
+        return
+    }
+    mod.app_tools.fail(call_id, "Unknown tool: " + name)
 }
 
 fn boot(){
@@ -686,6 +1397,15 @@ SolidView{width: Fill height: Fill flow: Down padding: 16 spacing: 12 draw_bg.co
         nav_proposal := BtnG{text: "提案" on_click: || show_page(3)}
         nav_draft := BtnG{text: "草稿" on_click: || show_page(4)}
     }
+    // 状态和取消常显；长回复单独滚动，不挤出商品操作区。
+    View{width: Fill height: Fit flow: Right spacing: 8
+        agent_task_status := Label{text: "Agent 办理：未开始。" draw_text.color: secondary draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 12}
+        agent_task_sync_btn := BtnG{text: "同步回复" on_click: || agent_task_sync_reply()}
+        agent_cancel_top_btn := BtnG{text: "结束 / 取消" on_click: || agent_task_cancel()}
+    }
+    agent_task_reply_panel := ScrollYView{width: Fill height: 72 visible: false
+        agent_task_reply := Label{text: "" draw_text.color: ink draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 12}
+    }
 
     ScrollYView{width: Fill height: Fill flow: Down spacing: 12
         input_panel := SolidView{width: Fill height: Fit flow: Down spacing: 8 padding: 12 draw_bg.color: panel
@@ -699,6 +1419,10 @@ SolidView{width: Fill height: Fill flow: Down padding: 16 spacing: 12 draw_bg.co
                 preset_portable := BtnG{text: "便携预设" on_click: || fill_portable()}
             }
             research_btn := Btn{text: "研究商品" on_click: || research()}
+            View{width: Fill height: Fit flow: Right spacing: 8
+                agent_start_btn := Btn{text: "交给 Agent 办理采购草稿" on_click: || agent_task_start()}
+            }
+            Label{text: "助手会按你的预算和必需条件研究商品、生成提案；保存前会请你确认。" draw_text.color: secondary draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 12}
             research_status := Label{text: "请输入预算并点击研究商品。" draw_text.color: secondary draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
         }
 

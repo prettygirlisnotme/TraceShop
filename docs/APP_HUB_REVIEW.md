@@ -1,3 +1,5 @@
+> 历史资料：本页记录0.4.x。0.5.0的新工具办理、验证范围和发布状态见 [README](../README.md) 与 [VALIDATION](VALIDATION.md)。
+
 # TraceShop — 作者对 Hub 扫描的答复（v0.4.0 历史答复） / author answers to hub scan
 
 > 版本范围 / Version scope: 下面七个问答是 **v0.4.0（`4cf35ca8`）** 提交 App Hub #71 时的历史答复，保留原文与对照译文。当前源码为 **0.4.1（待发布）**，只改文档、截图与官方发布配置，应用逻辑与 v0.4.0 相同；本轮对评审建议的回应见文末[评审结果与本轮回应](#评审结果与本轮回应--preliminary-result-and-current-round-response)。

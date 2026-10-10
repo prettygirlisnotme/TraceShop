@@ -1,58 +1,40 @@
-# 验证范围 · 2026-10-03
+# 运行范围与证据
 
-独立脚本应用 `traceshop.shopping 0.4.0` 在官方 `card-host` / Linux 中完成真实原生操作。CPU 作业 182121 退出 0；源码和宿主运行时未通过替身服务改变行为。
+2026-10-10。所有运行与素材编码在学校集群CPU作业内完成；本预览不包含密钥、私有签名材料、完整会话日志或模型权重。
 
-## 已观察到
+## 真实 Agent 办理（已有运行196923）
 
-- 无效预算和无结果显示原因，未生成采购草稿。
-- 办公预设检索到 VicTsing 静音鼠标等候选，展示实际演示目录事实。
-- 选择候选仅生成待确认提案。
-- 点击审阅得到真实 `no service answers "octos" on this device`；当时没有草稿。
-- 模拟报价上涨后旧提案被拒绝；重新研究与确认后保存 $14.94 USD 草稿。
-- 写入后从文件独立读回，关键字段一致；重启后恢复同一草稿。
-- 原生脚本运行记录没有应用错误行；官方 `hub check --allow-unsigned` 输出 PASSED。
+未修改官方 OctoSense Linux 0.1.0-rc.1 Debian 包，源码933abbcf2737e652acd9cae2a4c9ffc16bfdaec6。包SHA256 fe23928f7c082f9105e7ab8e777d1df6290789834ab812bdef536a2a192806dc。私有测试目录安装，经真实商店 Get/Install/Open，未更改全局信任。
 
-数据与操作摘要见 [native-workflow.json](../evidence/native-workflow.json)。
+CN MiniMax-M3 对“办公用无线鼠标，安静”、预算30、硬词wireless自主调用 status.read → catalog.research → proposal.create → draft.save → draft.read。人工只批准宿主权限和保存，没有人工研究、选候选或建提案。6次模型请求、5个工具调用，8个草稿字段与提案一致。批准前没有草稿，批准后才写入。
 
-## 固定官方源码
+选中item4 VicTsing Wireless Mouse，12.99 USD，预算余量17.01。静音依据为 description 的Quiet原文和features的Silent click；item1/item2为not_documented，不据此声称它们不支持静音。
 
-| 组件 | commit |
-| --- | --- |
-| App Design Flow | `0e59346e810ed694702b1df48f4283dc8104358c` |
-| App Hub | `2bcb8985bc1d2c8856f2a61e65baa7ed443ae817` |
-| makepad | `c155f61d0e1600d2ec474209374444a38a09a470` |
-| octoscript | `5991dfae9344589e732b2605b530f788e8bbcd11` |
-| octoscript-makepad | `2cc5ef37d7d6a3d2992673389ce74488f7bb2d87` |
+## 仍有的限制
 
-## 范围与局限
+- 宿主60秒回调超时；历史同步取回文字与真实final逐字相同，随后明确结束。历史文字不是宿主终态证明。
+- 首次工具授权后立即重试的问题未定位；观察到延后重试成功不能算根因修复。
+- 真实final误称“其余两条候选价低”：item1为11.99、item2为14.99、选中商品12.99。原文在摘要完整保留。
+- 当前价格措辞与draft.read字段指引是运行后的修改，未重新调用模型验证。
+- 声明6个工具，本序列实际调用5个；proposal.read未单独调用。未证明所有UI、其他软偏好、手机或全部Agent路径。
+- 只是规则型合成目录，不是Project A模型检索实测或真实购买。
 
-182121 验证人工闭环、宿主服务缺失与重启恢复，本身没有调用模型。其后 182276 在同一份已提交 bundle 上补充真实模型建议采纳，范围如下；手机与其他操作系统仍未验证。
+## 源码对应
 
-视频来自该作业连续捕获的真实原生窗口帧，素材作业 182141 使用已有浏览器编码器输出；以 4fps 编码，播放速度与现场操作时间不同。
+真实模型运行：main.splash ed412c2c06f743454cef036e1422f6cccefe63162c2542866243338dab547c5a；
+AGENT.md b6f28f0313914bd868eac1470b6bc7cee37f58a08da9c8bfa6b2d7b8460d597e。
 
-发布者、支持入口和隐私说明定稿后，仅因 listing 变化执行必要包检查：CPU 作业 **182240 COMPLETED 0:0**，hub stamp/check、tools/octo check 和 hub scan 均退出 0。占位已清除，只剩首次未签名警告。源码与上述原生流程/录屏一致，没有重复业务或调用模型。最终摘要见 [native-gate.json](../evidence/native-gate.json)，作者答复见 [APP_HUB_REVIEW.md](APP_HUB_REVIEW.md)。
+当前文字修正版：main.splash 539bdc0586f7ffb487fd6df52914377dcfd423e8b4cc8f9fef320ae9e2c32105；
+AGENT.md 40d292cfcf15afa0a84cfe807e24ba093924e1a91c96b17595fd56b005db8c39。
+两者工具定义均为 c51e4df96eef9f719b874a49fc330ea63cfb282eba3dc76bce4e07728f0174f3。
+元数据与截图可能在打包时更新，最终摘要以检查及发布回执为准。
 
-包检查通过不代表 App Hub 人工审核通过或比赛受理。
+## 当前源码的人工UI录像（196958）
 
-## 真实 Agent 流程（提交后补充）
+官方RC1私有Store安装，CPU作业196958完成0:0。当前main539bdc05/tools c51e4df9/AGENT40d292cf完成界面流程，16个记录项均true（含总通过项与未发送Agent请求项）。三个候选中item4具有静音原始字段证据，item1/item2未证实；保存草稿并独立读回；模拟报价上涨15%后拒绝旧提案，已有草稿未被覆盖。
 
-CPU 作业 **182276 COMPLETED 0:0**：固定且未修改的 Rinx `5a9e2af2433a04129f2ad0c11acafb187c66f649`，二进制 SHA `60431b16b8e67f2167eae951bec306ca0a554f02264c798e3cf1ef78ec29a720`，实际 packaged octos 与 CN MiniMax-M3。五项 bundle 文件 SHA 和最终 BLAKE3 与 v0.4.0 提交一致；新应用自己产生资料，没有 Web 导出或复制粘贴。
+282帧连续采集，首末帧跨度98.6386秒；采集开始到结束98.9144秒。编码专用CPU作业196987完成0:0，用实际帧间时长生成VFR H.264，文件时长98.96秒、1400×900、963423字节；无剪切、无音轨，不新增模型调用。[录像](../evidence/native-ui-196958.mp4) · [摘要](../evidence/native-ui-196958.json)。
 
-实际观察：assistant OFF 时显示宿主真实错误；启用本设备助手后，真实请求返回非空 JSON，选中 item_id 4，并依据 Silent click、2.4GHz 无线和 $12.99 / $30 预算说明理由。采纳后生成 v2 待确认提案，确认前没有采购草稿；明确确认后写入并独立读回一致。
+官方hub stamp/check --allow-unsigned对最终listing、元数据与4张截图通过。保留两项警告：尚无publisher签名，draft.save每次等待宿主批准。开发检查不生成GitHub证明、封存包、Release或App Hub准入。
 
-[实际结果](../evidence/native-agent-workflow.json) · [真实回复截图](../evidence/native-agent-review.png) · [采纳状态](../evidence/native-agent-adoption.png) · [保存读回](../evidence/native-agent-draft.png)。这些是独立真实原生截图，不把它们冒充成已有购物视频中的镜头。
-
-首次 182258 因审阅控件位于裁剪范围外，未正确触发或观察服务；修正驱动的滚动后 182276 成功，应用源码与固定宿主未修改。该次失败不能作为模型失败证据。
-
-这是 standalone Rinx 自己的本地 Agent peer，未验证 OctoSense Shell 注入的 System Agent。只有一个合成目录用例，不代表推荐准确率或总体效果。
-
-## 0.4.1 发布准备（2026-10-09）
-
-0.4.1 业务脚本与 v0.4.0 相同。新增 listing 截图来自作业182121的原生 card-host 素材，未重新生成画面：
-
-| 新文件 | 原始状态 | SHA-256 |
-| --- | --- | --- |
-| screenshots/02-proposal.png | run1/04-proposal.png，待确认提案 | 26293c655d5561fe07afc5329e751f2c871160bad95bd449198cb6069234b7f2 |
-| screenshots/03-readback.png | run1/08-readback.png，独立读回 | 0ef0bedc94e20cdb46e1964583cf6a9ff7044ab47a61087b5e1ab0525604de14 |
-
-本轮只新增包元数据检查，没有重跑业务或模型。集群 CPU 作业195388已完成（0:0，2秒）：现有固定hub对源包stamp/check/scan通过；包内文件与本地逐项核对一致，工作流与官方生成内容一致。源包BLAKE3为e83fe68f14ec73377fb8f4d4de3c037167f864a05cdb693ff22cec726e0e8ed1。官方发布流程固定 App Flow 049bc6b4010aa3660bab4ad632857d6ed4612151，GitHub 工作流固定 App Hub 655114c4943cd2490daaefa2173e7b5aaa20669f。GitHub工作流尚未运行，封存包、证明和兼容宿主安装均未验证。
+采集作业中缓存的精简编码器缺少PNG解码能力，原始native-showcase-result.json保留video=null；编码结果另记encoding-repair.json，不改旧结果冒充当时已完成。采集前196950只因录制器滚动跳过按钮失败，未写草稿；改录制器后196958通过，业务源码未改。它只证明人工UI流程；价格文字修改尚无新的模型验证。

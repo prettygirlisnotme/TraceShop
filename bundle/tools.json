@@ -1,0 +1,548 @@
+{
+  "schema": 1,
+  "tools": [
+    {
+      "name": "shopping.status.read",
+      "description": "Read TraceShop's current local state: synthetic USD catalog size, merchant version, the last rule-research result, the pending proposal (if any) and whether a purchase draft is stored. Read-only.",
+      "implemented_by": "app",
+      "risk": "read",
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "is_ok": {
+            "type": "boolean"
+          },
+          "catalog_size": {
+            "type": "integer"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "merchant_version": {
+            "type": "integer"
+          },
+          "has_research": {
+            "type": "boolean"
+          },
+          "candidate_count": {
+            "type": "integer"
+          },
+          "has_proposal": {
+            "type": "boolean"
+          },
+          "proposal_id": {
+            "type": "string"
+          },
+          "proposal_revision": {
+            "type": "integer"
+          },
+          "proposal_status": {
+            "type": "string"
+          },
+          "has_draft": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "research_current": {
+            "type": "boolean"
+          },
+          "research_revision": {
+            "type": "integer"
+          },
+          "research_merchant_version": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "is_ok"
+        ]
+      }
+    },
+    {
+      "name": "shopping.catalog.research",
+      "description": "Run TraceShop's deterministic rule search over its embedded synthetic USD catalog: a text need, a USD budget and optional hard keywords. Returns up to three candidates with price, budget remainder and matched evidence. Each candidate also carries verbatim catalog facts (features/description), evidence entries (term/field/value) for literal matches in real catalog fields, and preference_checks for the small explicit soft-preference dictionary (quiet/gaming/portable) triggered by the need: evidence_status is documented or not_documented, where documented means a literal match in this synthetic catalog field. Candidate facts/evidence are copied from the synthetic demo catalog and are not real product reviews, endorsements or guarantees; not_documented only means this demo catalog has no matching field for the item, not that a real product lacks the feature. Business errors (invalid budget, no candidates) come back as is_ok=false with an error_code; it never invents items.",
+      "implemented_by": "app",
+      "risk": "act",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "need": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "budget_usd": {
+            "type": "number",
+            "minimum": 0.01,
+            "maximum": 100000
+          },
+          "hard_keywords": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 40
+            },
+            "maxItems": 8
+          }
+        },
+        "required": [
+          "need",
+          "budget_usd"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "is_ok": {
+            "type": "boolean"
+          },
+          "error_code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "budget_usd": {
+            "type": "number"
+          },
+          "candidate_count": {
+            "type": "integer"
+          },
+          "candidates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "item_id": {
+                  "type": "integer"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "brand": {
+                  "type": "string"
+                },
+                "price_usd": {
+                  "type": "number"
+                },
+                "budget_remaining_usd": {
+                  "type": "number"
+                },
+                "matched_terms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "facts": {
+                  "type": "object",
+                  "description": "Verbatim catalog fields for this item; synthetic demo data.",
+                  "properties": {
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "evidence": {
+                  "type": "array",
+                  "description": "Literal term/field/value matches in real catalog fields (title/brand/categories/features/description/technical_details); no synthesized 'satisfied' quotes.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "term": {
+                        "type": "string"
+                      },
+                      "field": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "preference_checks": {
+                  "type": "array",
+                  "description": "One entry per soft-preference group actually mentioned by the need. evidence_status=documented means a literal catalog-field match (synthetic demo data, not a real review); not_documented only means this demo catalog has no matching field for the item.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "preference": {
+                        "type": "string",
+                        "enum": [
+                          "quiet",
+                          "gaming",
+                          "portable"
+                        ]
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "evidence_status": {
+                        "type": "string",
+                        "enum": [
+                          "documented",
+                          "not_documented"
+                        ]
+                      },
+                      "evidence": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "term": {
+                              "type": "string"
+                            },
+                            "field": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "research_revision": {
+            "type": "integer"
+          },
+          "merchant_version": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "is_ok"
+        ]
+      }
+    },
+    {
+      "name": "shopping.proposal.create",
+      "description": "Create a pending purchase proposal for one candidate item_id returned by the last shopping.catalog.research. The proposal binds a new revision, the current merchant version and the exact request snapshot. It never saves a draft and never orders; saving needs the person's host confirmation and is exposed separately as shopping.draft.save. Pass research_revision and merchant_version exactly as returned by that research. Changed inputs, quotes or stale versions are rejected.",
+      "implemented_by": "app",
+      "risk": "act",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "item_id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "research_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "merchant_version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "item_id",
+          "research_revision",
+          "merchant_version"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "is_ok": {
+            "type": "boolean"
+          },
+          "error_code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "proposal_id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "merchant_version": {
+            "type": "integer"
+          },
+          "selected_item_id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "price_usd": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "integer"
+          },
+          "need_snapshot": {
+            "type": "string"
+          },
+          "budget_snapshot": {
+            "type": "string"
+          },
+          "hard_keywords_snapshot": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "research_revision": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "is_ok"
+        ]
+      }
+    },
+    {
+      "name": "shopping.proposal.read",
+      "description": "Read the current pending proposal: id, revision, bound merchant version, selected item, price and the request snapshot it was created from. Read-only; returns is_ok=false with error_code no_proposal when none exists.",
+      "implemented_by": "app",
+      "risk": "read",
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "is_ok": {
+            "type": "boolean"
+          },
+          "error_code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "proposal_id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "merchant_version": {
+            "type": "integer"
+          },
+          "selected_item_id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "price_usd": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "integer"
+          },
+          "need_snapshot": {
+            "type": "string"
+          },
+          "budget_snapshot": {
+            "type": "string"
+          },
+          "hard_keywords_snapshot": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "research_revision": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "is_ok"
+        ]
+      }
+    },
+    {
+      "name": "shopping.draft.save",
+      "description": "Save a local purchase draft for exactly one pending proposal, after the person confirms it on the host. Re-checks the call is still active, then re-validates the proposal id/revision/research revision/merchant version and the current request snapshot against the app state, requires active again before writing, and independently reads the stored draft back. Never orders or pays. May change stored state: risk destructive, host confirmation required, no auto approval.",
+      "implemented_by": "app",
+      "risk": "destructive",
+      "confirm": "host",
+      "auto_approvable": false,
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "proposal_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "research_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "merchant_version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "proposal_id",
+          "revision",
+          "research_revision",
+          "merchant_version"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "is_ok": {
+            "type": "boolean"
+          },
+          "error_code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "draft_id": {
+            "type": "string"
+          },
+          "proposal_id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "research_revision": {
+            "type": "integer"
+          },
+          "merchant_version": {
+            "type": "integer"
+          },
+          "selected_item_id": {
+            "type": "integer"
+          },
+          "price_usd": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "confirmed_at": {
+            "type": "integer"
+          },
+          "readback_ok": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "is_ok"
+        ]
+      }
+    },
+    {
+      "name": "shopping.draft.read",
+      "description": "Independently read the stored local purchase draft. Reports read_ok separately from matches_current_proposal, and states the verification_scope. With no in-memory proposal, including after restart, it only verifies stored fields and never claims a current proposal match. When a proposal exists, checks IDs, revisions, merchant version, item, price and currency. Legacy missing research revision is reported as -1. Read-only.",
+      "implemented_by": "app",
+      "risk": "read",
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "is_ok": {
+            "type": "boolean"
+          },
+          "present": {
+            "type": "boolean"
+          },
+          "error_code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "draft_id": {
+            "type": "string"
+          },
+          "proposal_id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "research_revision": {
+            "type": "integer"
+          },
+          "merchant_version": {
+            "type": "integer"
+          },
+          "selected_item_id": {
+            "type": "integer"
+          },
+          "price_usd": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "confirmed_at": {
+            "type": "integer"
+          },
+          "read_ok": {
+            "type": "boolean"
+          },
+          "current_proposal_present": {
+            "type": "boolean"
+          },
+          "matches_current_proposal": {
+            "type": "boolean"
+          },
+          "verification_scope": {
+            "type": "string",
+            "enum": [
+              "none",
+              "stored_fields",
+              "proposal_fields"
+            ]
+          }
+        },
+        "required": [
+          "is_ok"
+        ]
+      }
+    }
+  ]
+}

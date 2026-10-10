@@ -19,3 +19,7 @@ Official protocol reference in docs/upstream/robrix2-mini_app.rs:
 Historical catalog data and pretrained model weights are NOT distributed.
 The portable demo catalog is authored synthetic data and marked accordingly.
 No trademarks, retailer affiliation or actual transaction processing is claimed.
+
+Native 0.5.0 preview:
+  OctoScript application and authored synthetic catalog; no additional model weights,
+  production datasets or native host code are redistributed by this update.

@@ -1,0 +1,404 @@
+{
+  "review_date": "2026-10-10",
+  "job_id": 196923,
+  "state": "COMPLETED",
+  "exit_code": "0:0",
+  "elapsed": "00:07:32",
+  "scope": "single private CPU real RC1 + MiniMax-M3 case; no real commerce",
+  "requests": 6,
+  "tool_requests": 5,
+  "tool_results": 5,
+  "business_checks": {
+    "five_tool_results": true,
+    "session_complete": true,
+    "real_final": true,
+    "save_readback_ok": true,
+    "actual_draft_found": true,
+    "opened": true,
+    "save_read_consistent": true
+  },
+  "raw_host_confirmation_verified": false,
+  "host_confirmation_verified_by_controller": true,
+  "approval_before_draft_present": false,
+  "after_approval_draft_present": true,
+  "selected_item_id": 4,
+  "selected_price_usd": 12.99,
+  "candidate_preferences": [
+    {
+      "item_id": 4,
+      "price_usd": 12.99,
+      "preference_checks": [
+        {
+          "evidence": [
+            {
+              "field": "description",
+              "term": "quiet",
+              "value": "Quiet wireless mouse with adjustable DPI for office work."
+            },
+            {
+              "field": "features",
+              "term": "silent",
+              "value": "Silent click"
+            }
+          ],
+          "evidence_status": "documented",
+          "label": "静音",
+          "preference": "quiet"
+        }
+      ]
+    },
+    {
+      "item_id": 1,
+      "price_usd": 11.99,
+      "preference_checks": [
+        {
+          "evidence": [],
+          "evidence_status": "not_documented",
+          "label": "静音",
+          "preference": "quiet"
+        }
+      ]
+    },
+    {
+      "item_id": 2,
+      "price_usd": 14.99,
+      "preference_checks": [
+        {
+          "evidence": [],
+          "evidence_status": "not_documented",
+          "label": "静音",
+          "preference": "quiet"
+        }
+      ]
+    }
+  ],
+  "grounded_quiet_selection": true,
+  "ui_recovered_text_exactly_equals_real_final": true,
+  "explicit_end_observed": true,
+  "host_timeout_observed": true,
+  "known_final_text_error": {
+    "verbatim": "其余两条候选价低",
+    "actual_prices_usd": {
+      "chosen_item4": 12.99,
+      "item1": 11.99,
+      "item2": 14.99
+    },
+    "all_recommendation_claims_grounded": false
+  },
+  "tested_source_sha256": {
+    "main.splash": "ed412c2c06f743454cef036e1422f6cccefe63162c2542866243338dab547c5a",
+    "AGENT.md": "b6f28f0313914bd868eac1470b6bc7cee37f58a08da9c8bfa6b2d7b8460d597e",
+    "tools.json": "c51e4df96eef9f719b874a49fc330ea63cfb282eba3dc76bce4e07728f0174f3"
+  },
+  "preview_business_source_sha256": {
+    "main.splash": "539bdc0586f7ffb487fd6df52914377dcfd423e8b4cc8f9fef320ae9e2c32105",
+    "AGENT.md": "40d292cfcf15afa0a84cfe807e24ba093924e1a91c96b17595fd56b005db8c39",
+    "tools.json": "c51e4df96eef9f719b874a49fc330ea63cfb282eba3dc76bce4e07728f0174f3"
+  },
+  "followup_prompt_changes_model_verified": false,
+  "final_text_verbatim": "**采购草稿已保存（本地草稿，未真实下单）。**\n\n| 字段 | 值 |\n|---|---|\n| 商品 | VicTsing Wireless Mouse |\n| 价格 | 12.99 USD（预算 30，剩余 17.01） |\n| 提案 | `p-1791628672-1`（修订 1） |\n| 草稿 | `d-p-1791628672-1` |\n| 独立读回 | `read_ok=true`，`matches_current_proposal=true`，`verification_scope=proposal_fields` |\n\n**依据与取舍：**\n- 硬关键词 `wireless`：3 个候选都有 `title`/`description`/`features`/`technical_details.connectivity` 的字面命中，全部满足。\n- 软偏好\"安静\"：只有 VicTsing 的 `preference_checks.evidence_status=documented`，证据原始字段为 `description=\"Quiet wireless mouse...\"` 与 `features=\"Silent click\"`；Amazon Basics 与 Logitech M170 为 `not_documented`，只能说明\"本演示目录未证实\"，未据此声称它们不静音。\n- 取舍说明：选 VicTsing 是因为\"安静\"在目录中有原始字段证据，证据更强；其余两条候选价低（DPI/形状不同），但无\"安静\"的目录证据，所以未选。\n- 没有真实下单、支付或物流，所有数据均为本地合成演示目录。",
+  "draft_json": {
+    "schema_version": 1,
+    "draft_id": "d-p-1791628672-1",
+    "proposal_id": "p-1791628672-1",
+    "revision": 1,
+    "research_revision": 1,
+    "merchant_version": 1,
+    "selected_item_id": 4,
+    "title": "VicTsing Wireless Mouse",
+    "brand": "VicTsing",
+    "price_usd": 12.99,
+    "currency": "USD",
+    "confirmed_at": 1791628859.657507,
+    "note": "本地采购草稿；无真实下单、支付或物流。"
+  },
+  "tools": {
+    "shopping.status.read": {
+      "candidate_count": 0,
+      "catalog_size": 14,
+      "currency": "USD",
+      "has_draft": false,
+      "has_proposal": false,
+      "has_research": false,
+      "is_ok": true,
+      "merchant_version": 1,
+      "message": "TraceShop 本地状态；USD 合成演示目录，无真实下单。",
+      "proposal_id": "",
+      "proposal_revision": -1,
+      "proposal_status": "",
+      "research_current": false,
+      "research_merchant_version": -1,
+      "research_revision": 0
+    },
+    "shopping.catalog.research": {
+      "budget_usd": 30,
+      "candidate_count": 3,
+      "candidates": [
+        {
+          "brand": "VicTsing",
+          "budget_remaining_usd": 17.01,
+          "evidence": [
+            {
+              "field": "title",
+              "term": "wireless",
+              "value": "VicTsing Wireless Mouse"
+            },
+            {
+              "field": "description",
+              "term": "wireless",
+              "value": "Quiet wireless mouse with adjustable DPI for office work."
+            },
+            {
+              "field": "features",
+              "term": "wireless",
+              "value": "2.4 GHz wireless"
+            },
+            {
+              "field": "technical_details.connectivity",
+              "term": "wireless",
+              "value": "2.4 GHz wireless"
+            },
+            {
+              "field": "title",
+              "term": "mouse",
+              "value": "VicTsing Wireless Mouse"
+            },
+            {
+              "field": "description",
+              "term": "mouse",
+              "value": "Quiet wireless mouse with adjustable DPI for office work."
+            },
+            {
+              "field": "description",
+              "term": "office",
+              "value": "Quiet wireless mouse with adjustable DPI for office work."
+            },
+            {
+              "field": "description",
+              "term": "quiet",
+              "value": "Quiet wireless mouse with adjustable DPI for office work."
+            },
+            {
+              "field": "features",
+              "term": "silent",
+              "value": "Silent click"
+            }
+          ],
+          "facts": {
+            "description": "Quiet wireless mouse with adjustable DPI for office work.",
+            "features": [
+              "2.4 GHz wireless",
+              "Three adjustable DPI levels",
+              "Silent click"
+            ]
+          },
+          "item_id": 4,
+          "matched_terms": [
+            "wireless",
+            "mouse",
+            "office",
+            "quiet",
+            "silent"
+          ],
+          "preference_checks": [
+            {
+              "evidence": [
+                {
+                  "field": "description",
+                  "term": "quiet",
+                  "value": "Quiet wireless mouse with adjustable DPI for office work."
+                },
+                {
+                  "field": "features",
+                  "term": "silent",
+                  "value": "Silent click"
+                }
+              ],
+              "evidence_status": "documented",
+              "label": "静音",
+              "preference": "quiet"
+            }
+          ],
+          "price_usd": 12.99,
+          "title": "VicTsing Wireless Mouse"
+        },
+        {
+          "brand": "Amazon Basics",
+          "budget_remaining_usd": 18.01,
+          "evidence": [
+            {
+              "field": "title",
+              "term": "wireless",
+              "value": "Amazon Basics Wireless Mouse"
+            },
+            {
+              "field": "description",
+              "term": "wireless",
+              "value": "Compact wireless mouse with a USB nano receiver and a long-life battery."
+            },
+            {
+              "field": "features",
+              "term": "wireless",
+              "value": "2.4 GHz wireless"
+            },
+            {
+              "field": "technical_details.connectivity",
+              "term": "wireless",
+              "value": "2.4 GHz wireless"
+            },
+            {
+              "field": "title",
+              "term": "mouse",
+              "value": "Amazon Basics Wireless Mouse"
+            },
+            {
+              "field": "description",
+              "term": "mouse",
+              "value": "Compact wireless mouse with a USB nano receiver and a long-life battery."
+            }
+          ],
+          "facts": {
+            "description": "Compact wireless mouse with a USB nano receiver and a long-life battery.",
+            "features": [
+              "2.4 GHz wireless",
+              "1600 DPI",
+              "Ambidextrous shape"
+            ]
+          },
+          "item_id": 1,
+          "matched_terms": [
+            "wireless",
+            "mouse"
+          ],
+          "preference_checks": [
+            {
+              "evidence": [],
+              "evidence_status": "not_documented",
+              "label": "静音",
+              "preference": "quiet"
+            }
+          ],
+          "price_usd": 11.99,
+          "title": "Amazon Basics Wireless Mouse"
+        },
+        {
+          "brand": "Logitech",
+          "budget_remaining_usd": 15.01,
+          "evidence": [
+            {
+              "field": "title",
+              "term": "wireless",
+              "value": "Logitech M170 Wireless Mouse"
+            },
+            {
+              "field": "description",
+              "term": "wireless",
+              "value": "Reliable wireless mouse for everyday use with a 10-meter range."
+            },
+            {
+              "field": "features",
+              "term": "wireless",
+              "value": "2.4 GHz wireless"
+            },
+            {
+              "field": "technical_details.connectivity",
+              "term": "wireless",
+              "value": "2.4 GHz wireless"
+            },
+            {
+              "field": "title",
+              "term": "mouse",
+              "value": "Logitech M170 Wireless Mouse"
+            },
+            {
+              "field": "description",
+              "term": "mouse",
+              "value": "Reliable wireless mouse for everyday use with a 10-meter range."
+            }
+          ],
+          "facts": {
+            "description": "Reliable wireless mouse for everyday use with a 10-meter range.",
+            "features": [
+              "2.4 GHz wireless",
+              "1000 DPI",
+              "Plug and play"
+            ]
+          },
+          "item_id": 2,
+          "matched_terms": [
+            "wireless",
+            "mouse"
+          ],
+          "preference_checks": [
+            {
+              "evidence": [],
+              "evidence_status": "not_documented",
+              "label": "静音",
+              "preference": "quiet"
+            }
+          ],
+          "price_usd": 14.99,
+          "title": "Logitech M170 Wireless Mouse"
+        }
+      ],
+      "currency": "USD",
+      "error_code": "",
+      "is_ok": true,
+      "merchant_version": 1,
+      "message": "",
+      "research_revision": 1
+    },
+    "shopping.proposal.create": {
+      "budget_snapshot": "30",
+      "currency": "USD",
+      "error_code": "",
+      "expires_at": 1791629312,
+      "hard_keywords_snapshot": "wireless",
+      "is_ok": true,
+      "merchant_version": 1,
+      "message": "",
+      "need_snapshot": "办公用无线鼠标，安静",
+      "price_usd": 12.99,
+      "proposal_id": "p-1791628672-1",
+      "research_revision": 1,
+      "revision": 1,
+      "selected_item_id": 4,
+      "status": "pending",
+      "title": "VicTsing Wireless Mouse"
+    },
+    "shopping.draft.save": {
+      "confirmed_at": 1791628800,
+      "currency": "USD",
+      "draft_id": "d-p-1791628672-1",
+      "error_code": "",
+      "is_ok": true,
+      "merchant_version": 1,
+      "message": "已确认并保存采购草稿（未下单）。",
+      "price_usd": 12.99,
+      "proposal_id": "p-1791628672-1",
+      "readback_ok": true,
+      "research_revision": 1,
+      "revision": 1,
+      "selected_item_id": 4
+    },
+    "shopping.draft.read": {
+      "confirmed_at": 1791628800,
+      "currency": "USD",
+      "current_proposal_present": true,
+      "draft_id": "d-p-1791628672-1",
+      "error_code": "",
+      "is_ok": true,
+      "matches_current_proposal": true,
+      "merchant_version": 1,
+      "message": "独立读回并核对提案ID、草稿ID、修订、研究/报价版本、商品、价格与币种。",
+      "present": true,
+      "price_usd": 12.99,
+      "proposal_id": "p-1791628672-1",
+      "read_ok": true,
+      "research_revision": 1,
+      "revision": 1,
+      "selected_item_id": 4,
+      "verification_scope": "proposal_fields"
+    }
+  }
+}

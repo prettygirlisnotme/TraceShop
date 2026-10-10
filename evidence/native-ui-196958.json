@@ -1,0 +1,96 @@
+{
+  "kind": "manual-ui",
+  "manual_ui": true,
+  "no_model_configured": true,
+  "no_external_model_api": true,
+  "agent_host_confirmed": false,
+  "agent_request_sent": false,
+  "candidates": {
+    "infos": {
+      "cand0_info": "1. VicTsing Wireless Mouse（VicTsing）\n价格 $12.99 ｜ 预算余量 $17.01\n类别：Electronics、Computer Accessories、Mice\n事实特征：2.4 GHz wireless、Three adjustable DPI levels、Silent click\n参数：connectivity=2.4 GHz wireless；dpi=1600；battery=1 AA\n软偏好核对：静音：目录有证据（description：Quiet wireless mouse with adjustable DPI for office work.；features：Silent click）\n约束证据：命中关键词 wireless、mouse、office、quiet、silent",
+      "cand1_info": "2. Amazon Basics Wireless Mouse（Amazon Basics）\n价格 $11.99 ｜ 预算余量 $18.01\n类别：Electronics、Computer Accessories、Mice\n事实特征：2.4 GHz wireless、1600 DPI、Ambidextrous shape\n参数：connectivity=2.4 GHz wireless；dpi=1600；battery=1 AA\n软偏好核对：静音：目录未证实（本演示目录未见相关字段，不代表商品不支持）\n约束证据：命中关键词 wireless、mouse",
+      "cand2_info": "3. Logitech M170 Wireless Mouse（Logitech）\n价格 $14.99 ｜ 预算余量 $15.01\n类别：Electronics、Computer Accessories、Mice\n事实特征：2.4 GHz wireless、1000 DPI、Plug and play\n参数：connectivity=2.4 GHz wireless；dpi=1000；battery=1 AA\n软偏好核对：静音：目录未证实（本演示目录未见相关字段，不代表商品不支持）\n约束证据：命中关键词 wireless、mouse"
+    },
+    "silent_documented_indices": [
+      0
+    ],
+    "quiet_not_documented_indices": [
+      1,
+      2
+    ],
+    "order": [
+      "cand0_info",
+      "cand1_info",
+      "cand2_info"
+    ]
+  },
+  "selected_item_id": 4,
+  "checks": {
+    "app_ready": true,
+    "office_preset_filled": true,
+    "three_candidates": true,
+    "one_documented_quiet": true,
+    "others_quiet_not_documented": true,
+    "documented_candidate_selected": true,
+    "proposal_created": true,
+    "draft_saved_readback_ok": true,
+    "draft_fields_present": true,
+    "draft_matches_selected_item": true,
+    "independent_readback_ok": true,
+    "requote_simulated": true,
+    "stale_confirmation_rejected": true,
+    "draft_not_overwritten_by_stale_confirm": true,
+    "no_agent_request_sent": true,
+    "all_ok": true
+  },
+  "draft_after_save": {
+    "schema_version": 1,
+    "draft_id": "d-p-1791631744-1",
+    "proposal_id": "p-1791631744-1",
+    "revision": 1,
+    "research_revision": 1,
+    "merchant_version": 1,
+    "selected_item_id": 4,
+    "title": "VicTsing Wireless Mouse",
+    "brand": "VicTsing",
+    "price_usd": 12.99,
+    "currency": "USD",
+    "confirmed_at": 1791631790.2751076,
+    "note": "本地采购草稿；无真实下单、支付或物流。"
+  },
+  "draft_after_reject": {
+    "schema_version": 1,
+    "draft_id": "d-p-1791631744-1",
+    "proposal_id": "p-1791631744-1",
+    "revision": 1,
+    "research_revision": 1,
+    "merchant_version": 1,
+    "selected_item_id": 4,
+    "title": "VicTsing Wireless Mouse",
+    "brand": "VicTsing",
+    "price_usd": 12.99,
+    "currency": "USD",
+    "confirmed_at": 1791631790.2751076,
+    "note": "本地采购草稿；无真实下单、支付或物流。"
+  },
+  "errors": [],
+  "frame_count": 282,
+  "record_seconds": 98.6386,
+  "capture_job_id": 196958,
+  "encoding_job_id": 196987,
+  "capture_seconds": 98.91439999989234,
+  "video_seconds": 98.96,
+  "video_sha256": "dbfaf6d14703d97c770dadc2046c7d56b222ec97e3d34d29243b33b54a22c5be",
+  "source_sha256": {
+    "main.splash": "539bdc0586f7ffb487fd6df52914377dcfd423e8b4cc8f9fef320ae9e2c32105",
+    "tools.json": "c51e4df96eef9f719b874a49fc330ea63cfb282eba3dc76bce4e07728f0174f3",
+    "AGENT.md": "40d292cfcf15afa0a84cfe807e24ba093924e1a91c96b17595fd56b005db8c39"
+  },
+  "timing": "282 continuous frames; measured monotonic durations; VFR; no cuts; no audio",
+  "official_development_bundle_check": "PASSED --allow-unsigned; not GitHub proof or App Hub admission",
+  "limitations": [
+    "manual UI automation, not live agent execution",
+    "synthetic 14-item USD catalog; no real commerce",
+    "existing real MiniMax-M3 run196923 is separate and used earlier text snapshot"
+  ]
+}
