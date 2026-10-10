@@ -1,0 +1,12 @@
+{
+  "manifest.json": "133901c504d2b2685480f423b081f29202deb1cc19c33bd62aea98ec30737f95",
+  "listing.json": "f4059e51e797a845df37ef477e5279a54be2da6feddaf6ed0cb0bc95a78f8e1c",
+  "main.splash": "4c3a5daabb267dfe05586802f66aed70400f80f312920844986b2946a8292c53",
+  "tools.json": "c51e4df96eef9f719b874a49fc330ea63cfb282eba3dc76bce4e07728f0174f3",
+  "AGENT.md": "dd5f1e9ebc57bf488a1cb05e5fd8a4e1cd658ad7d7a0419c8eaca545244dd90d",
+  "assets/icon.svg": "c3dc4f8af970087ece5e31e0445df02e614fd28898fa946981d4d89c0c6d2996",
+  "screenshots/04-complete.png": "8327514bbdc52a64951c199a81e15ed7c36fa8b8215f6d29a397787f0a6a382f",
+  "screenshots/02-host-approval.png": "efb296742507abd349e50842316bff73850eb49b205172cc6b143e215133ce22",
+  "screenshots/03-readback.png": "5f438c0027b24319e3cc5abe6ee648920e3634aa9889c78d9b935a5bfb0c4927",
+  "screenshots/01-changed.png": "a77f02a4b72ee1b0d02087756a05ccc94a65308fa4c9f78e4e04f47f3aaee128"
+}

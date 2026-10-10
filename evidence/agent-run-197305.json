@@ -1,0 +1,102 @@
+{
+  "date": "2026-10-11",
+  "source_job": 197305,
+  "source_main_sha256": "4c3a5daabb267dfe05586802f66aed70400f80f312920844986b2946a8292c53",
+  "base_commit": "b3ac9f79b5cf93b5e5e69d8710810d1c7b45d9fa",
+  "real_llm_autonomy": true,
+  "driver_checks": {
+    "five_tool_results": true,
+    "session_complete": true,
+    "real_final": true,
+    "save_readback_ok": true,
+    "actual_draft_found": true,
+    "opened": true,
+    "save_read_consistent": true
+  },
+  "old_proposal_created_manually": true,
+  "stale_confirmation_rejected_no_draft": true,
+  "new_save_approval_no_prior_draft": true,
+  "actual_save_after_native_approval": true,
+  "save_read_draft_fields_consistent": true,
+  "history_equals_provider_final": true,
+  "model": "MiniMax-M3",
+  "family": "minimax-cn",
+  "requests": 6,
+  "model_tool_calls": 5,
+  "usage": {
+    "total_tokens": 74431,
+    "prompt_tokens": 73586,
+    "completion_tokens": 845
+  },
+  "cached_prompt_tokens": 60583,
+  "rmb_cost": null,
+  "new_draft": {
+    "schema_version": 1,
+    "draft_id": "d-p-1791648896-2",
+    "proposal_id": "p-1791648896-2",
+    "revision": 2,
+    "research_revision": 2,
+    "merchant_version": 2,
+    "selected_item_id": 4,
+    "title": "VicTsing Wireless Mouse",
+    "brand": "VicTsing",
+    "price_usd": 14.94,
+    "currency": "USD",
+    "confirmed_at": 1791648949.6400688,
+    "note": "本地采购草稿；无真实下单、支付或物流。"
+  },
+  "final_text_review": {
+    "prices_correct_in_this_run": true,
+    "budget_remaining_usd": 15.06,
+    "quiet_evidence_matches_original_fields": true,
+    "unsupported_other_candidate_quiet_claim": false,
+    "guarantees_other_inputs_or_future_calls": false
+  },
+  "host_limits": [
+    "60-second callback timeout still present; real final recovered with explicit history sync",
+    "history lacks turn terminal state; explicit end/cancel still required",
+    "first-authorization retry timing root cause not solved"
+  ],
+  "not_verified": [
+    "budget13 scenario",
+    "all six tools individually",
+    "all reject/no-change/active-task paths",
+    "production signature/App Hub/new public release"
+  ],
+  "final_text": "**已保存的本地采购草稿**\n\n- 所选 `item_id=4`，商品 VicTsing Wireless Mouse；`price_usd=14.94`；`budget_remaining_usd=15.06`\n- `draft_id=d-p-1791648896-2`，`proposal_id=p-1791648896-2`，`revision=2`，`research_revision=2`，`merchant_version=2`\n- 核验：`draft.save.readback_ok=true`；`draft.read.read_ok=true`，`matches_current_proposal=true`，`verification_scope=proposal_fields`\n- 软偏好依据（`quiet`，仅候选 4 有目录证据）：\n  - `description`: \"Quiet wireless mouse with adjustable DPI for office work.\"\n  - `features`: \"Silent click\"\n- 候选原始价格对照（`merchant_version=2` 下的工具原始数据）：\n  - `item_id=4` — VicTsing Wireless Mouse — `$14.94 USD`\n  - `item_id=1` — Amazon Basics Wireless Mouse — `$11.99 USD`\n  - `item_id=2` — Logitech M170 Wireless Mouse — `$14.99 USD`\n\n未真实下单、支付或物流；旧提案与旧价格均未沿用。",
+  "source_agent_sha256": "dd5f1e9ebc57bf488a1cb05e5fd8a4e1cd658ad7d7a0419c8eaca545244dd90d",
+  "host": "unmodified official OctoSense Linux 0.1.0-rc.1, isolated private Store install",
+  "recording": {
+    "frames": 368,
+    "seconds": 368.169,
+    "errors": 0,
+    "continuous": true
+  },
+  "presentation": {
+    "source_job": 197305,
+    "nominal_excerpt_seconds": 94,
+    "actual_encoded_seconds": 94.0,
+    "waits_cut": true,
+    "crop": {
+      "x": 84,
+      "y": 100,
+      "width": 990,
+      "height": 646
+    },
+    "continuous_original_location": "retained in private cluster report run-197305; not included in this public-source candidate"
+  },
+  "bundle_check": {
+    "job": 197371,
+    "result": "PASSED",
+    "unsigned": true,
+    "production_signature": false,
+    "published": false
+  },
+  "recording_controller": {
+    "automated_manual_ui_baseline": true,
+    "explicit_native_authorization_and_save_approval": true,
+    "application_auto_approval": false,
+    "minimax_auto_approval": false,
+    "minimax_autonomous_research_selection_proposal_and_tool_requests": true
+  }
+}

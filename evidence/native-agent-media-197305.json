@@ -1,0 +1,49 @@
+{
+  "source_job": 197305,
+  "media_jobs": [
+    197348,
+    197356
+  ],
+  "source_continuous_seconds": 368.169,
+  "source_continuous_frames": 368,
+  "source_capture_errors": 0,
+  "source_continuous_video_sha256": "f1a1bbf621ea65f3f620bd22a21ae5261e442fc92e1e0e0bf4ce4002366827fb",
+  "excerpt_seconds": 94.0,
+  "excerpt_sha256": "dcb9ca2f8fe7870060778b7dfa0ab05934f99e0e3deae19c4da9105275469921",
+  "excerpt_bytes": 731494,
+  "crop": {
+    "x": 84,
+    "y": 100,
+    "width": 990,
+    "height": 646
+  },
+  "waits_cut": true,
+  "audio": false,
+  "generated_frames": false,
+  "screenshots": {
+    "stale-rejected": {
+      "source_sha256": "5c097db558f460ef28b566c69943659a2be37d974271247df28601fec67b7d7f",
+      "sha256": "a77f02a4b72ee1b0d02087756a05ccc94a65308fa4c9f78e4e04f47f3aaee128",
+      "bytes": 131814,
+      "pixels_identical_to_source_crop": true
+    },
+    "pending": {
+      "source_sha256": "daac0d50867303c2c5e187621d8e1f09dabca23faab5dcd88c476ba1e5717a8c",
+      "sha256": "efb296742507abd349e50842316bff73850eb49b205172cc6b143e215133ce22",
+      "bytes": 238742,
+      "pixels_identical_to_source_crop": true
+    },
+    "saved": {
+      "source_sha256": "fef21eee24468fe97f604ff6b32e70c768cd1092be55d6e9e4bb4eac6e1232ce",
+      "sha256": "5f438c0027b24319e3cc5abe6ee648920e3634aa9889c78d9b935a5bfb0c4927",
+      "bytes": 114970,
+      "pixels_identical_to_source_crop": true
+    },
+    "complete": {
+      "source_sha256": "2d0560ee840e914035982ff2b685acbbd25cad35390af2ea1e07a2affdbc1545",
+      "sha256": "8327514bbdc52a64951c199a81e15ed7c36fa8b8215f6d29a397787f0a6a382f",
+      "bytes": 112735,
+      "pixels_identical_to_source_crop": true
+    }
+  }
+}

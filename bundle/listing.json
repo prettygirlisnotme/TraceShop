@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "subtitle": "依据商品事实研究，宿主确认保存，独立读回采购草稿",
-  "description": "TraceShop 是 OctoScript/Splash 购物决策应用。需求、USD预算、硬关键词经规则检索得到最多3个候选，并显示原始字段证据与静音/游戏/便携软偏好的目录核对。6个声明应用工具与界面共用业务核心；Agent可读取状态、研究、创建/读取提案、申请宿主确认保存、独立读回。保存工具不可自动批准；报价、需求、版本或有效期变化会阻止旧提案写入。宿主回复超时后可手动同步本次任务历史并明确结束。14条合成商品，无真实下单、支付或物流。仅有Linux私有宿主实测，未声称所有功能100% Agent可操作。",
+  "subtitle": "条件变化后重新研究，新提案重新批准，草稿独立读回",
+  "description": "TraceShop 是 OctoScript/Splash 购物决策应用。Agent 通过六个声明工具读取状态、研究候选、创建/读取提案、申请宿主确认保存与独立读回。提案绑定需求、预算、研究与商户版本；条件变化会阻止旧提案保存，并展示旧/新条件。用户明确点击重新办理后，Agent 重新研究和创建新提案，写入仍需新的宿主批准。候选展示原始字段及软偏好证据，区分目录有证据与目录未证实。14条合成USD商品，无真实下单、支付或物流。",
   "category": "shopping",
   "keywords": [
     "shopping",
@@ -11,10 +11,10 @@
     "shopping decision"
   ],
   "screenshots": [
-    "screenshots/01-main.png",
-    "screenshots/02-proposal.png",
+    "screenshots/01-changed.png",
+    "screenshots/02-host-approval.png",
     "screenshots/03-readback.png",
-    "screenshots/04-requote.png"
+    "screenshots/04-complete.png"
   ],
   "icon": "assets/icon.svg",
   "platforms": [
@@ -25,7 +25,7 @@
     "support": "https://github.com/prettygirlisnotme/TraceShop/issues",
     "privacy_policy_url": "https://github.com/prettygirlisnotme/TraceShop/blob/main/PRIVACY.md"
   },
-  "release_notes": "0.5.0：依据商品目录事实研究候选、生成待确认提案，经宿主确认后保存本地采购草稿并独立读回；六个应用工具与界面共用同一业务核心，候选与提案展示原始字段并区分“目录已证实”与“目录未证实”，报价或版本变化会阻止旧提案写入。采用紧凑三候选卡布局：同一990×613窗口内候选正文区域由约257px增至约445px（约+73%），选择按钮无需滚动，完整提案与确认按钮同屏。真实MiniMax-M3已完成一次静音需求办理与八字段读回（单用例，不代表全部路径）。已知边界：宿主60秒回调超时与首次授权后立即重试尚未定位；报价文字修正与紧凑界面未重跑模型；字段读回正确不代表每句自然语言准确。14条合成USD商品，无真实下单、支付或物流。",
+  "release_notes": "0.5.0：新增条件变化摘要与显式交给Agent重新办理。官方Linux RC1私有宿主实测：旧报价12.99→14.94USD、旧确认拒绝；真实MiniMax-M3自主新研究、新提案，经新宿主批准保存并独立读回，版本及八字段一致。单用例实测，不代表全部路径或平台；60秒回调超时仍需手动同步历史和明确结束，首次授权重试时序根因未修。截图与实录均来自同次197305运行；展示节选明确剪去等待。14条合成USD商品，无真实交易。",
   "age_rating": "all",
   "license": "Apache-2.0"
 }

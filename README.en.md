@@ -1,35 +1,75 @@
 # TraceShop
 
-An OctoScript shopping decision app: research products from catalog facts, obtain host approval before saving, then independently read back the local purchase draft.
+> After the situation changes, the Agent re-researches and creates a new proposal; the host approves, the app saves a local purchase draft, and the Agent independently reads it back.
 
-The main program is [`bundle/main.splash`](bundle/main.splash). Six declared app tools share the same research, proposal and save business core as the UI. The Agent can read status, research candidates, create/read a proposal, request host-approved saving, and independently read the draft back. Candidates and proposals show raw catalog fields, separating "documented by this catalog" from "not documented yet"; the latter is not evidence that a product lacks a feature.
+TraceShop is an **OctoScript / Splash** app ([`bundle/main.splash`](bundle/main.splash)). It turns shopping decisions grounded in catalog facts into confirmable, checkable steps: the Agent reads status, researches candidates, creates a proposal, then **requests host approval** before saving. Only after approval does it write a local draft into the host's private storage, and the Agent independently reads it back to verify the fields. UI buttons and the six declared app tools share one research/proposal/save core; there are no two parallel flows.
 
-The catalog contains **14 synthetic USD products**. Saving writes a local draft into the host's private storage; there are **no real orders, payments or shipping**.
+The catalog contains **14 synthetic USD products**; saving writes a local draft into the host's private storage and there are **no real orders, payments or shipping**.
 
-## Verified evidence (real MiniMax-M3, run 196923)
+## Quick look for reviewers
 
-On unmodified official OctoSense Linux 0.1.0-rc.1 (real Store Get→Install→Open), a real CN MiniMax-M3 completed `status.read → catalog.research → proposal.create → draft.save → draft.read → final` in a CPU job (196923 COMPLETED 0:0, 7m32s): 6 model requests, 5 tool calls, `readback_ok=true`, and 8 saved draft fields matched the proposal after explicit host approval. It selected item4 VicTsing Wireless Mouse at 12.99 USD (budget 30). This covers a single quiet-mouse case; it is not a claim that 100% of the app is Agent-operable. The real-M3 evidence is an earlier text snapshot (tested main.splash `ed412c2c` / AGENT.md `b6f28f03`); the current business-text fix and compact UI were made afterwards and have **not been re-tested with a model**.
+- **Problem**: make a purchase suggestion a verifiable action, not just a natural-language conclusion. Candidates and proposals show raw catalog fields, separating "documented by this catalog" from "not documented yet".
+- **Agent autonomy scope**: a real MiniMax-M3 autonomously reads status, researches candidates, creates a proposal, requests saving, reads the draft back and writes the final summary. **Saving cannot be auto-approved** — it requires a host `Approve once`.
+- **Latest demo**: after a requote from 12.99 to 14.94 USD, the manually created old proposal's confirmation is rejected and **no draft is written**; the user explicitly hands the task back to the Agent, which re-researches, creates a new proposal, and after a new host approval saves and reads back. See [run 197305 evidence](evidence/agent-run-197305.json).
+- **Boundaries**: a single verified case only; the callback timeout and authorization-retry root cause are unfixed; not all six tools were individually tested; the synthetic catalog has no real commerce and no native Project A integration.
+
+## Core loop
+
+1. Need + USD budget + hard keywords → deterministic rule-based retrieval, up to 3 candidates with raw field evidence.
+2. Select a candidate → a **pending proposal** bound to research revision, merchant version and request snapshot (no draft written).
+3. The Agent calls `shopping.draft.save` to request host approval: `risk=destructive`, `confirm=host`, not auto-approvable; calling the tool is not user approval.
+4. Only after approval is the draft written, then an independent `shopping.draft.read` verifies the fields.
+5. A price, need or version change invalidates the old proposal; saved drafts are restored from private storage after restart.
+
+## Latest verified evidence (MiniMax-M3, run 197305)
+
+On **unmodified** official OctoSense Linux 0.1.0-rc.1 (isolated private Store install), a real CN MiniMax-M3 ran autonomously:
+
+- The scenario starts from a manually created **pending old proposal** (12.99 USD); after the quote changed to **14.94 USD**, the old confirmation was **rejected with no draft written** (`stale_confirmation_rejected_no_draft=true`).
+- The user explicitly handed the task back to the Agent, which autonomously ran `status.read → catalog.research → proposal.create`, then after a host **Approve once** ran `draft.save → draft.read → final`.
+- 6 model requests, 5 tool calls; `readback_ok=true`, and the **8 saved draft fields matched the proposal**. No draft existed before approval; it was written only after approval.
+- Selected item4 **VicTsing Wireless Mouse at 14.94 USD**, budget remaining **15.06**; `draft_id=d-p-1791648896-2`, `proposal_id=p-1791648896-2`, `revision=2`, `research_revision=2`, `merchant_version=2`.
+- Quiet evidence comes from raw catalog fields `description="Quiet..."` and `features="Silent click"` (`documented`); the other two candidates are `not_documented`, which only means **not documented by this demo catalog**, not that the products lack quiet operation.
+- The final text's prices match the raw catalog prices (`prices_correct_in_this_run=true`); the synced task history text is **verbatim identical** to the upstream provider final, and the task was **explicitly ended**.
+- The source and compact UI were both verified in this same 197305 run.
+
+## Demo media
+
+[94-second native recording excerpt](evidence/native-agent-excerpt-197305.mp4) · [Chinese subtitles](evidence/native-agent-excerpt-197305.zh-CN.srt) · [Media provenance](evidence/native-agent-media-197305.json).
+
+All media comes from run 197305. The continuous source (368.169 seconds, 368 frames, zero capture errors) remains in the private cluster report. This repository includes a 94-second excerpt with waits removed and the complete app window cropped, including native permission dialogs. No generated frames or audio.
+
+A test controller automates the initial UI proposal and explicitly clicks native authorization and save approval. MiniMax autonomously performs the new research, selection, proposal, save request and independent readback. Neither the application nor the execution model automatically approves saving.
+
+| Changed conditions | Native Approve once |
+| --- | --- |
+| ![Changed conditions](bundle/screenshots/01-changed.png) | ![Native approval](bundle/screenshots/02-host-approval.png) |
+
+[Independent readback](bundle/screenshots/03-readback.png) · [Final completion](bundle/screenshots/04-complete.png). All four screenshots are pixel-identical crops of the same run's native captures.
+
+The earlier manual UI recording and model run 196923 remain historical material.
+
 
 ## Known limitations
 
-- The host has a **60-second callback timeout**; the reply was recovered by manually syncing this task's history (verbatim identical to the upstream final), but history carries no turn terminal state and the user still had to end the task explicitly.
-- The retry-immediately-after-first-authorization issue is **not root-caused**.
-- The original final text contains one incorrect comparative price statement; the raw reply is preserved, and field readback passing does not prove every natural-language sentence is correct. A later instruction change has **not been retested with a model**.
-- Six tools are declared, five were actually called (`proposal.read` was not called separately).
+- **Single case**: verified only on one real-model case (office wireless mouse, quiet, USD budget); this is not a claim that all paths or 100% of the app are Agent-operable.
+- **Host limits remain**: the 60-second callback timeout is still present; the real final was recovered by explicitly syncing this task's history, which carries no turn terminal state, so the user still has to **end the task explicitly**. The timing root cause of retrying immediately after first authorization is **not root-caused**.
+- **Not all tested**: the budget-13 scenario and all six tools were not individually tested; this sequence called 5 tools, `proposal.read` was not called separately.
+- **No real commerce/upstream**: the catalog is 14 synthetic USD products with no real product/retrieval service or native Project A integration, and no real orders, payments or shipping.
+- **Development bundle checked**: official job 197371 passed stamp/check --allow-unsigned; all ten bundle files match the [check record](evidence/bundle-check-replan.json). This is unsigned and does not establish production signing, release publication or App Hub admission.
 
-## Demo video (manual UI automation)
+## Usage
 
-[Compact native UI recording 78.24 s](evidence/native-ui-197066.mp4) · [Chinese subtitles](evidence/native-ui-197066.zh-CN.srt) · [current candidate screenshot](evidence/native-candidates-197066.png) · [recording summary](evidence/native-ui-197066.json).
+1. Enter a need, USD budget and hard keywords, or use an office/gaming/portable preset.
+2. Research/select/confirm manually, or click "hand the purchase draft to the Agent" to delegate to the host Agent.
+3. An Agent save triggers host confirmation; the draft is written only after approval.
+4. Inspect the draft readback; after a price change, research and propose again.
 
-217 continuous frames, VFR H.264, no cuts, no audio. This video is **automation of the manual UI with zero application model calls**; the real-model evidence above is the separate, earlier 196923 text snapshot. This revision compacts the header and arranges three candidate cards side by side with independently scrolling text: within the same 990×613 window the candidate container grows from 257px to 445px (about +73%), the three selection buttons need no scrolling, and the full proposal plus its confirm button fit on one screen (current main.splash `e344068d`; business functions, six tools and AGENT instructions unchanged).
-
-The run completed the manual UI flow (select the documented quiet product, save and read back independently, simulate a +15% requote and reject the stale confirmation without overwriting the draft) with 16 of 16 record items true. The final development bundle passed official `stamp/check --allow-unsigned` ([check](evidence/bundle-check-compact.txt), [file hashes](evidence/bundle-check-compact.json)). It is **not a GitHub proof or App Hub admission**. All four bundled screenshots and the recording come from run 197066.
-
-[Candidates](bundle/screenshots/01-main.png) · [Full proposal and confirmation](bundle/screenshots/02-proposal.png) · [Saved draft](bundle/screenshots/03-readback.png) · [Stale proposal rejected](bundle/screenshots/04-requote.png).
+Requires an OctoSense host supporting `script-tools-v1` / `app_tools.dispatch@1`. The app requests no `net` and holds no model API keys; the model service is configured by the host. See [reproducing](docs/REPRODUCING.md).
 
 ## Status
 
-- Public repository: [prettygirlisnotme/TraceShop](https://github.com/prettygirlisnotme/TraceShop); released versions on the [Releases page](https://github.com/prettygirlisnotme/TraceShop/releases).
+- Public repository: [prettygirlisnotme/TraceShop](https://github.com/prettygirlisnotme/TraceShop); this working tree is **not yet pushed**.
 - App Hub submission: [OctoSense-App-Hub #71](https://github.com/OctoSense-org/OctoSense-App-Hub/issues/71). Listing, review and award status are per those pages.
 - This repository contains the editable development bundle. Sealed packages, GitHub proof and release receipts are provided as Release assets; App Hub admission remains a separate review.
 
