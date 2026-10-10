@@ -1,0 +1,4 @@
+traceshop.shopping 0.5.0 — PASSED
+  [warning] publisher-signature: unsigned: accountability rests on the hub alone
+  [warning] tools: shopping.draft.save is destructive: every call waits for the host's approval
+  grants: capabilities {"octos.session.history", "octos.session.open", "octos.turn.interrupt", "octos.turn.start", "storage"}, hosts {}, storage 16777216 bytes, agent read-only

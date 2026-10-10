@@ -2,9 +2,9 @@
 
 ## 已录素材
 
-[连续原生录像98.96秒](../evidence/native-ui-196958.mp4) · [中文字幕](../evidence/native-ui-196958.zh-CN.srt) · [草稿读回截图](../bundle/screenshots/03-readback.png) · [旧提案拒绝截图](../bundle/screenshots/04-requote.png)。
+[紧凑原生录像78.24秒](../evidence/native-ui-197066.mp4) · [中文字幕](../evidence/native-ui-197066.zh-CN.srt) · [当前候选界面截图](../evidence/native-candidates-197066.png) · [录制摘要](../evidence/native-ui-197066.json)。
 
-录像记录人工UI按钮流程，由自动化操作，零模型调用。真实模型自主工具链使用[196923摘要](../evidence/agent-run-196923.json)与[宿主批准截图](../evidence/agent-host-approval-196923.png)独立说明。结尾拒绝画面较短，讲解时可以暂停录像或打开对应截图。
+录像记录人工UI按钮流程，由自动化操作，**零应用模型调用**；217帧、VFR H.264、无剪切、无音轨。真实模型自主工具链使用[196923摘要](../evidence/agent-run-196923.json)与[宿主批准截图](../evidence/agent-host-approval-196923.png)独立说明。本版压缩顶部状态区并调整候选卡布局：候选容器由原版257px增至实测445px（约增加73%），选择按钮无需滚动，完整提案与确认按钮同屏。[完整提案](../bundle/screenshots/02-proposal.png)、[草稿核验](../bundle/screenshots/03-readback.png)和[旧提案拒绝](../bundle/screenshots/04-requote.png)均已补齐；结尾拒绝画面较短，讲解时可以暂停录像或打开对应截图。
 
 ## 三分钟答辩稿
 

@@ -1,0 +1,74 @@
+{
+  "kind": "manual-ui",
+  "manual_ui": true,
+  "app_version": "0.5.0",
+  "application_model_calls": 0,
+  "no_model_configured": true,
+  "no_external_model_api": true,
+  "agent_host_confirmed": false,
+  "agent_request_sent": false,
+  "capture_job_id": 197066,
+  "frame_count": 217,
+  "frame_errors": 0,
+  "app_viewport": [
+    114,
+    162,
+    990,
+    613
+  ],
+  "video_seconds": 78.24,
+  "video_duration_source": "MP4 mvhd",
+  "video_bytes": 556698,
+  "video_sha256": "81b8cf1f21615b839f42dafe23a8669453076e75338ff3f1eca24e0b03f2f025",
+  "encoding": "H264 VFR from measured frame intervals; no cuts; no audio",
+  "source_sha256": {
+    "main.splash": "e344068d5b8f885dadada682c9be69965a212fe3c30ffe6b1560ddf6a2c88467",
+    "tools.json": "c51e4df96eef9f719b874a49fc330ea63cfb282eba3dc76bce4e07728f0174f3",
+    "AGENT.md": "40d292cfcf15afa0a84cfe807e24ba093924e1a91c96b17595fd56b005db8c39"
+  },
+  "official_development_bundle_check": "PASSED --allow-unsigned; not GitHub proof or App Hub admission",
+  "checks": {
+    "app_ready": true,
+    "office_preset_filled": true,
+    "three_candidates": true,
+    "one_documented_quiet": true,
+    "others_quiet_not_documented": true,
+    "documented_candidate_selected": true,
+    "proposal_created": true,
+    "draft_saved_readback_ok": true,
+    "draft_fields_present": true,
+    "draft_matches_selected_item": true,
+    "independent_readback_ok": true,
+    "requote_simulated": true,
+    "stale_confirmation_rejected": true,
+    "draft_not_overwritten_by_stale_confirm": true,
+    "no_agent_request_sent": true,
+    "all_ok": true
+  },
+  "layout_990x613": {
+    "candidate_panel_px": [
+      124,
+      319,
+      970,
+      445
+    ],
+    "original_candidate_height_px": 257,
+    "increase_px": 188,
+    "increase_percent": 73,
+    "selection_buttons_visible_without_scroll": true,
+    "full_proposal_and_confirm_same_screen": true
+  },
+  "limitations": [
+    "manual UI automation, not live agent execution",
+    "zero application model calls",
+    "synthetic 14-item USD catalog; no real commerce",
+    "field readback passing does not prove every natural-language sentence is correct",
+    "current business-text fix and compact UI were not re-tested with a model",
+    "existing real MiniMax-M3 run 196923 is separate and uses an earlier text snapshot (main ed412c2c / AGENT b6f28f03)",
+    "host 60-second callback timeout and retry-immediately-after-first-authorization remain unresolved"
+  ],
+  "first_last_frame_span_seconds": 77.8363,
+  "package_check_job_id": 197113,
+  "package_check_evidence": "bundle-check-compact.json",
+  "screenshots_source_job": 197066
+}

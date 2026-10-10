@@ -11,15 +11,36 @@
 
 保存工具为risk=destructive、confirm=host、auto_approvable=false。调用保存是在请求批准；执行时的版本、输入和时效校验仍须保留。
 
+## 理解已验证的批准分支
+
+```mermaid
+sequenceDiagram
+    participant A as 宿主 Agent
+    participant T as 应用工具与共享核心
+    participant H as 宿主批准
+    participant S as 本地存储
+    A->>T: 读状态、研究、创建提案
+    T-->>A: 原始字段证据与绑定版本的提案
+    A->>H: draft.save 请求
+    H->>T: 用户批准后分派保存
+    T->>T: 再检输入、版本与有效期
+    T->>S: 检查通过才写入并核验
+    A->>T: draft.read
+    T->>S: 独立读取实际草稿
+    T-->>A: 实际字段与一致性结果
+```
+
+宿主拒绝时不分派保存；状态校验失败时不写入。人工界面也复用研究和保存核心，但界面人工确认与Agent路径的宿主批准是两种入口：录像证明前者，真实模型196923证明后者。学习时先沿research_core → create_proposal_at → confirm_draft_core → draft_read_result阅读，再看app_tool如何分派到这些函数。
+
 ## 运行证据怎么对应源码
 
-真实MiniMax-M3运行196923完成五个工具调用、保存批准和八字段读回，使用较早文字快照。之后只收紧价格说明和draft.read字段指引；当前源码的人工UI录像196958/编码196987通过，零新模型调用。精确源码摘要、两类证据和已知限制见[VALIDATION](VALIDATION.md)，它们属于不同运行。
+真实MiniMax-M3运行196923完成五个工具调用、保存批准和八字段读回，使用较早文字快照（main ed412c2c/AGENT b6f28f03）。之后只收紧价格说明和draft.read字段指引；当前紧凑界面为main.splash e344068d，人工UI录像197066（217帧、78.24秒）零新模型调用，业务文字修正与新UI均未重跑模型。上一轮196958录像/编码196987及其原生截图保留为历史证据。精确源码摘要、两类证据和已知限制见[VALIDATION](VALIDATION.md)，它们属于不同运行。
 
 当前是14条合成USD商品的规则决策，不包含真实下单、支付、物流或真实检索模型效果。
 
 ## 打包与发布
 
-修改bundle后需重新进行官方stamp/check，确保manifest摘要对应最终文件。当前开发检查已通过，仍为unsigned；本地私有测试签名不作为正式发布证明。
+修改bundle后需重新进行官方stamp/check，确保manifest摘要对应最终文件。最终紧凑界面、listing和四张截图已由CPU作业197113完成官方stamp/check --allow-unsigned；[文件摘要](../evidence/bundle-check-compact.json)与当前bundle一致。仍为unsigned，本地私有测试签名不作为正式发布证明。
 
 已有[官方发布工作流](../.github/workflows/publish-app.yml)由版本tag触发，准备并验证GitHub证明、生成封存包与发布回执。发布状态见[Releases](https://github.com/prettygirlisnotme/TraceShop/releases)，App Hub审核见[提交项](https://github.com/OctoSense-org/OctoSense-App-Hub/issues/71)。复现环境见[REPRODUCING](REPRODUCING.md)。
 

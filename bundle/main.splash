@@ -1383,73 +1383,89 @@ let ink = #x1c1c1e
 let secondary = #x8e8e93
 let panel = #xf2f2f7
 let white = #xffffff
-let Btn = ButtonFlat{height: 40 padding: Inset{left: 16 right: 16} draw_bg +: {border_radius: 10.0 color: #x2563eb color_hover: #x1d4ed8 color_down: #x1e40af border_size: 0.0} draw_text +: {color: #xffffff color_hover: #xffffff color_down: #xffffff}}
-let BtnG = ButtonFlat{height: 40 padding: Inset{left: 16 right: 16} draw_bg +: {border_radius: 10.0 color: #xe5e5ea color_hover: #xd1d1d6 color_down: #xc7c7cc border_size: 0.0} draw_text +: {color: #x1c1c1e color_hover: #x1c1c1e color_down: #x1c1c1e}}
+// 紧凑全局按钮：32–36px 高度，减小内边距；全局复用同一样式。
+let Btn = ButtonFlat{height: 34 padding: Inset{left: 14 right: 14} draw_bg +: {border_radius: 9.0 color: #x2563eb color_hover: #x1d4ed8 color_down: #x1e40af border_size: 0.0} draw_text +: {color: #xffffff color_hover: #xffffff color_down: #xffffff}}
+let BtnG = ButtonFlat{height: 34 padding: Inset{left: 14 right: 14} draw_bg +: {border_radius: 9.0 color: #xe5e5ea color_hover: #xd1d1d6 color_down: #xc7c7cc border_size: 0.0} draw_text +: {color: #x1c1c1e color_hover: #x1c1c1e color_down: #x1c1c1e}}
 
-SolidView{width: Fill height: Fill flow: Down padding: 16 spacing: 12 draw_bg.color: white
-    Label{text: "TraceShop 采购助手" draw_text.color: ink draw_text.text_style.font_size: 24}
-    Label{text: "挑选符合预算的商品，比较证据，由你确认后保存采购草稿。" draw_text.color: secondary draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
-    Label{text: "演示商品 · 美元计价 · 本地草稿，无真实下单或支付" draw_text.color: secondary draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 12}
-    stage_info := Label{text: "1 / 4 · 说明你的需求" draw_text.color: ink draw_text.text_style.font_size: 16}
-    View{width: Fill height: Fit flow: Right spacing: 8
+// 顶部固定区目标 <= 190px：标题与演示标签同一行、四导航与阶段同一行、常驻 Agent 状态与同步/结束同一行；
+// 长回复单独滚动，不挤占商品正文。正文（ScrollYView）与回复面板各自独立滚动。
+SolidView{width: Fill height: Fill flow: Down padding: 10 spacing: 6 draw_bg.color: white
+    View{width: Fill height: Fit flow: Right spacing: 10 align: Align{y: 0.5}
+        Label{text: "TraceShop 采购助手" draw_text.color: ink draw_text.text_style.font_size: 22}
+        Label{text: "演示目录 · USD · 本地草稿" draw_text.color: secondary draw_text.text_style.font_size: 13}
+    }
+    View{width: Fill height: Fit flow: Right spacing: 8 align: Align{y: 0.5}
         nav_input := BtnG{text: "需求" on_click: || show_page(1)}
         nav_candidates := BtnG{text: "候选" on_click: || show_page(2)}
         nav_proposal := BtnG{text: "提案" on_click: || show_page(3)}
         nav_draft := BtnG{text: "草稿" on_click: || show_page(4)}
+        stage_info := Label{text: "1 / 4 · 说明你的需求" draw_text.color: ink draw_text.text_style.font_size: 15}
     }
     // 状态和取消常显；长回复单独滚动，不挤出商品操作区。
-    View{width: Fill height: Fit flow: Right spacing: 8
+    View{width: Fill height: Fit flow: Right spacing: 8 align: Align{y: 0.5}
         agent_task_status := Label{text: "Agent 办理：未开始。" draw_text.color: secondary draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 12}
         agent_task_sync_btn := BtnG{text: "同步回复" on_click: || agent_task_sync_reply()}
         agent_cancel_top_btn := BtnG{text: "结束 / 取消" on_click: || agent_task_cancel()}
     }
-    agent_task_reply_panel := ScrollYView{width: Fill height: 72 visible: false
+    agent_task_reply_panel := ScrollYView{width: Fill height: 64 visible: false
         agent_task_reply := Label{text: "" draw_text.color: ink draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 12}
     }
 
-    ScrollYView{width: Fill height: Fill flow: Down spacing: 12
+    ScrollYView{width: Fill height: Fill flow: Down spacing: 10
         input_panel := SolidView{width: Fill height: Fit flow: Down spacing: 8 padding: 12 draw_bg.color: panel
-            Label{text: "1. 输入需求" draw_text.color: ink draw_text.text_style.font_size: 16}
-            need_input := TextInput{width: Fill height: 40 text: "" empty_text: "例如：办公用无线鼠标，安静一点" draw_bg +: {color: #xffffff color_hover: #xffffff color_focus: #xffffff color_empty: #xffffff border_radius: 8.0} draw_text +: {color: ink color_hover: ink color_focus: ink color_empty: secondary color_empty_hover: secondary}}
-            budget_input := TextInput{width: Fill height: 40 text: "30" empty_text: "预算（美元，数字）" draw_bg +: {color: #xffffff color_hover: #xffffff color_focus: #xffffff color_empty: #xffffff border_radius: 8.0} draw_text +: {color: ink color_hover: ink color_focus: ink color_empty: secondary color_empty_hover: secondary}}
-            keywords_input := TextInput{width: Fill height: 40 text: "" empty_text: "硬关键词（可选，用逗号或空格分隔，如 wireless）" draw_bg +: {color: #xffffff color_hover: #xffffff color_focus: #xffffff color_empty: #xffffff border_radius: 8.0} draw_text +: {color: ink color_hover: ink color_focus: ink color_empty: secondary color_empty_hover: secondary}}
+            Label{text: "1. 输入需求" draw_text.color: ink draw_text.text_style.font_size: 15}
+            need_input := TextInput{width: Fill height: 36 text: "" empty_text: "例如：办公用无线鼠标，安静一点" draw_bg +: {color: #xffffff color_hover: #xffffff color_focus: #xffffff color_empty: #xffffff border_radius: 8.0} draw_text +: {color: ink color_hover: ink color_focus: ink color_empty: secondary color_empty_hover: secondary}}
+            // 预算与硬关键词同一行；明确 USD 标签。
+            View{width: Fill height: Fit flow: Right spacing: 8 align: Align{y: 0.5}
+                Label{text: "预算 USD" draw_text.color: ink draw_text.text_style.font_size: 13}
+                budget_input := TextInput{width: Fill height: 36 text: "30" empty_text: "预算（美元，数字）" draw_bg +: {color: #xffffff color_hover: #xffffff color_focus: #xffffff color_empty: #xffffff border_radius: 8.0} draw_text +: {color: ink color_hover: ink color_focus: ink color_empty: secondary color_empty_hover: secondary}}
+                keywords_input := TextInput{width: Fill height: 36 text: "" empty_text: "硬关键词（可选，逗号或空格分隔，如 wireless）" draw_bg +: {color: #xffffff color_hover: #xffffff color_focus: #xffffff color_empty: #xffffff border_radius: 8.0} draw_text +: {color: ink color_hover: ink color_focus: ink color_empty: secondary color_empty_hover: secondary}}
+            }
             View{width: Fill height: Fit flow: Right spacing: 8
                 preset_office := BtnG{text: "办公预设" on_click: || fill_office()}
                 preset_gaming := BtnG{text: "游戏预设" on_click: || fill_gaming()}
                 preset_portable := BtnG{text: "便携预设" on_click: || fill_portable()}
             }
             research_btn := Btn{text: "研究商品" on_click: || research()}
-            View{width: Fill height: Fit flow: Right spacing: 8
-                agent_start_btn := Btn{text: "交给 Agent 办理采购草稿" on_click: || agent_task_start()}
-            }
+            agent_start_btn := Btn{text: "交给 Agent 办理采购草稿" on_click: || agent_task_start()}
             Label{text: "助手会按你的预算和必需条件研究商品、生成提案；保存前会请你确认。" draw_text.color: secondary draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 12}
             research_status := Label{text: "请输入预算并点击研究商品。" draw_text.color: secondary draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
         }
 
         candidates_panel := SolidView{width: Fill height: Fit flow: Down spacing: 8 padding: 12 draw_bg.color: panel
-            Label{text: "2. 候选（最多 3 个）" draw_text.color: ink draw_text.text_style.font_size: 16}
-            cand0_card := SolidView{width: Fill height: Fit flow: Down spacing: 6 padding: 12 draw_bg.color: white
-                Label{text: "候选 1" draw_text.color: secondary draw_text.text_style.font_size: 12}
-                cand0_info := Label{text: "" draw_text.color: ink draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
-                cand0_btn := Btn{text: "选择候选 1" on_click: || pick(0)}
-            }
-            cand1_card := SolidView{width: Fill height: Fit flow: Down spacing: 6 padding: 12 draw_bg.color: white
-                Label{text: "候选 2" draw_text.color: secondary draw_text.text_style.font_size: 12}
-                cand1_info := Label{text: "" draw_text.color: ink draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
-                cand1_btn := Btn{text: "选择候选 2" on_click: || pick(1)}
-            }
-            cand2_card := SolidView{width: Fill height: Fit flow: Down spacing: 6 padding: 12 draw_bg.color: white
-                Label{text: "候选 3" draw_text.color: secondary draw_text.text_style.font_size: 12}
-                cand2_info := Label{text: "" draw_text.color: ink draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
-                cand2_btn := Btn{text: "选择候选 3" on_click: || pick(2)}
+            Label{text: "2. 候选（最多 3 个）" draw_text.color: ink draw_text.text_style.font_size: 15}
+            // 三卡同一横行宽度均分；仅针对当前 Linux 桌面窗口，不宣称手机响应式。
+            View{width: Fill height: Fit flow: Right spacing: 8
+                cand0_card := SolidView{width: Fill height: Fit flow: Down spacing: 6 padding: 10 draw_bg.color: white
+                    Label{text: "候选 1" draw_text.color: secondary draw_text.text_style.font_size: 12}
+                    cand0_btn := Btn{text: "选择候选 1" on_click: || pick(0)}
+                    ScrollYView{width: Fill height: 270
+                        cand0_info := Label{text: "" draw_text.color: ink draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
+                    }
+                }
+                cand1_card := SolidView{width: Fill height: Fit flow: Down spacing: 6 padding: 10 draw_bg.color: white
+                    Label{text: "候选 2" draw_text.color: secondary draw_text.text_style.font_size: 12}
+                    cand1_btn := Btn{text: "选择候选 2" on_click: || pick(1)}
+                    ScrollYView{width: Fill height: 270
+                        cand1_info := Label{text: "" draw_text.color: ink draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
+                    }
+                }
+                cand2_card := SolidView{width: Fill height: Fit flow: Down spacing: 6 padding: 10 draw_bg.color: white
+                    Label{text: "候选 3" draw_text.color: secondary draw_text.text_style.font_size: 12}
+                    cand2_btn := Btn{text: "选择候选 3" on_click: || pick(2)}
+                    ScrollYView{width: Fill height: 270
+                        cand2_info := Label{text: "" draw_text.color: ink draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
+                    }
+                }
             }
         }
 
         proposal_panel := SolidView{width: Fill height: Fit flow: Down spacing: 8 padding: 12 draw_bg.color: panel
-            Label{text: "3. 待确认提案" draw_text.color: ink draw_text.text_style.font_size: 16}
+            Label{text: "3. 待确认提案" draw_text.color: ink draw_text.text_style.font_size: 15}
             proposal_info := Label{text: "暂无待确认提案。" draw_text.color: ink draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
             proposal_status := Label{text: "" draw_text.color: secondary draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
-            View{width: Fill height: Fit flow: Down spacing: 8
+            // 确认/拒绝/模拟报价同一行，保持确认动作靠前可见。
+            View{width: Fill height: Fit flow: Right spacing: 8
                 confirm_btn := Btn{text: "确认并保存采购草稿" on_click: || confirm_draft()}
                 reject_btn := BtnG{text: "拒绝提案" on_click: || reject_proposal()}
                 price_btn := BtnG{text: "模拟报价变化 +15%" on_click: || simulate_price_change()}
@@ -1457,16 +1473,16 @@ SolidView{width: Fill height: Fill flow: Down padding: 16 spacing: 12 draw_bg.co
         }
 
         draft_panel := SolidView{width: Fill height: Fit flow: Down spacing: 8 padding: 12 draw_bg.color: panel
-            Label{text: "4. 本地采购草稿" draw_text.color: ink draw_text.text_style.font_size: 16}
+            Label{text: "4. 本地采购草稿" draw_text.color: ink draw_text.text_style.font_size: 15}
             readback_btn := Btn{text: "读回已保存草稿" on_click: || readback_draft()}
             draft_status := Label{text: "" draw_text.color: secondary draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
             draft_info := Label{text: "" draw_text.color: ink draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
         }
 
         agent_panel := SolidView{width: Fill height: Fit flow: Down spacing: 8 padding: 12 draw_bg.color: panel
-            Label{text: "5. 可选：宿主 Agent 只读审阅" draw_text.color: ink draw_text.text_style.font_size: 16}
+            Label{text: "5. 可选：宿主 Agent 只读审阅" draw_text.color: ink draw_text.text_style.font_size: 15}
             Label{text: "仅在你请求时，将需求与候选交给宿主配置的模型服务。建议不会自动保存草稿；服务不可用时仍可手动操作。" draw_text.color: secondary draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
-            View{width: Fill height: Fit flow: Down spacing: 8
+            View{width: Fill height: Fit flow: Right spacing: 8
                 review_btn := Btn{text: "请求只读审阅" on_click: || request_review()}
                 interrupt_btn := BtnG{text: "取消审阅" on_click: || interrupt_review()}
                 adopt_btn := Btn{text: "采纳建议生成提案" on_click: || adopt_suggestion()}

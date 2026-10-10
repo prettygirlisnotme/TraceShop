@@ -8,7 +8,7 @@ The catalog contains **14 synthetic USD products**. Saving writes a local draft 
 
 ## Verified evidence (real MiniMax-M3, run 196923)
 
-On unmodified official OctoSense Linux 0.1.0-rc.1 (real Store Get→Install→Open), a real CN MiniMax-M3 completed `status.read → catalog.research → proposal.create → draft.save → draft.read → final` in a CPU job (196923 COMPLETED 0:0, 7m32s): 6 model requests, 5 tool calls, `readback_ok=true`, and 8 saved draft fields matched the proposal after explicit host approval. It selected item4 VicTsing Wireless Mouse at 12.99 USD (budget 30). This covers a single quiet-mouse case; it is not a claim that 100% of the app is Agent-operable.
+On unmodified official OctoSense Linux 0.1.0-rc.1 (real Store Get→Install→Open), a real CN MiniMax-M3 completed `status.read → catalog.research → proposal.create → draft.save → draft.read → final` in a CPU job (196923 COMPLETED 0:0, 7m32s): 6 model requests, 5 tool calls, `readback_ok=true`, and 8 saved draft fields matched the proposal after explicit host approval. It selected item4 VicTsing Wireless Mouse at 12.99 USD (budget 30). This covers a single quiet-mouse case; it is not a claim that 100% of the app is Agent-operable. The real-M3 evidence is an earlier text snapshot (tested main.splash `ed412c2c` / AGENT.md `b6f28f03`); the current business-text fix and compact UI were made afterwards and have **not been re-tested with a model**.
 
 ## Known limitations
 
@@ -19,9 +19,13 @@ On unmodified official OctoSense Linux 0.1.0-rc.1 (real Store Get→Install→Op
 
 ## Demo video (manual UI automation)
 
-[Native UI recording 98.96 s](evidence/native-ui-196958.mp4) · [Chinese subtitles](evidence/native-ui-196958.zh-CN.srt) · [recording summary](evidence/native-ui-196958.json).
+[Compact native UI recording 78.24 s](evidence/native-ui-197066.mp4) · [Chinese subtitles](evidence/native-ui-197066.zh-CN.srt) · [current candidate screenshot](evidence/native-candidates-197066.png) · [recording summary](evidence/native-ui-197066.json).
 
-282 continuous frames, VFR H.264, no cuts, no audio. This video is **automation of the manual UI with zero model calls**; the real-model evidence above is the separate, earlier 196923 text snapshot. The official `hub stamp/check --allow-unsigned` passed, but the preview remains unsigned and is **not a GitHub proof or App Hub admission**.
+217 continuous frames, VFR H.264, no cuts, no audio. This video is **automation of the manual UI with zero application model calls**; the real-model evidence above is the separate, earlier 196923 text snapshot. This revision compacts the header and arranges three candidate cards side by side with independently scrolling text: within the same 990×613 window the candidate container grows from 257px to 445px (about +73%), the three selection buttons need no scrolling, and the full proposal plus its confirm button fit on one screen (current main.splash `e344068d`; business functions, six tools and AGENT instructions unchanged).
+
+The run completed the manual UI flow (select the documented quiet product, save and read back independently, simulate a +15% requote and reject the stale confirmation without overwriting the draft) with 16 of 16 record items true. The final development bundle passed official `stamp/check --allow-unsigned` ([check](evidence/bundle-check-compact.txt), [file hashes](evidence/bundle-check-compact.json)). It is **not a GitHub proof or App Hub admission**. All four bundled screenshots and the recording come from run 197066.
+
+[Candidates](bundle/screenshots/01-main.png) · [Full proposal and confirmation](bundle/screenshots/02-proposal.png) · [Saved draft](bundle/screenshots/03-readback.png) · [Stale proposal rejected](bundle/screenshots/04-requote.png).
 
 ## Status
 

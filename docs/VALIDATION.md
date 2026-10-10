@@ -24,17 +24,19 @@ CN MiniMax-M3 对“办公用无线鼠标，安静”、预算30、硬词wireles
 真实模型运行：main.splash ed412c2c06f743454cef036e1422f6cccefe63162c2542866243338dab547c5a；
 AGENT.md b6f28f0313914bd868eac1470b6bc7cee37f58a08da9c8bfa6b2d7b8460d597e。
 
-当前文字修正版：main.splash 539bdc0586f7ffb487fd6df52914377dcfd423e8b4cc8f9fef320ae9e2c32105；
+当前源码（文字修正与紧凑界面）：main.splash e344068d5b8f885dadada682c9be69965a212fe3c30ffe6b1560ddf6a2c88467；
 AGENT.md 40d292cfcf15afa0a84cfe807e24ba093924e1a91c96b17595fd56b005db8c39。
 两者工具定义均为 c51e4df96eef9f719b874a49fc330ea63cfb282eba3dc76bce4e07728f0174f3。
 元数据与截图可能在打包时更新，最终摘要以检查及发布回执为准。
 
-## 当前源码的人工UI录像（196958）
+## 当前源码的人工UI录像（197066 紧凑界面）
 
-官方RC1私有Store安装，CPU作业196958完成0:0。当前main539bdc05/tools c51e4df9/AGENT40d292cf完成界面流程，16个记录项均true（含总通过项与未发送Agent请求项）。三个候选中item4具有静音原始字段证据，item1/item2未证实；保存草稿并独立读回；模拟报价上涨15%后拒绝旧提案，已有草稿未被覆盖。
+官方RC1私有Store安装，CPU作业197066为CPU8、1分47秒、COMPLETED 0:0。当前main e344068d/tools c51e4df9/AGENT 40d292cf完成界面流程，16个记录项（含总通过项与未发送Agent请求项）全部为true。三个候选中item4具有静音原始字段证据，item1/item2未证实；保存草稿并独立读回；模拟报价上涨15%后拒绝旧提案，已有草稿未被覆盖。全程零Agent请求、零外部模型调用。
 
-282帧连续采集，首末帧跨度98.6386秒；采集开始到结束98.9144秒。编码专用CPU作业196987完成0:0，用实际帧间时长生成VFR H.264，文件时长98.96秒、1400×900、963423字节；无剪切、无音轨，不新增模型调用。[录像](../evidence/native-ui-196958.mp4) · [摘要](../evidence/native-ui-196958.json)。
+217帧连续采集，首末帧跨度77.8363秒；按实际帧间时长编码为VFR H.264，MP4实际时长78.24秒、1400×900、556698字节；无剪切、无音轨，不新增模型调用。[录像](../evidence/native-ui-197066.mp4) · [中文字幕](../evidence/native-ui-197066.zh-CN.srt) · [当前候选截图](../evidence/native-candidates-197066.png) · [摘要](../evidence/native-ui-197066.json)。
 
-官方hub stamp/check --allow-unsigned对最终listing、元数据与4张截图通过。保留两项警告：尚无publisher签名，draft.save每次等待宿主批准。开发检查不生成GitHub证明、封存包、Release或App Hub准入。
+只改从 `let ink = #x1c1c1e` 起的UI声明；此前67944字节与布局调整前的main.splash 539bdc05逐字节相同，工具、业务函数、确认、写入、独立读回与21个按钮处理器不变。同一990×613窗口内候选容器由原版257px增至实测445px（约增加73%），三张候选选择按钮无需滚动，完整提案与确认按钮同屏。
 
-采集作业中缓存的精简编码器缺少PNG解码能力，原始native-showcase-result.json保留video=null；编码结果另记encoding-repair.json，不改旧结果冒充当时已完成。采集前196950只因录制器滚动跳过按钮失败，未写草稿；改录制器后196958通过，业务源码未改。它只证明人工UI流程；价格文字修改尚无新的模型验证。
+最终开发bundle由CPU作业197113在2秒内完成官方stamp/check --allow-unsigned，COMPLETED 0:0。[检查输出](../evidence/bundle-check-compact.txt)与[文件摘要](../evidence/bundle-check-compact.json)对应当前源码、listing和四张197066截图。保留两项警告：尚无publisher签名，draft.save每次等待宿主批准。开发检查不生成GitHub证明、封存包、Release或App Hub准入。
+
+上一轮196958（main539bdc05）的人工UI录像、编码196987及其素材保留为历史证据。当前四张bundle截图均来自197066；03-readback截于保存核心已完成写入后核验的页面，录像随后还单独点击了读回按钮。读回通过只证明业务字段一致，不证明自然语言每句准确。

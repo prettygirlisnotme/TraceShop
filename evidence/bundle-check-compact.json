@@ -1,0 +1,22 @@
+{
+  "app_id": "traceshop.shopping",
+  "app_version": "0.5.0",
+  "check_job": 197113,
+  "result": "PASSED",
+  "unsigned": true,
+  "kind": "official development bundle check",
+  "hub_ref": "655114c4943cd2490daaefa2173e7b5aaa20669f",
+  "files_sha256": {
+    "manifest.json": "cedbaaf7ec6fef2af48b69df32874b3e501fc12fbaa10bbebb974ae059be90d2",
+    "listing.json": "0ab63ae6d139c02c0898fd01391b9856ce700a5f0b081cf8592961f4575b0c59",
+    "main.splash": "e344068d5b8f885dadada682c9be69965a212fe3c30ffe6b1560ddf6a2c88467",
+    "tools.json": "c51e4df96eef9f719b874a49fc330ea63cfb282eba3dc76bce4e07728f0174f3",
+    "AGENT.md": "40d292cfcf15afa0a84cfe807e24ba093924e1a91c96b17595fd56b005db8c39",
+    "assets/icon.svg": "c3dc4f8af970087ece5e31e0445df02e614fd28898fa946981d4d89c0c6d2996",
+    "screenshots/04-requote.png": "1a86591c9f92b1ac4aff04b1991da8aeb6689d0a4b8937bad66bd1e3ca828222",
+    "screenshots/02-proposal.png": "d41d5e887e1ddae373b3e449a4ffd1c7d91639532a7baa9daaa74e9a524096ea",
+    "screenshots/03-readback.png": "51f74597598a271f8abed0e8f9c3e6255cee6401e45ae0f4d7907f04c68af9df",
+    "screenshots/01-main.png": "5e5b0c17a100e8e8aeebb53128c64125e62c3e97a49a6082df4e86129d05caa0"
+  },
+  "not_publication_proof": true
+}

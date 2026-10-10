@@ -8,15 +8,19 @@
 
 ## 演示录像（人工 UI 自动化）
 
-[新版原生界面录像 98.96 秒](evidence/native-ui-196958.mp4) · [中文字幕](evidence/native-ui-196958.zh-CN.srt) · [录制摘要](evidence/native-ui-196958.json)。
+[紧凑原生界面录像 78.24 秒](evidence/native-ui-197066.mp4) · [中文字幕](evidence/native-ui-197066.zh-CN.srt) · [当前候选界面截图](evidence/native-candidates-197066.png) · [录制摘要](evidence/native-ui-197066.json)。
 
-282 帧连续采集、按实际帧间时长编码为 VFR H.264、无剪切、无音轨。该录像记录人工 UI 按钮流程，由自动化操作，零模型调用。真实 M3 自主工具证据见下方运行196923，两者分别标注。
+217 帧连续采集、按实际帧间时长编码为 VFR H.264、无剪切、无音轨。该录像记录人工 UI 按钮流程，由自动化操作，**零应用模型调用**；真实 M3 自主工具证据见下方运行196923，两者分别标注。
 
-| 商品证据 | 草稿读回 |
+本版压缩顶部状态区，并让三张候选卡横排、长文本独立滚动：同一 990×613 窗口内，候选容器由原版 257px 增至实测 445px（约增加 73%）；三张候选卡横排，选择按钮无需滚动；完整提案文字与确认按钮同屏。当前 main.splash `e344068d`（紧凑界面），业务函数、六个工具与 AGENT 指引未改。
+
+本轮人工 UI 流程完成：选择有静音目录证据的商品、保存并独立读回、模拟报价上涨 15% 后拒绝旧提案且不覆盖原草稿；16 个记录项（含汇总）全部为 true。最终开发 bundle 经官方 `stamp/check --allow-unsigned` 通过（[检查输出](evidence/bundle-check-compact.txt) · [文件摘要](evidence/bundle-check-compact.json)），仍为 unsigned，**不代表 GitHub 证明或 App Hub 准入**。四张内置截图与录像均来自同一次 197066 运行。
+
+| 候选比较 | 完整提案与确认 |
 | --- | --- |
-| ![原始字段与目录证据](bundle/screenshots/01-main.png) | ![草稿读回字段](bundle/screenshots/03-readback.png) |
+| ![三候选与固定选择按钮](bundle/screenshots/01-main.png) | ![提案字段与确认按钮](bundle/screenshots/02-proposal.png) |
 
-本轮人工 UI 流程完成：选择有静音目录证据的商品、保存并独立读回、模拟报价上涨 15% 后拒绝旧提案且不覆盖原草稿。官方 `hub stamp/check --allow-unsigned` 通过（[输出](evidence/bundle-check-196958.txt)），仍为 unsigned，**不代表 GitHub 证明或 App Hub 准入**。
+[保存后独立核验](bundle/screenshots/03-readback.png) · [报价变化后拒绝旧提案](bundle/screenshots/04-requote.png)。
 
 
 ## 核心闭环
@@ -32,6 +36,7 @@
 - CPU 作业 **196923 COMPLETED 0:0，7 分 32 秒**：在未修改的官方 OctoSense Linux 0.1.0-rc.1 包、真实商店 Get→Install→Open 的隔离副本上，真实 CN MiniMax-M3 自主完成 `status.read → catalog.research → proposal.create → draft.save → draft.read → final`。**6 次模型请求、5 个工具调用**，`readback_ok=true`，独立读回的 **8 个草稿字段与提案一致**。批准前无草稿，批准后才有。选中 item4 **VicTsing Wireless Mouse，12.99 USD**，预算余量 17.01。
 - 静音依据来自目录原始字段 `description="Quiet..."` 与 `features="Silent click"`（`documented`）；另外两个候选为 `not_documented`，只表示**本演示目录未证实**，不等于商品不支持静音。人工只批准宿主权限和保存，未做人工研究、选候选或建提案。
 - 证据入口：[脱敏运行摘要](evidence/agent-run-196923.json) · [宿主保存批准](evidence/agent-host-approval-196923.png) · [写入后草稿](evidence/agent-draft-196923.png)。
+- 以上真实 M3 证据来自较早的文字快照（已测 main.splash `ed412c2c` / AGENT.md `b6f28f03`）。当前业务文字修正与紧凑界面都是运行后修改，**没有重跑模型**，不声称新版模型回复或紧凑界面已被模型验证。
 
 ### 验证范围与已知限制
 
