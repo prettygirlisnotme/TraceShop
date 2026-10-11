@@ -2,8 +2,8 @@
 
 ## 素材（先看清版本）
 
-- `evidence/native-agent-excerpt-197305.mp4`（94 秒节选）、`evidence/native-agent-excerpt-197305.zh-CN.srt`、`evidence/agent-run-197305.json` 与 `bundle/screenshots/01–04` **全部来自 197305 的旧合成目录流程**：演示“报价变化后旧确认被拒绝、用户交给 Agent 重办、重新研究/批准/保存/读回”。**这是历史证据，不对应当前 0.5.1 包，演示时须说明。**
-- **当前候选**没有配套正式录像：RC5 业务与界面由 **198242** 人工 UI 13 项检查覆盖（零模型、无录像）；候选上的真实模型闭环由 **198316** 覆盖（官方未修改 Linux RC5 真实 Store 安装，6 请求 5 工具，宿主 `Allow` + `Approve once`，M240 $22.99、预算 23、quiet 有字段证据，`passed=true`、10 项 observed 全 true）。**198273** 为历史失败（首次授权未批准、无 live-result、模型请求 0），材料保留；197799 为较早业务对照。
+- `evidence/native-agent-excerpt-197305.mp4`（94 秒节选）、`evidence/native-agent-excerpt-197305.zh-CN.srt`、`evidence/agent-run-197305.json` 与 `bundle/screenshots/01–04` **全部来自 197305 的旧合成目录流程**：演示“报价变化后旧确认被拒绝、用户交给 Agent 重办、重新研究/批准/保存/读回”。**这是历史证据，不对应当前 0.5.2 包，演示时须说明。**
+- **0.5.2没有配套新正式录像**：198377只覆盖当前main的首次使用UI流程（22项检查、零模型、未保存）；198242人工UI和198316真实M3仍属0.5.1基线。后者6请求5工具、宿主批准后保存M240并读回。详细范围见VALIDATION；本页仅维护版本归属，未新增或定稿新版答辩内容。
 - 精确版本与私有集群证据路径（`reports/20261011-upstream-alignment/`）见 [VALIDATION](VALIDATION.md)；新实录暂缓。
 
 ## 三分钟答辩稿

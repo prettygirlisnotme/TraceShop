@@ -2,9 +2,9 @@
 
 > 有证据、能应对条件变化的个人采购决策：研究 → 证据 → 约束 → 批准 → 执行 → 读回。
 
-TraceShop 是一个 **OctoScript / Splash** 应用，作品唯一入口是 [`bundle/`](bundle/)。它把一次采购决策拆成可核对、可回溯的步骤：Agent 读取状态、研究候选、创建提案；**保存必须经宿主批准**，写入的是宿主私有存储中的本地草稿，并由 Agent 独立 `draft.read` 读回核对。界面按钮与七个应用工具共用同一套研究/提案/保存业务核心，不维护两套逻辑。
+TraceShop 是一个 **OctoScript / Splash** 应用，作品唯一入口是 [`bundle/`](bundle/)。它把一次采购决策拆成可核对、可回溯的步骤：Agent 读取状态、研究候选、创建提案；**Agent发起的保存必须经宿主批准**，写入的是宿主私有存储中的本地草稿，并由 Agent 独立 `draft.read` 读回核对。界面按钮与七个应用工具共用同一套研究/提案/保存业务核心，不维护两套逻辑。
 
-目录是演示数据，草稿写入宿主私有存储，**没有真实下单、支付或物流**。
+目录由合成演示商品与人工整理的官网快照组成。结果是宿主私有存储中的采购草稿，没有真实下单、支付或物流。
 
 ## 为什么做“购物”
 
@@ -15,11 +15,11 @@ TraceShop 是一个 **OctoScript / Splash** 应用，作品唯一入口是 [`bun
 - 候选与只读替代严格分开，替代项不能直接变成提案；
 - 保存是后果性操作：模型调用工具**不等于**用户批准。
 
-这条“检索 → 证据 → 约束 → 批准 → 执行 → 读回”的动线，可以直接迁移到其它需要“有据可查的自动化决策 + 人类把关”的场景。本应用**不做生成式搜广推、不是全双工 Agent、未接入 AgenticOS 或 Jev 推荐/向量检索**，只演示上述可核验闭环。
+这套候选、证据、任务版本、批准与回执的边界，可供采购审批或旅行预订等场景适配复用。业务约束、数据来源与权限仍需按场景设计。
 
 ## 唯一入口与目录来源
 
-- 入口：[`bundle/main.splash`](bundle/main.splash) · [`bundle/tools.json`](bundle/tools.json) · [`bundle/AGENT.md`](bundle/AGENT.md) · [`bundle/manifest.json`](bundle/manifest.json)（版本 **0.5.1**）。
+- 入口：[`bundle/main.splash`](bundle/main.splash) · [`bundle/tools.json`](bundle/tools.json) · [`bundle/AGENT.md`](bundle/AGENT.md) · [`bundle/manifest.json`](bundle/manifest.json)（版本 **0.5.2**）。
 - 目录来源（会话内切换，`shopping.catalog.select`）：
   - `synthetic_demo`（默认）：14 条纯虚构 USD 演示商品。
   - `official_snapshot`：3 条人工核对的官网页面价格快照（US/USD）。是**整理摘要，不是整页原文**；**非实时**；只有**商品价**，**运费、税费与配送未核验**，不保证库存或可配送。快照已内嵌于脚本，**程序运行时不联网抓取**；`net` 仅按官方规则披露已有来源 URL。
@@ -35,43 +35,25 @@ TraceShop 是一个 **OctoScript / Splash** 应用，作品唯一入口是 [`bun
 6. `shopping.draft.save`：`risk=destructive`、`confirm=host`、不可自动批准；宿主批准后写入草稿并**即时独立读回**（`readback_ok`）。
 7. `shopping.draft.read`：独立读回草稿，分别报告 `read_ok`、`current_proposal_present`、`matches_current_proposal` 与 `verification_scope`。
 
-0.5.1 整合的界面与绑定能力：应用发起任务时，把起始条件（`task_id` + 需求/预算/硬关键词/目录来源/商户版本/起始研究版本）绑定到本进程，写工具必须原样携带匹配的 `task_id`，否则拒绝。**该绑定是应用本地快照，不是宿主身份认证，也不承诺任意回合隔离**。研究回复已压缩（`decision` 不再重复候选核对）。界面提供完整回复原文页、选择摘要前置、首屏确认，并把“Agent 回合状态”与“提案业务状态”用独立标题分开显示。
+继承自 0.5.1 的界面与绑定能力：应用发起任务时，把起始条件（`task_id` + 需求/预算/硬关键词/目录来源/商户版本/起始研究版本）绑定到本进程，写工具必须原样携带匹配的 `task_id`，否则拒绝。**该绑定是应用本地快照，不是宿主身份认证，也不承诺任意回合隔离**。研究回复已压缩（`decision` 不再重复候选核对）。界面提供完整回复原文页、选择摘要前置、首屏确认，并把“Agent 回合状态”与“提案业务状态”用独立标题分开显示。
 
-## 证据状态（版本必须分开看）
+0.5.2 增量只在 `bundle/main.splash` 首页增加一个“预算取舍 $20”按钮（`fill_quote_tradeoff`）：选择后切到 3 条官网报价快照并预填“办公用无线鼠标，安静 / 预算 20 美元 / 必须 wireless”，让预算与软偏好的取舍直接可见。**该按钮只准备输入，不自动研究、不启动 Agent、不生成提案、不保存**，复用既有目录切换与研究/保存核心；有 Agent 任务进行时先返回提示。静音是软偏好、wireless 是硬关键词，按钮点击不是用户对商品或保存的批准。除该按钮外，本版工具/schema/AGENT/算法/图片/视频与 0.5.1 基线一致。
 
-| 运行 | 精确源码 | 类型 | 结论 |
-| --- | --- | --- | --- |
-| **198242** | 候选 0.5.1（本仓库 `bundle/` 的私有测试副本） | RC5 人工 UI，13 项检查，零模型，2:51，Slurm CPU4 | 官方未修改 Linux RC5 真实 Store Get/Install/Open；现有 13 项人工 UI 检查全通过，无录像；测试副本 manifest 有 Linux/测试 publisher/签名改动，listing 有私有测试说明，**不继承原候选字节全通过** |
-| **198215** | main `18647a97…`、旧 manifest/listing（较早候选） | 人工 UI，13 项检查，零模型，2:05，CPU4 | 历史旧包；manifest/listing 其后已改，**不继承包字节验证** |
-| **197799** | main `fc005b81…`、AGENT `06a058…`（较早业务） | 真实 CN MiniMax-M3，6 请求 5 工具，宿主 Approve once，4:44，CPU4 | **较早业务对照**；M240 $22.99（预算 23、quiet）保存并独立读回，其后改 AGENT 文字与 UI 摘要/状态且未重跑模型 |
-| **198316** | 候选 0.5.1（本仓库 `bundle/` 的私有测试副本） | 真实 CN MiniMax-M3，6 请求 5 工具，原生 Allow + 宿主 Approve once，7:43，CPU4 | 官方未修改 Linux RC5 真实 Store 安装；M240 $22.99（预算 23、wireless、quiet 有字段证据）保存并独立读回；`passed=true`、10 项 observed 全 true、`draft.read` `matches_current_proposal=true` `scope=proposal_fields`；693 字符真实 final 经一次显式历史同步显示，明确结束后状态已结束；**未调用 `catalog.select`/`proposal.read`** |
-| **198273** | 候选 0.5.1 | 真实 CN MiniMax-M3（历史失败，材料保留） | 首次授权待主控操作时 SSH 失联，**无 live-result、无 relay 请求、模型请求 0，未通过**；wrapper 超时被误映射为 exit0，已在 198316 修正 |
-| **197305** | main `4c3a5daa…` | 历史：合成目录“变价后重办”，94 秒节选 + 4 张截图 | **仅历史证据**，不对应当前包 |
-| 197754 / 197860 | 较早业务 | 零模型夹具 / 人工 UI 检查 | 支持性局部检查 |
+## 已运行的范围
 
-- 当前候选十文件摘要见 [`package-inputs.json`](package-inputs.json)（本地开发摘要，非官方签名）。
-- 官方 `stamp/check` 作业 197371 对应旧包（main `4c3a5daa…`），**不适用于当前候选**；当前候选只经旧 CLI `655114c4`（契约 1.8.0）`stamp/check --allow-unsigned` 结构检查，**不是**新 Hub `38635915`（1.12）工具链或 GitHub attestation 验证。
+| 版本与源码 | 运行证据 | 实际范围 |
+| --- | --- | --- |
+| 0.5.2 的 main `7e0c08e1…` | [198377](evidence/rc5-onboarding-198377/README.md)，官方 Linux RC5，CPU4、65秒 | 一条首次使用流程22项检查；预算20→用户明确改23→选择M240，确认按钮可见；零模型、未保存、无新录像 |
+| 0.5.1 基线 main `18647a97…` | 198242人工UI；[198316真实M3](evidence/rc5-agent-198316/) | 13项UI检查；另有6次M3请求、5种工具、宿主批准保存与独立读回的一条任务 |
+| 历史197305 | 仓库内94秒视频与四张截图 | 旧合成目录流程，保留作历史素材 |
 
-### RC5 兼容验证：198242 人工 UI 与 198316 真实模型均已通过
+198377的业务main与本候选完全相同，测试副本使用私有Linux发布者与签名，其manifest仍为0.5.1；本轮整合后改了0.5.2元数据，**尚未对新十文件整包运行官方发布检查**。旧Hub CLI1.8日志仅属于当时测试副本，新工作流固定Hub1.12且未运行。完整摘要见[package-inputs](package-inputs.json)，版本与失败记录见[VALIDATION](docs/VALIDATION.md)。
 
-官方 OctoSense 桌面 RC5 已于 2026-10-11 发布（源码 `83d356c2…`），App Flow 更名为 **OctoSense-App-Flow**。能力/network 声明改为**用途披露**由 **RC4 引入、RC5 延续**；设备同意、账户 scope、人工写批准与存储隔离保留；RC5 新增 charts/Wasm 与 HTTPS 修复——**本应用不使用这些新能力，也不宣称 60 秒宿主超时问题已修复**。
-
-- **198242**（COMPLETED 0:0、CPU4、2:51）：官方未修改 Linux RC5 真实 Store Get/Install/Open，现有 13 项人工 UI 检查全通过，零模型请求、无录像；只经旧 CLI `655114c4`（契约 1.8.0）结构检查，**不是**新 Hub `38635915`（1.12）工具链或 GitHub attestation 验证。
-- **198316**（COMPLETED 0:0、CPU4、7:43）：官方未修改 Linux RC5（`octosense_0.1.0-rc.5_amd64.deb`，`unmodified_official=true`）真实 Store 安装，真实 CN MiniMax-M3，非流上游转标准 SSE 适配器不变，6 请求 5 工具（`status`/`research`/`proposal.create`/`draft.save`/`draft.read`）；原生 Allow 与宿主 Approve once 均主控按本次实际画面点击，批准前草稿不存在、批准后成功保存 M240 $22.99（预算 23、wireless、quiet 有字段证据）。`live-result passed=true`，10 项 observed 全 true，research/create/save 同一 `task_id`，`draft.read` `read_ok=true`/`matches_current_proposal=true`/`verification_scope=proposal_fields`；693 字符真实 final 经一次显式历史同步显示，明确结束后状态已结束。**未调用 `catalog.select`/`proposal.read`，不代表七工具或全平台全覆盖。**
-- **198273**（历史失败，材料保留）：候选上首次真实 M3 作业；首次授权待主控操作时 SSH 失联，**无 live-result、无 relay 请求日志、模型请求 0，未通过**；wrapper 超时错误被误映射为 Slurm exit0，已在 198316 修正。恢复 VPN 后仅取回失败材料，不盲目重提。
-- 发布工作流已由主控更新为官方 App Flow `45174df…` 模板、Hub pin `38635915…`；**未跑 CI、未发布**。
-
-## 边界与已知限制
-
-- **原生仍是规则 + 目录**：检索是合成目录与 3 条官网快照上的确定性规则，不是完整语义理解，也**未接入实时商品目录或在线检索服务，未原生接入 Project A**。
-- **无真实交易**：没有真实下单、支付或物流；草稿只写本地私有存储。
-- **真实模型覆盖有限**：当前候选 198316 调用 5 个工具（未调用 `catalog.select` / `proposal.read`），不代表七工具、所有平台或拒绝路径全覆盖；197799 仅作较早业务对照。
-- **宿主限制仍在**：60 秒回调超时仍存在；最终回复经显式同步本次任务历史取回，历史没有回合终态，仍需用户明确结束；首次授权后立即重试的时序根因未定位。
-- **历史素材**：仓库内 94 秒视频（`evidence/native-agent-excerpt-197305.mp4`）与 `bundle/screenshots/01–04` 均来自 **197305 旧合成目录**流程，**不是当前候选的实拍**，仅作历史保留。
+新main未重新运行M3，旧模型证据仍只对应0.5.1；首次使用按钮的Agent活跃守卫仅审阅了代码，未动态驱动。宿主60秒回调限制仍在，真实任务可能需要显式同步回复并结束。当前原生研究使用规则目录，Project A接入与推荐质量评测另行推进。
 
 ## 使用
 
-1. 输入需求、USD 预算与硬关键词，或使用预设。
+1. 输入需求、USD 预算与硬关键词，或使用预设；也可点首页“预算取舍 $20”按钮，预填一个官网快照示例条件（只填条件，不研究、不保存）。
 2. 手动研究/选择/确认，或点“交给 Agent 办理采购草稿”委托宿主 Agent。
 3. Agent 保存会触发宿主确认；批准后才写本地草稿。
 4. 报价/条件变化后旧提案不能保存；在提案页明确点击重新办理，由 Agent 重新研究、重新批准、重新核验。
@@ -82,7 +64,7 @@ TraceShop 是一个 **OctoScript / Splash** 应用，作品唯一入口是 [`bun
 
 - 公开仓库：[prettygirlisnotme/TraceShop](https://github.com/prettygirlisnotme/TraceShop)；本工作树**尚未 push**。
 - App Hub 提交：[OctoSense-App-Hub #71](https://github.com/OctoSense-org/OctoSense-App-Hub/issues/71)；其中 86/100 为**历史初赛评语**，不针对当前版本。
-- 本目录内容（含 `bundle/`、历史截图与历史视频）**全部保持本地**，未 push/tag/Release/评论；本届正式提交材料暂缓，需单独批准。
+- 本轮候选尚未 push/tag/Release/更新App Hub；其中历史素材曾随旧版公开，保留原版本归属。新正式实录与答辩定稿按当前安排暂缓；对外发布逐次批准。
 
 ## 文档
 
@@ -93,7 +75,7 @@ TraceShop 是一个 **OctoScript / Splash** 应用，作品唯一入口是 [`bun
 | [VALIDATION.md](docs/VALIDATION.md) | 精确版本、CPU 位置、人工 UI vs 真实 Agent vs 外部效果 |
 | [REPRODUCING.md](docs/REPRODUCING.md) | 复现环境与命令边界 |
 | [HANDOFF.md](docs/HANDOFF.md) | 开发者接手与发布边界 |
-| [DEMO.zh-CN.md](docs/DEMO.zh-CN.md) | 三分钟答辩稿与常见问答 |
+| [DEMO.zh-CN.md](docs/DEMO.zh-CN.md) | 既有演示提纲与问答，未定稿新版 |
 | [DEVELOPMENT.md](docs/DEVELOPMENT.md) | 开发说明与历史 Web 原型 |
 | [SUBMISSION.md](SUBMISSION.md) · [PRIVACY.md](PRIVACY.md) | 提交草稿 / 隐私说明 |
 

@@ -25,7 +25,7 @@
     "support": "https://github.com/prettygirlisnotme/TraceShop/issues",
     "privacy_policy_url": "https://github.com/prettygirlisnotme/TraceShop/blob/main/PRIVACY.md"
   },
-  "release_notes": "0.5.1私有整合候选：合并三条官网报价快照、预算/偏好取舍、选择依据落盘、应用任务条件绑定、完整回复页及中文状态提示。原四张截图与94秒视频仅属于197305旧合成目录版本；本次RC5兼容检查与模型证据分别记录，未发布。",
+  "release_notes": "0.5.2私有整合候选：首页新增“预算取舍 $20”按钮，仅用3条官网报价快照预填需求/预算/硬关键词，不自动研究、不启动 Agent、不保存；预算与软偏好取舍随后由用户自行决定。0.5.1基线与本轮证据分开记录：新main仅经一条RC5首次使用流程（22项断言、零模型、未运行Agent保存），历史四张截图与94秒视频未更新；未发布。",
   "age_rating": "all",
   "license": "Apache-2.0"
 }

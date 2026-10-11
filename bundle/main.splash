@@ -883,6 +883,26 @@ fn fill_portable(){
     ui.research_status.set_text("已填入便携预设，请点击研究商品。")
 }
 
+// 首次使用引导：预算取舍入口。只切换官网报价快照并填入条件；不研究、不调模型、不建提案、不保存。
+// 进行中的 Agent 任务优先：只提示并返回，任何输入/目录/草稿/任务都不改变。
+fn fill_quote_tradeoff(){
+    if agent_task_active {
+        ui.research_status.set_text("办理进行中，请先在顶部结束本次任务，再使用预算取舍示例；当前条件未改变。")
+        return
+    }
+    let r = set_catalog_source("official_snapshot")
+    if !r.is_ok {
+        ui.research_status.set_text("无法切换到官网报价快照，未填入条件：" + r.message)
+        return
+    }
+    show_page(1)
+    ui.need_input.set_text("办公用无线鼠标，安静")
+    ui.keywords_input.set_text("wireless")
+    ui.budget_input.set_text("20")
+    ui.research_status.set_text("已填好官网快照示例：预算 $20，无线为必需，静音为偏好。仅填条件，尚未研究或保存；请选择研究或交给助手办理。")
+    refresh_proposal()
+}
+
 // 共享研究核心：UI 按钮与 app_tool 走同一份规则，不复制第二套算法。
 fn hard_input_text(terms){
     let text = ""
@@ -2587,6 +2607,7 @@ SolidView{width: Fill height: Fill flow: Down padding: 10 spacing: 6 draw_bg.col
                 preset_office := BtnG{text: "办公预设" on_click: || fill_office()}
                 preset_gaming := BtnG{text: "游戏预设" on_click: || fill_gaming()}
                 preset_portable := BtnG{text: "便携预设" on_click: || fill_portable()}
+                quote_tradeoff_preset := BtnG{text: "预算取舍 $20" on_click: || fill_quote_tradeoff()}
             }
             // 目录来源显式切换：两个固定按钮，共用 set_catalog_source；不自动切换用户选择。
             View{width: Fill height: Fit flow: Right spacing: 8

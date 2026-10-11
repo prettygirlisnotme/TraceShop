@@ -1,0 +1,65 @@
+{
+  "kind": "onboarding-first-use-ui",
+  "model_requests": 0,
+  "video_recorded": false,
+  "scope": "Official unmodified RC5, real Store install, scripted UI clicks only. No model, no fixture relay, no native tool-approval claim. Only fill_quote_tradeoff's non-active branch is exercised; the agent_task_active guard is NOT run-verified here.",
+  "checks": {
+    "on_first_screen_before": true,
+    "no_draft_before_button": true,
+    "agent_not_running_before_button": true,
+    "no_candidates_before_button": true,
+    "no_proposal_before_button": true,
+    "official_snapshot_label": true,
+    "need_value_defined": true,
+    "budget_value_defined": true,
+    "keywords_value_defined": true,
+    "still_first_screen": true,
+    "no_draft_after_button": true,
+    "agent_not_running_after_button": true,
+    "no_candidates_after_button": true,
+    "no_proposal_after_button": true,
+    "budget20_official_snapshot_note": true,
+    "budget20_feasible_m170_1499": true,
+    "budget20_quiet_evidence_gap": true,
+    "budget20_higher_alt_m240_2299": true,
+    "no_draft_after_research_budget20": true,
+    "m240_selectable_at_budget_23": true,
+    "confirm_visible_on_first_proposal_screen": true,
+    "no_save_no_draft_after_select": true
+  },
+  "errors": [],
+  "window_size": [
+    1400,
+    900
+  ],
+  "candidates_before_button": [
+    "",
+    "",
+    ""
+  ],
+  "proposal_state_before_button": "3. 尚未生成提案",
+  "catalog_source_label": "当前目录：官网报价快照（3 条，US/USD，非实时）",
+  "need_input": "办公用无线鼠标，安静",
+  "budget_input": "20",
+  "keywords_input": "wireless",
+  "research_status_after_preset": "已填好官网快照示例：预算 $20，无线为必需，静音为偏好。仅填条件，尚未研究或保存；请选择研究或交给助手办理。",
+  "candidates_after_button": [
+    "",
+    "",
+    ""
+  ],
+  "proposal_state_after_button": "3. 尚未生成提案",
+  "summary_at_budget_20": "本次请求：需求「办公用无线鼠标，安静」；预算 $20 美元；硬关键词 wireless。\n官网报价快照：人工核对的公开官网页面快照（logitech-us-20261011，采集 2026-10-10T17:40:07Z，US/USD）。规格为整理摘要（curated_page_summary），不是整页原文；仅商品价，运费/税费与配送到用户地址未核验，非实时、非总到手价。\n有满足预算与硬关键词的候选，但软偏好缺乏目录证据（仅表示本演示目录未证实，不代表商品不支持）。\n· Logitech M170 Wireless Mouse（item_id 101）价格 $14.99；未证实的偏好：静音（预算余量 $5.01）\n只读替代（仅供比较，不计入候选，不能直接保存）：\n· Logitech M240 Silent Bluetooth Mouse（item_id 102）价格 $22.99；超出预算 $2.99；静音依据：title＝Logitech M240 Silent Bluetooth Mouse\n  出处：https://www.logitech.com/en-us/shop/p/m240-silent-bluetooth-mouse\n· Logitech Pebble Mouse 2 M350s（item_id 103）价格 $24.99；超出预算 $4.99；静音依据：features＝quiet clicks\n  出处：https://www.logitech.com/en-us/shop/p/pebble-2-m350s-wireless-mouse\n偏好缺证据时，你可以保留当前预算选择合格候选，或手动调整条件后重新研究；不会替你修改条件。\n替代仅供比较；修改需求、预算或硬关键词后需重新研究。",
+  "summary_at_budget_23": "本次请求：需求「办公用无线鼠标，安静」；预算 $23 美元；硬关键词 wireless。\n官网报价快照：人工核对的公开官网页面快照（logitech-us-20261011，采集 2026-10-10T17:40:07Z，US/USD）。规格为整理摘要（curated_page_summary），不是整页原文；仅商品价，运费/税费与配送到用户地址未核验，非实时、非总到手价。\n找到满足预算与硬关键词的候选。\n· Logitech M240 Silent Bluetooth Mouse（item_id 102）价格 $22.99（预算余量 $0.01）\n· Logitech M170 Wireless Mouse（item_id 101）价格 $14.99；未证实的偏好：静音（预算余量 $8.01）\n",
+  "m240_card_index": 0,
+  "confirm_rect": [
+    136,
+    665,
+    148,
+    34
+  ],
+  "confirm_in_view": true,
+  "proposal_summary_before_no_save": "选择摘要：Logitech M240 Silent Bluetooth Mouse\n商品价 $22.99 ｜ 当时预算 $23 ｜ 余量 $0.01\n当时需求：「办公用无线鼠标，安静」\n必需「wireless」：features＝wireless\n软偏好：静音：目录有证据（title：Logitech M240 Silent Bluetooth Mouse；features：silent click）\n相邻研究对照（不是批准）：预算 $20 → $23（预算增加 $3）；该商品相对旧预算 超出 $2.99。",
+  "no_draft_after_select": true,
+  "passed": true
+}
