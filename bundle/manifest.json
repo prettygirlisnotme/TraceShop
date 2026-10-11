@@ -18,7 +18,8 @@
     "octos.session.open",
     "octos.session.history",
     "octos.turn.start",
-    "octos.turn.interrupt"
+    "octos.turn.interrupt",
+    "net"
   ],
   "compute": {
     "instruction_budget": 4000000,
@@ -26,7 +27,7 @@
   },
   "id": "traceshop.shopping",
   "integrity": {
-    "bundle_blake3": "f9c41b8569d28027c49036adba5cba29a92d7b609cc61f7394e36c89b498d3f4"
+    "bundle_blake3": ""
   },
   "name": "TraceShop 采购助手",
   "requires": [
@@ -37,5 +38,10 @@
     "accounts": false,
     "agent_workspace": "none"
   },
-  "version": "0.5.0"
+  "version": "0.5.1",
+  "network": {
+    "hosts": [
+      "www.logitech.com"
+    ]
+  }
 }

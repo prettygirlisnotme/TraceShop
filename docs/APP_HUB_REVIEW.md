@@ -1,9 +1,9 @@
-> 历史资料：本页记录0.4.x。0.5.0的新工具办理、验证范围和发布状态见 [README](../README.md) 与 [VALIDATION](VALIDATION.md)。
+> **历史资料，只读参考。** 本页七个问答是 v0.4.0 的答复，当时的“当前源码 0.4.1”现已过时；当前作品版本为 **0.5.1**，工具契约、验证范围与发布状态以 [README](../README.md) 和 [VALIDATION](VALIDATION.md) 为准。本页不描述当前包，不用于当前提交。
 
 # TraceShop — 作者对 Hub 扫描的答复（v0.4.0 历史答复） / author answers to hub scan
 
-> 版本范围 / Version scope: 下面七个问答是 **v0.4.0（`4cf35ca8`）** 提交 App Hub #71 时的历史答复，保留原文与对照译文。当前源码为 **0.4.1（待发布）**，只改文档、截图与官方发布配置，应用逻辑与 v0.4.0 相同；本轮对评审建议的回应见文末[评审结果与本轮回应](#评审结果与本轮回应--preliminary-result-and-current-round-response)。
-> The seven answers below are the historical answers for the **v0.4.0 (`4cf35ca8`)** bundle submitted to App Hub #71. The current source is **0.4.1 (pending release)**, changing only docs, screenshots and the official publishing config, with the same app logic as v0.4.0. See the current-round response at the end.
+> 版本范围 / Version scope: 下面七个问答是 **v0.4.0（`4cf35ca8`）** 提交 App Hub #71 时的历史答复，保留原文与对照译文。**当前作品版本为 0.5.1，工具集、界面与证据状态均已变化**；本轮对评审建议的回应见文末[评审结果与本轮回应](#评审结果与本轮回应--preliminary-result-and-current-round-response)。
+> The seven answers below are the historical answers for the **v0.4.0 (`4cf35ca8`)** bundle submitted to App Hub #71. **The current app version is 0.5.1, with a different tool set, UI and evidence status.** See the current-round response at the end.
 
 导航 / Navigation: [中文作者答复](#中文作者答复) · [English author answers](#english-author-answers) · [模型验证口径 / Model-validation wording](#模型验证口径--model-validation-wording) · [评审结果与本轮回应](#评审结果与本轮回应--preliminary-result-and-current-round-response)
 
@@ -44,8 +44,11 @@
 
 ## 模型验证口径 / Model-validation wording
 
-以下口径与 [README](../README.md)、[SUBMISSION](../SUBMISSION.md) 保持一致。
-This wording is kept consistent with [README](../README.md) and [SUBMISSION](../SUBMISSION.md).
+> 历史口径（v0.4.0）。当前 0.5.1 的模型见 [VALIDATION](VALIDATION.md)（真实 M3：197799 为较早业务且后续又改 UI 摘要/状态、未重跑；候选上的 198273 已提交但未取回终态）与 [README](../README.md)；本节不适用于当前包。
+> Historical wording (v0.4.0). For 0.5.1 model evidence see [VALIDATION](VALIDATION.md) (real M3: run 197799 is an earlier business source whose UI summary/status was later changed without a model re-run; the candidate's 198273 is submitted but no terminal state was retrieved) and [README](../README.md); this section does not apply to the current bundle.
+
+以下口径与 [README](../README.md)、[SUBMISSION](../SUBMISSION.md) 保持一致（v0.4.0 当时）。
+This wording was kept consistent with [README](../README.md) and [SUBMISSION](../SUBMISSION.md) at the time of v0.4.0.
 
 - 模型实测针对 v0.4.0 的同一业务脚本；0.4.1 只改文档、截图与发布配置，没有新的模型验证。
 - 官方 Linux `card-host`（固定版本）实测了人工状态流转、人工确认与独立读回；宿主不提供 `octos` 审阅服务，应用如实显示不可用。

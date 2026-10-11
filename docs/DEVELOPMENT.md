@@ -1,24 +1,20 @@
-> 历史资料：本页记录0.4.x。0.5.0的新工具办理、验证范围和发布状态见 [README](../README.md) 与 [VALIDATION](VALIDATION.md)。
+> 本页面向开发者。0.4.x 的函数命名仍保留在下文“历史函数对照”中，但当前作品源码、工具契约、验证范围与发布状态以 [README](../README.md) 和 [VALIDATION](VALIDATION.md) 为准。
 
 # 开发说明
 
-## 当前独立应用（0.4.1 源码，待发布）
+## 当前独立应用（0.5.1，待发布）
 
-比赛作品入口是 [bundle/main.splash](../bundle/main.splash)。从 0.4.0 起，完整购物任务运行在 OctoScript / Splash 中，无需下方的历史 Web 服务。
+比赛作品唯一入口是 [bundle/](../bundle/)，业务核心在 [bundle/main.splash](../bundle/main.splash)。从 0.4.0 起，完整购物任务运行在 OctoScript / Splash 中，无需下方的历史 Web 服务。
 
-| 函数 | 职责 |
-| --- | --- |
-| research | 在内嵌合成目录中按预算、必需商品词检索，展示最多三条候选与证据 |
-| pick | 保存当前输入、候选、报价版本与截止时间，生成待确认提案 |
-| request_review / adopt_suggestion | 调用可选宿主 Agent，检查建议的来源、版本和候选归属；采纳后仍为待确认 |
-| confirm_draft | 重查状态、输入、商户版本、有效期、价格、预算、硬约束；写入草稿并独立读回 |
-| boot | 从宿主分配的应用私有存储恢复草稿 |
+当前提供七个宿主应用工具（见 [bundle/tools.json](../bundle/tools.json)）：`shopping.status.read`、`shopping.catalog.select`、`shopping.catalog.research`、`shopping.proposal.create`、`shopping.proposal.read`、`shopping.draft.save`、`shopping.draft.read`。界面按钮与工具共用同一套 `research_core → create_proposal_at → confirm_draft_core → draft_read_result` 业务核心。
 
-核心区别：Agent 可以建议商品，保存还需要用户确认；写入函数返回后要重新读取草稿并核对字段，才能显示成功。商品事实、模型理由与用户授权分别处理。
+核心区别：Agent 可以研究并建议商品，**保存还需要宿主确认**；写入函数返回后要独立读取草稿并核对字段，才能显示成功。商品事实、模型理由与用户授权分别处理。目录来源可切换（`synthetic_demo` 14 条合成；`official_snapshot` 3 条官网快照，整理摘要、非实时、仅商品价）。应用发起任务时绑定起始条件（`task_id` + 需求/预算/硬关键词/目录来源/商户版本/起始研究版本），写工具须携带匹配 `task_id`；该绑定是本地快照，不是宿主身份认证。
 
-0.4.1 只更新中文文档、真实截图、版本和发布配置，业务脚本与 0.4.0 相同。见[运行说明](REPRODUCING.md)、[实际验证范围](VALIDATION.md)和[演示提纲](DEMO.zh-CN.md)。纯文档修改无需重跑业务；bundle 文件变化后由官方工具重查摘要；业务修改只验证受影响的路径。
+历史函数对照（0.4.x 命名）：`research`=按预算/必需词检索候选；`pick`=生成待确认提案；`request_review`/`adopt_suggestion`=可选宿主审阅；`confirm_draft`=校验后写草稿并读回；`boot`=从私有存储恢复草稿。
 
-## 历史 Web 原型（v0.3.0）
+见[运行说明](REPRODUCING.md)、[实际验证范围](VALIDATION.md)和[演示提纲](DEMO.zh-CN.md)。**RC5 人工 UI 由 198242 覆盖，真实 M3 的 198273 待取回。** 纯文档修改无需重跑业务；bundle 文件变化后由官方工具重查摘要；业务修改只验证受影响的路径。
+
+## 历史 Web 原型（v0.3.0，只作复用/历史）
 
 以下内容保留供学习与复用，不是当前比赛应用的启动入口。
 

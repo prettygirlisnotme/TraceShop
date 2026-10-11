@@ -1,41 +1,63 @@
 # 运行范围与证据
 
-更新：2026-10-11。本轮运行与素材编码在离线 CPU 作业内完成；本预览不包含密钥、私有签名材料、完整会话日志或模型权重。
+更新：2026-10-11。本页区分**多个精确版本**、**CPU 执行位置**，以及证据属于**人工 UI**、**真实 Agent** 还是**外部效果**。应用与检查均在集群 Slurm CPU 作业内执行；真实模型作业会访问 MiniMax API，界面在私有 Xvfb 中软件渲染；本预览不含密钥、私有签名材料、完整会话日志或模型权重。
 
-## 真实 Agent 办理（运行 197305，最新事实源）
+## 精确版本（分开看，不要混用）
 
-未修改官方 OctoSense Linux 0.1.0-rc.1 包，隔离私有 Store 安装，未更改全局信任。
+| 版本 | main.splash | tools.json | AGENT.md | manifest.json | listing.json | 用途 |
+| --- | --- | --- | --- | --- | --- | --- |
+| **当前候选 0.5.1**（本仓库 `bundle/`） | `18647a97…` | `e3f0e0f5…` | `f02c135f…` | `93096796…` | `21de8b0e…` | 待发布；十文件摘要见 [`../package-inputs.json`](../package-inputs.json) |
+| **198242 私有测试副本** | `18647a97…` | `e3f0e0f5…` | `f02c135f…` | Linux/测试 publisher/签名 | 私有测试说明 | 当前候选的 RC5 人工 UI 运行；**不继承原候选字节全通过** |
+| **198215 实测包** | `18647a97…` | `e3f0e0f5…` | `f02c135f…` | `af045121…` | `9944a0d7…` | 历史旧包；manifest/listing 与当前候选不同 |
+| **197799 实测包** | `fc005b81…` | `e3f0e0f5…` | `06a058…` | `af045121…` | `9944a0d7…` | 历史旧包；真实模型闭环，较早业务 |
+| **197305 历史包** | `4c3a5daa…`（base `b3ac9f79…`） | `c51e4df9…` | `dd5f1e9e…` | 旧 | 旧 | 历史素材来源，不对应当前包 |
 
-场景：人工建立一份**待确认旧提案**（12.99 USD）。报价变化到 **14.94 USD** 后，旧提案确认被**拒绝，且没有产生草稿**（`stale_confirmation_rejected_no_draft=true`）。随后用户明确把任务交给 Agent 重办。
+- 简写为完整 SHA256 前缀；完整值以 [`../package-inputs.json`](../package-inputs.json) 与各自运行目录内的 `expected-sha256.json` 为准。198215 与 197799 的 `main.splash` 不同（`18647a97` vs `fc005b81`），必须分开引用，两者都属历史旧包。
+- 当前候选的 manifest/listing 元数据已在 198215 之后调整，所以 **198215 的包字节验证不继承到当前候选**；198242 用的是**私有测试副本**，其 manifest 含 Linux/测试 publisher/签名改动，listing 含私有测试说明，同样**不继承原候选字节全通过**。
 
-真实 CN MiniMax-M3 自主执行 `status.read → catalog.research → proposal.create`，经宿主 **Approve once** 后执行 `draft.save → draft.read → final`。6 次模型请求、5 个工具调用。批准前无草稿，批准后才写入；独立读回的 **8 个草稿字段与提案一致**（`save_read_draft_fields_consistent=true`）。
+## CPU 位置与执行边界
 
-结果：选中 item4 VicTsing Wireless Mouse，**14.94 USD**，预算余量 **15.06**；`draft_id=d-p-1791648896-2`，`proposal_id=p-1791648896-2`，`revision=2`，`research_revision=2`，`merchant_version=2`。静音依据为 `description` 的 Quiet 原文与 `features` 的 Silent click（`documented`）；item1/item2 为 `not_documented`，不据此声称它们不支持静音。
+- 控制位置（编辑、调度、查看）：`/home/a/myprojects/workspaces/03_competitions/active/gosim-agentic-app-2026`（WSL 只编辑、控制与查看）。
+- 执行位置（应用与检查实际运行）：集群 `/projects/user007ssd/projects/gosim-agentic-app-2026/release/v0.5.1-staging/bundle` 内的 Slurm CPU 作业。
+- 界面均为 CPU 软件渲染；真实模型调用需外网；**不代表 Android、Windows 或 macOS 已验证**。相关作业号：197754（CPU4，1:46）、197860（CPU4，1:38）、197799（CPU4，4:44）、198215（CPU4，2:05）、198242（CPU4，2:51）；198273 为真实 M3，待取回；历史 197305 为 CPU8、6:48。
+- 作业 UI 证据 `reports/20261011-upstream-alignment/run-198242/`、M3 证据 `reports/20261011-upstream-alignment/live/run-198273/`；本仓库不含这些集群运行目录，**不虚构对应文件**。
 
-本轮 final 的价格说明与目录原始价格一致（`prices_correct_in_this_run=true`）。同步的本次任务历史文字与 provider final **逐字相同**（`history_equals_provider_final=true`），并已显式结束。源码与紧凑界面均在本次 197305 运行中验证。
+## 人工 UI vs 真实 Agent vs 外部效果
 
-## 源码对应
+- **人工 UI（RC5，198242，当前业务）**：官方未修改 Linux RC5、真实 Store Get/Install/Open，控制器点击一条人工 UI 流程，现有 13 项检查全部通过，零模型请求、无录像；COMPLETED 0:0、CPU4、2:51。私有测试副本的 manifest/listing 含 Linux 测试 publisher/签名改动，**不继承原候选字节全通过**；旧 CLI `655114c4`（契约 1.8.0）`stamp/check --allow-unsigned` 仅结构检查，不是新 Hub `38635915`（1.12）工具链或 GitHub attestation 验证。此步**不驱动真实模型**。
+- **人工 UI（198215，历史旧包）**：未修改官方 Linux RC1、真实 Store 安装，13 项相关检查通过，零模型请求、无录像；manifest/listing 其后已改，**不继承包字节验证**。覆盖：待确认提案、保存并独立读回一致、报价变化后旧确认被拒绝且旧 M240 草稿全字段不变、拒绝新提案不删除旧草稿；顶部独立说明 Agent 回合状态（不会把“草稿已核验”或历史文字回复当成宿主终态）。此步**不驱动真实模型**。
+- **真实 Agent（197799，历史旧包）**：真实 CN MiniMax-M3，CPU4、4:44、6 次请求、5 个应用工具；未修改官方 RC1 真实 Store 安装。先以预算 20 研究、用户明确改 23，再启动绑定任务；模型选 M240 $22.99，静音字段有证据、预算余 0.01。`research`/`create`/`save` 全部携带同一原始 `task_id`；主控真实点击宿主 `Approve once`；`draft.read` 返回 `read_ok=true`、`matches_current_proposal=true`、`verification_scope=proposal_fields`；`quote` 与 `selection_record` 在落盘文件与工具结果中一致；973 字符最终回复经一次显式历史同步显示，主控显式结束。**该次 main 为 `fc005b81…`（较早业务），且之后不仅改 AGENT 文字，还改了 UI 摘要及状态、未重跑模型，故不能当作当前 0.5.1 的模型验收。**
+- **真实 Agent（198273，待取回）**：候选 0.5.1 上已提交真实 CN MiniMax-M3 闭环；首次授权待主控操作时 SSH 失联，**未取回终态，不能称通过**；模型请求数与退出码待取回。恢复 VPN 后先读结果，不盲目重提。
+- **零模型夹具 / 界面检查**：`197754`（13 项工具断言 + 6 项控制/UI 检查）与 `197860`（选择摘要前置 7 项检查，main `ca293739…`）提供支持性局部证据；`197786` 真实 M3（7 请求）曾暴露读回 `parse_failed` 与研究结果被宿主按 4 KB 截断，失败原样保留，不将后续修复回填成 197786 成功。
+- **外部效果**：本应用**没有**任何真实外部效果。目录为 14 条合成 + 3 条官网快照（整理摘要、非实时、仅商品价），**没有真实下单、支付、物流**，也未接入实时商品目录或在线检索服务；检索/推荐质量未做独立评估。
 
-真实模型运行源码：main.splash `4c3a5daabb267dfe05586802f66aed70400f80f312920844986b2946a8292c53`；AGENT.md `dd5f1e9ebc57bf488a1cb05e5fd8a4e1cd658ad7d7a0419c8eaca545244dd90d`；tools.json `c51e4df96eef9f719b874a49fc330ea63cfb282eba3dc76bce4e07728f0174f3`（六工具定义未变）。
+## 当前候选的证据边界
 
-## 演示与打包证据
+- 十文件本地摘要与当前 `bundle/` 一致（[`../package-inputs.json`](../package-inputs.json)）；本地摘要**不是**官方签名。
+- 官方 `stamp/check` 作业 **197371** 的十文件（main `4c3a5daa…`、listing `f4059e51…` 等）属于**旧包**，**不适用于当前候选**。当前候选只经旧 CLI `655114c4`（契约 1.8.0）`stamp/check --allow-unsigned` 结构检查，**不是**新 Hub `38635915`（1.12）工具链或 GitHub attestation 验证；RC5 人工 UI 由 198242 覆盖，真实模型闭环 198273 待取回。
+- 四张 `bundle/screenshots/01–04` 与 94 秒节选（`../evidence/native-agent-excerpt-197305.mp4`）全部来自 **197305 旧合成目录**流程，**仅历史**，不得当作当前包实拍。
 
-- [94秒节选](../evidence/native-agent-excerpt-197305.mp4)剪去等待、裁出完整应用窗口，保留原生批准弹窗；[字幕](../evidence/native-agent-excerpt-197305.zh-CN.srt)和[来源](../evidence/native-agent-media-197305.json)随附。
-- 完整连续原片368.169秒/368帧/零错误，保存在私有集群；本候选不包含该大文件，不能把节选称连续录屏。
-- 四张包内截图来自197305同次真实采集。裁切990×646（x84,y100），逐张核对裁切前后RGBA像素一致。
-- 原生批准由测试控制器按真实界面显式点击；基线走人工UI入口，重新办理的研究、选择、建提案、保存请求和读回由MiniMax自主完成。
-- 官方开发包检查197371（CPU2、COMPLETED0:0）通过，最终10文件与[检查摘要](../evidence/bundle-check-replan.json)逐项一致。[原始输出](../evidence/bundle-check-replan.txt)明确unsigned及保存工具每次等待宿主批准，不代表正式发布证明。
+## RC5 兼容验证：198242 人工 UI 已通过，198273 真实模型待取回
 
+官方 OctoSense 桌面 **RC5** 已于 2026-10-11 发布：
+
+- 源码 `83d356c261f755fe4bb446e331c1508a78ee29f2`，release `desktop-v0.1.0-rc.5`；App Flow 更名为 **OctoSense-App-Flow**（旧名重定向）。
+- 将能力/network 声明改为**用途披露**由 **RC4 引入、RC5 延续**；设备同意、账户 scope、人工写批准与存储隔离**仍保留**。RC5 新增 charts/Wasm 与 HTTPS 修复——**本应用不使用这些新能力**。
+- 宿主 60 秒服务超时仍为默认值；本应用**不宣称 60 秒问题已修复**，最终回复仍靠显式历史同步取回。
+- **198242**（COMPLETED 0:0、CPU4、2:51）：官方未修改 Linux RC5 真实 Store Get/Install/Open，现有 13 项人工 UI 检查全通过，零模型请求、无录像；私有测试副本 manifest/listing 含测试 publisher/签名改动，**不继承原候选字节全通过**。
+- **198273**（真实 CN MiniMax-M3）：已提交；首次授权待主控操作时 SSH 失联，**未取回终态，不能称通过**；模型请求数与退出码待取回。恢复 VPN 后先读结果，不盲目重提。
+- 兼容性是**源码/文档级判断**（`script-tools-v1` / `app_tools.dispatch@1` / `confirm=host` 路径），与上述运行证据分开。发布工作流已由主控更新为官方 App Flow `45174df…` 模板、Hub pin `38635915…`；**未跑 CI、未发布**。
 
 ## 仍有的限制
 
-- 宿主 **60 秒回调超时**仍存在；本轮通过显式同步本次任务历史取回真实 final，历史不提供 turn 终态，**仍需用户明确结束**。
+- 宿主 **60 秒回调超时**仍存在；历史不提供 turn 终态，**仍需用户明确结束**。
 - 首次工具授权后立即重试的时序根因**未定位**；观察到的延后成功不能算根因修复。
-- 六工具未逐一实测：本序列调用 5 个，`proposal.read` 未单独调用；预算 13 场景未测；拒绝/无变化/进行中任务等路径未全覆盖。
-- 本次最终开发包检查已通过（197371，不继承b3结论）；生产签名、Release与App Hub更新未执行。
-- 目录为 14 条合成 USD 商品，未接入真实商品/检索服务或原生 Project A，无真实下单、支付、物流。
+- 七工具未逐一实测：197799 调用 5 个（未调用 `catalog.select` / `proposal.read`）；预算冲突/无变化/进行中任务等路径未全覆盖。
+- 研究输出已精简（`decision` 省略与候选重复的 `candidate_checks`，候选只保留 `features` 与命中字段证据、软偏好证据、完整 `quote` 与版本）；197799 该次紧凑 UTF8 重序列化 2920 字节，是本次具体输入的长度，**不保证**更长查询或三候选结果都低于宿主上限。
+- 原生仍是规则 + 目录，未接入实时商品目录或在线检索服务（合成目录 + 3 条官网快照）或原生 Project A；无真实交易。
+- 不把 Jev、生成式搜广推、AgenticOS、全双工写成本应用已实现能力。
 
 ## 历史证据（不作新版主证据）
 
-- 早期人工 UI 录像 197066（78.24 秒，零模型调用）与 196923 早期模型运行仅作历史记录。
-- 196923 的 final 曾出现一处价格比较错误；本轮 197305 的价格说明与目录一致，但旧文字记录不可修改，仅作历史。
+- 人工 UI 录像 197066（78.24 秒，零模型）、早期模型运行 196923、以及 197305 合成目录“变价后重办”（94 秒节选 + 4 张截图）均为历史记录。
+- 196923 的 final 曾出现一处价格比较错误；这些旧文字记录不可修改，仅作历史。

@@ -3,7 +3,7 @@
   "tools": [
     {
       "name": "shopping.status.read",
-      "description": "Read TraceShop's current local state: synthetic USD catalog size, merchant version, the last rule-research result, the pending proposal (if any) and whether a purchase draft is stored. Read-only.",
+      "description": "Read TraceShop's current local state: active catalog source (catalog_source/source_note) and its size, merchant version, whether a local price simulation is active, the last rule-research result, the pending proposal (if any) and whether a purchase draft is stored. Read-only.",
       "implemented_by": "app",
       "risk": "read",
       "input_schema": {
@@ -46,6 +46,22 @@
           "has_draft": {
             "type": "boolean"
           },
+          "catalog_source": {
+            "type": "string",
+            "enum": [
+              "official_snapshot",
+              "synthetic_demo"
+            ],
+            "description": "Active catalog source: official_snapshot is 3 curated US/USD official page price snapshots (curated summary, not verbatim, not real-time); synthetic_demo is the 14 fictional USD items."
+          },
+          "source_note": {
+            "type": "string",
+            "description": "Human-readable description of the active catalog source and its limits."
+          },
+          "price_is_simulated": {
+            "type": "boolean",
+            "description": "True while a local simulated price shift is active. Simulation never changes the snapshot price."
+          },
           "message": {
             "type": "string"
           },
@@ -57,6 +73,112 @@
           },
           "research_merchant_version": {
             "type": "integer"
+          },
+          "agent_task_binding": {
+            "type": "object",
+            "description": "Small local task-binding summary: whether an app-launched task binding exists/active, its task_id, the original request snapshot and the starting research revision. A local binding snapshot, not host turn identity and not a guarantee of arbitrary host-turn isolation.",
+            "properties": {
+              "present": {
+                "type": "boolean"
+              },
+              "bound": {
+                "type": "boolean"
+              },
+              "active": {
+                "type": "boolean"
+              },
+              "task_id": {
+                "type": "string"
+              },
+              "request": {
+                "type": "object",
+                "description": "Original request snapshot captured when the task was launched.",
+                "properties": {
+                  "need": {
+                    "type": "string"
+                  },
+                  "budget_usd": {
+                    "type": "number"
+                  },
+                  "hard_keywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "catalog_source": {
+                "type": "string"
+              },
+              "merchant_version": {
+                "type": "integer"
+              },
+              "start_research_revision": {
+                "type": "integer"
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "is_ok"
+        ]
+      }
+    },
+    {
+      "name": "shopping.catalog.select",
+      "description": "Switch the active catalog source for this session to one of two fixed embedded sources, closed selection with no network and no arbitrary JSON or file input: official_snapshot (3 curated US/USD official page price snapshots; facts_kind=curated_page_summary, a curated summary not verbatim page text, not real-time, item price only, shipping/tax/delivery-to-user unverified, stock not guaranteed) or synthetic_demo (14 fictional USD demo items, not a real quote). risk=act, no host confirmation. Re-selecting the current source is a no-op. On change it increments merchant_version and clears prior research results, selection, simulated price state and old suggestions; a still-pending prior proposal is kept on display but is then rejected for saving by the existing version guard (its status is not changed). It refuses while an Agent task is active so host async turns are not mixed. It does not fetch anything or accept item data.",
+      "implemented_by": "app",
+      "risk": "act",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "enum": [
+              "official_snapshot",
+              "synthetic_demo"
+            ]
+          }
+        },
+        "required": [
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "is_ok": {
+            "type": "boolean"
+          },
+          "changed": {
+            "type": "boolean"
+          },
+          "error_code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "catalog_source": {
+            "type": "string",
+            "enum": [
+              "official_snapshot",
+              "synthetic_demo"
+            ]
+          },
+          "merchant_version": {
+            "type": "integer"
+          },
+          "catalog_size": {
+            "type": "integer"
+          },
+          "source_note": {
+            "type": "string"
           }
         },
         "required": [
@@ -66,7 +188,7 @@
     },
     {
       "name": "shopping.catalog.research",
-      "description": "Run TraceShop's deterministic rule search over its embedded synthetic USD catalog: a text need, a USD budget and optional hard keywords. Returns up to three candidates with price, budget remainder and matched evidence. Each candidate also carries verbatim catalog facts (features/description), evidence entries (term/field/value) for literal matches in real catalog fields, and preference_checks for the small explicit soft-preference dictionary (quiet/gaming/portable) triggered by the need: evidence_status is documented or not_documented, where documented means a literal match in this synthetic catalog field. Candidate facts/evidence are copied from the synthetic demo catalog and are not real product reviews, endorsements or guarantees; not_documented only means this demo catalog has no matching field for the item, not that a real product lacks the feature. Business errors (invalid budget, no candidates) come back as is_ok=false with an error_code; it never invents items.",
+      "description": "Research the current catalog using the user's need, positive USD budget and hard_keywords. Never raise the budget or delete hard keywords. For an app-started task, carry the original task_id; changed UI conditions, source or versions reject the call without changing business state. Returns up to 3 eligible candidates with prices, budget remaining, catalog features, literal field evidence, preference_checks and dated quote metadata. not_documented means unverified in this catalog, not unsupported. decision contains the request, state, clarification_required, question and separate read-only alternatives; candidate checks are on candidates, not duplicated in decision. Alternatives cannot become proposals. Prices may be synthetic or locally simulated; official snapshots are item prices only, not live totals, shipping, tax or delivery guarantees. No save, purchase or approval occurs here.",
       "implemented_by": "app",
       "risk": "act",
       "input_schema": {
@@ -89,6 +211,12 @@
               "maxLength": 40
             },
             "maxItems": 8
+          },
+          "task_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "Optional. When the app launched this task, pass the exact task_id from the task payload; it must match the local binding, and the need/budget/hard-keyword set must match the task's starting snapshot. Omit only for direct host calls with no active binding."
           }
         },
         "required": [
@@ -138,30 +266,21 @@
                 "budget_remaining_usd": {
                   "type": "number"
                 },
-                "matched_terms": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
                 "facts": {
                   "type": "object",
-                  "description": "Verbatim catalog fields for this item; synthetic demo data.",
+                  "description": "Catalog feature list; literal evidence retains matched source field/value. quote.facts_kind states provenance.",
                   "properties": {
                     "features": {
                       "type": "array",
                       "items": {
                         "type": "string"
                       }
-                    },
-                    "description": {
-                      "type": "string"
                     }
                   }
                 },
                 "evidence": {
                   "type": "array",
-                  "description": "Literal term/field/value matches in real catalog fields (title/brand/categories/features/description/technical_details); no synthesized 'satisfied' quotes.",
+                  "description": "Literal catalog term/field/value matches; no synthesized quotes.",
                   "items": {
                     "type": "object",
                     "properties": {
@@ -179,7 +298,7 @@
                 },
                 "preference_checks": {
                   "type": "array",
-                  "description": "One entry per soft-preference group actually mentioned by the need. evidence_status=documented means a literal catalog-field match (synthetic demo data, not a real review); not_documented only means this demo catalog has no matching field for the item.",
+                  "description": "Only groups mentioned by need. documented has literal evidence; not_documented means unverified, not unsupported.",
                   "items": {
                     "type": "object",
                     "properties": {
@@ -220,15 +339,265 @@
                       }
                     }
                   }
+                },
+                "quote": {
+                  "type": "object",
+                  "description": "Dated source metadata: synthetic_demo is fictional; curated_page_summary is curated, not live. Shipping, tax and delivery unverified.",
+                  "properties": {
+                    "variant": {
+                      "type": "string"
+                    },
+                    "source_url": {
+                      "type": "string"
+                    },
+                    "region": {
+                      "type": "string"
+                    },
+                    "currency": {
+                      "type": "string"
+                    },
+                    "observed_at": {
+                      "type": "string"
+                    },
+                    "snapshot_price_usd": {
+                      "type": "number"
+                    },
+                    "price_basis": {
+                      "type": "string"
+                    },
+                    "stock_at_observation": {
+                      "type": "string"
+                    },
+                    "shipping_to_user": {
+                      "type": "string"
+                    },
+                    "tax_total": {
+                      "type": "string"
+                    },
+                    "merchant_quote_validity": {
+                      "type": "string"
+                    },
+                    "facts_kind": {
+                      "type": "string",
+                      "enum": [
+                        "curated_page_summary",
+                        "synthetic_demo"
+                      ]
+                    }
+                  }
+                },
+                "price_is_simulated": {
+                  "type": "boolean",
+                  "description": "True when the quoted price reflects a local simulated shift; snapshot_price_usd is never changed."
                 }
               }
             }
+          },
+          "catalog_source": {
+            "type": "string",
+            "enum": [
+              "official_snapshot",
+              "synthetic_demo"
+            ]
           },
           "research_revision": {
             "type": "integer"
           },
           "merchant_version": {
             "type": "integer"
+          },
+          "decision": {
+            "type": "object",
+            "description": "Deterministic decision structure for this research pass; present on every result including failures. state is the rule outcome; request is the exact input snapshot; the per-candidate checks are already on candidates, so this object omits a duplicate candidate_checks copy. alternatives are read-only comparison items that are NEVER in candidates. clarification_required is true only for no_valid_candidates/invalid_budget. Soft preferences never become hard filters, and not_documented means this catalog has no matching field, not that the feature is unsupported.",
+            "properties": {
+              "state": {
+                "type": "string",
+                "enum": [
+                  "ready",
+                  "no_valid_candidates",
+                  "preference_evidence_gap",
+                  "invalid_budget"
+                ]
+              },
+              "request": {
+                "type": "object",
+                "description": "Exact request snapshot for this research (raw text kept so UI edits can be detected).",
+                "properties": {
+                  "need": {
+                    "type": "string"
+                  },
+                  "budget_usd": {
+                    "type": "number"
+                  },
+                  "budget_text": {
+                    "type": "string"
+                  },
+                  "hard_keywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "hard_text": {
+                    "type": "string"
+                  },
+                  "catalog_source": {
+                    "type": "string",
+                    "enum": [
+                      "official_snapshot",
+                      "synthetic_demo"
+                    ]
+                  },
+                  "request_origin": {
+                    "type": "string",
+                    "enum": [
+                      "app_tool_arguments",
+                      "ui_current_input"
+                    ],
+                    "description": "Research input origin only; never approval."
+                  }
+                }
+              },
+              "research_revision": {
+                "type": "integer"
+              },
+              "merchant_version": {
+                "type": "integer"
+              },
+              "clarification_required": {
+                "type": "boolean",
+                "description": "True only for no_valid_candidates and invalid_budget; false for ready and preference_evidence_gap."
+              },
+              "question": {
+                "type": "string",
+                "description": "Chinese clarification/tradeoff prompt when input or evidence is insufficient; empty when none is needed."
+              },
+              "rule_note": {
+                "type": "string",
+                "description": "Rule boundary note: budget/hard keywords are hard constraints (never relaxed or deleted), soft preferences count only literal catalog-field evidence (not_documented means this catalog has no matching field, not that the item lacks the feature), and alternatives are read-only comparisons that cannot become proposals."
+              },
+              "alternatives": {
+                "type": "array",
+                "description": "Read-only comparison items, at most 3, strictly separate from candidates and never eligible. Empty for ready and invalid_budget; for no_valid_candidates it holds over-budget all-hard items (kind=budget_change_required, <=2) then under-budget missing-hard items (kind=hard_evidence_missing) sorted by fewest missing keywords then lowest price; for preference_evidence_gap it holds only over-budget all-hard items with all active preferences documented.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "budget_change_required",
+                        "hard_evidence_missing"
+                      ]
+                    },
+                    "item_id": {
+                      "type": "integer"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "brand": {
+                      "type": "string"
+                    },
+                    "price_usd": {
+                      "type": "number"
+                    },
+                    "budget_delta_usd": {
+                      "type": "number",
+                      "description": "price_usd minus budget when over budget (never negative); 0 for under-budget missing-hard items."
+                    },
+                    "missing_hard_keywords": {
+                      "type": "array",
+                      "description": "Original hard keyword words not literally documented for this item; empty for budget_change_required.",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "hard_evidence": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "term": {
+                            "type": "string"
+                          },
+                          "evidence": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "term": {
+                                  "type": "string"
+                                },
+                                "field": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "preference_checks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "preference": {
+                            "type": "string",
+                            "enum": [
+                              "quiet",
+                              "gaming",
+                              "portable"
+                            ]
+                          },
+                          "label": {
+                            "type": "string"
+                          },
+                          "evidence_status": {
+                            "type": "string",
+                            "enum": [
+                              "documented",
+                              "not_documented"
+                            ]
+                          },
+                          "evidence": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "term": {
+                                  "type": "string"
+                                },
+                                "field": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "quote": {
+                      "type": "object",
+                      "description": "Quote metadata for this alternative; facts_kind distinguishes synthetic_demo from curated_page_summary and price_basis is item_price_only."
+                    },
+                    "price_is_simulated": {
+                      "type": "boolean"
+                    },
+                    "currently_eligible": {
+                      "type": "boolean",
+                      "description": "Always false: alternatives are never eligible candidates and cannot be saved directly."
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "required": [
@@ -255,6 +624,12 @@
           "merchant_version": {
             "type": "integer",
             "minimum": 1
+          },
+          "task_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "Optional. When the app launched this task, pass the exact task_id from the task payload; it must match the active local binding, and the latest research must be from after the task started. Omit only for direct host calls with no active binding."
           }
         },
         "required": [
@@ -291,6 +666,22 @@
           "title": {
             "type": "string"
           },
+          "catalog_source": {
+            "type": "string",
+            "enum": [
+              "official_snapshot",
+              "synthetic_demo"
+            ],
+            "description": "Catalog source this proposal was created from."
+          },
+          "quote": {
+            "type": "object",
+            "description": "Snapshot of the item's quote metadata at proposal creation; kept so an old proposal is displayed from its own source, not from a different current catalog."
+          },
+          "price_is_simulated": {
+            "type": "boolean",
+            "description": "True when the proposal price reflects a local simulated shift; the snapshot price is never changed."
+          },
           "price_usd": {
             "type": "number"
           },
@@ -314,6 +705,13 @@
           },
           "research_revision": {
             "type": "integer"
+          },
+          "selection_record": {
+            "type": "object",
+            "description": "Structured evidence snapshot captured when this proposal was created: request, selected item price and budget remainder, per-hard-keyword literal evidence, preference checks and the previous adjacent request comparison if any. It records rule-field evidence and adjacent research, not full semantics or the person's approval; quote scope still governs shipping/tax."
+          },
+          "selection_record_present": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -357,6 +755,22 @@
           "title": {
             "type": "string"
           },
+          "catalog_source": {
+            "type": "string",
+            "enum": [
+              "official_snapshot",
+              "synthetic_demo"
+            ],
+            "description": "Catalog source this proposal was created from."
+          },
+          "quote": {
+            "type": "object",
+            "description": "Snapshot of the item's quote metadata at proposal creation; kept so an old proposal is displayed from its own source, not from a different current catalog."
+          },
+          "price_is_simulated": {
+            "type": "boolean",
+            "description": "True when the proposal price reflects a local simulated shift; the snapshot price is never changed."
+          },
           "price_usd": {
             "type": "number"
           },
@@ -380,6 +794,13 @@
           },
           "research_revision": {
             "type": "integer"
+          },
+          "selection_record": {
+            "type": "object",
+            "description": "Structured evidence snapshot captured when this proposal was created: request, selected item price and budget remainder, per-hard-keyword literal evidence, preference checks and the previous adjacent request comparison if any. It records rule-field evidence and adjacent research, not full semantics or the person's approval; quote scope still governs shipping/tax."
+          },
+          "selection_record_present": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -412,6 +833,12 @@
           "merchant_version": {
             "type": "integer",
             "minimum": 1
+          },
+          "task_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "Optional. When the app launched this task, pass the exact task_id from the task payload; it must match the active local binding, and the latest research must be from after the task started. Omit only for direct host calls with no active binding."
           }
         },
         "required": [
@@ -452,6 +879,16 @@
           "selected_item_id": {
             "type": "integer"
           },
+          "catalog_source": {
+            "type": "string",
+            "enum": [
+              "official_snapshot",
+              "synthetic_demo"
+            ]
+          },
+          "price_is_simulated": {
+            "type": "boolean"
+          },
           "price_usd": {
             "type": "number"
           },
@@ -462,6 +899,17 @@
             "type": "integer"
           },
           "readback_ok": {
+            "type": "boolean"
+          },
+          "quote": {
+            "type": "object",
+            "description": "Snapshot of the item's quote metadata at proposal creation; kept so an old proposal is displayed from its own source, not from a different current catalog."
+          },
+          "selection_record": {
+            "type": "object",
+            "description": "Structured evidence snapshot captured when the saved draft's proposal was created. Legacy drafts without it report kind=unknown_legacy and selection_record_present=false; it is never fabricated."
+          },
+          "selection_record_present": {
             "type": "boolean"
           }
         },
@@ -512,6 +960,13 @@
           "selected_item_id": {
             "type": "integer"
           },
+          "catalog_source": {
+            "type": "string",
+            "description": "official_snapshot or synthetic_demo; unknown_legacy when the stored draft has no source metadata."
+          },
+          "price_is_simulated": {
+            "type": "boolean"
+          },
           "price_usd": {
             "type": "number"
           },
@@ -537,6 +992,17 @@
               "stored_fields",
               "proposal_fields"
             ]
+          },
+          "quote": {
+            "type": "object",
+            "description": "Snapshot of the item's quote metadata at proposal creation; kept so an old proposal is displayed from its own source, not from a different current catalog."
+          },
+          "selection_record": {
+            "type": "object",
+            "description": "Structured evidence snapshot captured when the stored draft's proposal was created. Legacy drafts without it report kind=unknown_legacy and selection_record_present=false; it is never fabricated."
+          },
+          "selection_record_present": {
+            "type": "boolean"
           }
         },
         "required": [
