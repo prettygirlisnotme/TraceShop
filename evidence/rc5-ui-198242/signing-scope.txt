@@ -1,0 +1,4 @@
+approved_test_only=true
+key_count=3
+global_trust_modified=false
+mirror=/projects/user007ssd/projects/gosim-agentic-app-2026/scratch/upstream-rc5-ui-20261011/198242/mirror

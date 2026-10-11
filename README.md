@@ -43,27 +43,29 @@ TraceShop 是一个 **OctoScript / Splash** 应用，作品唯一入口是 [`bun
 | --- | --- | --- | --- |
 | **198242** | 候选 0.5.1（本仓库 `bundle/` 的私有测试副本） | RC5 人工 UI，13 项检查，零模型，2:51，Slurm CPU4 | 官方未修改 Linux RC5 真实 Store Get/Install/Open；现有 13 项人工 UI 检查全通过，无录像；测试副本 manifest 有 Linux/测试 publisher/签名改动，listing 有私有测试说明，**不继承原候选字节全通过** |
 | **198215** | main `18647a97…`、旧 manifest/listing（较早候选） | 人工 UI，13 项检查，零模型，2:05，CPU4 | 历史旧包；manifest/listing 其后已改，**不继承包字节验证** |
-| **197799** | main `fc005b81…`、AGENT `06a058…`（较早业务） | 真实 CN MiniMax-M3，6 请求 5 工具，宿主 Approve once，4:44，CPU4 | M240 $22.99（预算 23、quiet）保存并独立读回；此后不仅改 AGENT 文字，还改 UI 摘要与状态且未重跑模型，**不能当作当前 0.5.1 的模型验收** |
-| **198273** | 候选 0.5.1 | 真实 CN MiniMax-M3 | 已提交；首次授权待主控操作时 SSH 失联，**未取回终态，不能称通过**；模型请求数/退出码待取回 |
+| **197799** | main `fc005b81…`、AGENT `06a058…`（较早业务） | 真实 CN MiniMax-M3，6 请求 5 工具，宿主 Approve once，4:44，CPU4 | **较早业务对照**；M240 $22.99（预算 23、quiet）保存并独立读回，其后改 AGENT 文字与 UI 摘要/状态且未重跑模型 |
+| **198316** | 候选 0.5.1（本仓库 `bundle/` 的私有测试副本） | 真实 CN MiniMax-M3，6 请求 5 工具，原生 Allow + 宿主 Approve once，7:43，CPU4 | 官方未修改 Linux RC5 真实 Store 安装；M240 $22.99（预算 23、wireless、quiet 有字段证据）保存并独立读回；`passed=true`、10 项 observed 全 true、`draft.read` `matches_current_proposal=true` `scope=proposal_fields`；693 字符真实 final 经一次显式历史同步显示，明确结束后状态已结束；**未调用 `catalog.select`/`proposal.read`** |
+| **198273** | 候选 0.5.1 | 真实 CN MiniMax-M3（历史失败，材料保留） | 首次授权待主控操作时 SSH 失联，**无 live-result、无 relay 请求、模型请求 0，未通过**；wrapper 超时被误映射为 exit0，已在 198316 修正 |
 | **197305** | main `4c3a5daa…` | 历史：合成目录“变价后重办”，94 秒节选 + 4 张截图 | **仅历史证据**，不对应当前包 |
 | 197754 / 197860 | 较早业务 | 零模型夹具 / 人工 UI 检查 | 支持性局部检查 |
 
 - 当前候选十文件摘要见 [`package-inputs.json`](package-inputs.json)（本地开发摘要，非官方签名）。
 - 官方 `stamp/check` 作业 197371 对应旧包（main `4c3a5daa…`），**不适用于当前候选**；当前候选只经旧 CLI `655114c4`（契约 1.8.0）`stamp/check --allow-unsigned` 结构检查，**不是**新 Hub `38635915`（1.12）工具链或 GitHub attestation 验证。
 
-### RC5 兼容验证：198242 人工 UI 已通过，198273 真实模型待取回
+### RC5 兼容验证：198242 人工 UI 与 198316 真实模型均已通过
 
 官方 OctoSense 桌面 RC5 已于 2026-10-11 发布（源码 `83d356c2…`），App Flow 更名为 **OctoSense-App-Flow**。能力/network 声明改为**用途披露**由 **RC4 引入、RC5 延续**；设备同意、账户 scope、人工写批准与存储隔离保留；RC5 新增 charts/Wasm 与 HTTPS 修复——**本应用不使用这些新能力，也不宣称 60 秒宿主超时问题已修复**。
 
-- **198242**（COMPLETED 0:0、CPU4、2:51）：官方未修改 Linux RC5 真实 Store Get/Install/Open，现有 13 项人工 UI 检查全通过，零模型请求、无录像。旧 CLI `655114c4`（契约 1.8.0）`stamp/check --allow-unsigned` 只是结构检查，**不是**新 Hub `38635915`（1.12）工具链或 GitHub attestation 验证。
-- **198273**（真实 CN MiniMax-M3）：已提交；首次授权待主控操作时 SSH 失联，**未取回终态，不能称通过**；模型请求数与退出码待取回。恢复 VPN 后先读结果，不盲目重提。
+- **198242**（COMPLETED 0:0、CPU4、2:51）：官方未修改 Linux RC5 真实 Store Get/Install/Open，现有 13 项人工 UI 检查全通过，零模型请求、无录像；只经旧 CLI `655114c4`（契约 1.8.0）结构检查，**不是**新 Hub `38635915`（1.12）工具链或 GitHub attestation 验证。
+- **198316**（COMPLETED 0:0、CPU4、7:43）：官方未修改 Linux RC5（`octosense_0.1.0-rc.5_amd64.deb`，`unmodified_official=true`）真实 Store 安装，真实 CN MiniMax-M3，非流上游转标准 SSE 适配器不变，6 请求 5 工具（`status`/`research`/`proposal.create`/`draft.save`/`draft.read`）；原生 Allow 与宿主 Approve once 均主控按本次实际画面点击，批准前草稿不存在、批准后成功保存 M240 $22.99（预算 23、wireless、quiet 有字段证据）。`live-result passed=true`，10 项 observed 全 true，research/create/save 同一 `task_id`，`draft.read` `read_ok=true`/`matches_current_proposal=true`/`verification_scope=proposal_fields`；693 字符真实 final 经一次显式历史同步显示，明确结束后状态已结束。**未调用 `catalog.select`/`proposal.read`，不代表七工具或全平台全覆盖。**
+- **198273**（历史失败，材料保留）：候选上首次真实 M3 作业；首次授权待主控操作时 SSH 失联，**无 live-result、无 relay 请求日志、模型请求 0，未通过**；wrapper 超时错误被误映射为 Slurm exit0，已在 198316 修正。恢复 VPN 后仅取回失败材料，不盲目重提。
 - 发布工作流已由主控更新为官方 App Flow `45174df…` 模板、Hub pin `38635915…`；**未跑 CI、未发布**。
 
 ## 边界与已知限制
 
 - **原生仍是规则 + 目录**：检索是合成目录与 3 条官网快照上的确定性规则，不是完整语义理解，也**未接入实时商品目录或在线检索服务，未原生接入 Project A**。
 - **无真实交易**：没有真实下单、支付或物流；草稿只写本地私有存储。
-- **单用例真实模型**：197799 只在一条真实模型用例上验证；该次调用 5 个工具（未调用 `catalog.select` / `proposal.read`），不代表七工具、所有平台或拒绝路径全覆盖。
+- **真实模型覆盖有限**：当前候选 198316 调用 5 个工具（未调用 `catalog.select` / `proposal.read`），不代表七工具、所有平台或拒绝路径全覆盖；197799 仅作较早业务对照。
 - **宿主限制仍在**：60 秒回调超时仍存在；最终回复经显式同步本次任务历史取回，历史没有回合终态，仍需用户明确结束；首次授权后立即重试的时序根因未定位。
 - **历史素材**：仓库内 94 秒视频（`evidence/native-agent-excerpt-197305.mp4`）与 `bundle/screenshots/01–04` 均来自 **197305 旧合成目录**流程，**不是当前候选的实拍**，仅作历史保留。
 

@@ -38,17 +38,18 @@ sequenceDiagram
 
 - **当前候选 0.5.1**：main `18647a97…`、tools `e3f0e0f5…`、AGENT `f02c135f…`、manifest `93096796…`、listing `21de8b0e…`；集群执行位置 `release/v0.5.1-staging/bundle`。
 - **198242 RC5 人工 UI**：候选私有测试副本，官方未修改 Linux RC5 真实 Store Get/Install/Open，现有 13 项检查全通过，零模型、无录像（COMPLETED 0:0、CPU4、2:51）；测试副本 manifest 有 Linux/测试 publisher/签名改动，listing 有私有测试说明，**不继承原候选字节全通过**。
+- **198316 RC5 真实模型**：候选私有测试副本，官方未修改 Linux RC5 真实 Store 安装，真实 CN MiniMax-M3，6 请求 5 工具（`status`/`research`/`proposal.create`/`draft.save`/`draft.read`），原生 Allow 与宿主 `Approve once` 均由主控按实际画面点击，M240 $22.99（预算 23、quiet 有字段证据）保存并独立读回，`passed=true`、10 项 observed 全 true，693 字符真实 final 经一次显式历史同步、明确结束后状态已结束（COMPLETED 0:0、CPU4、7:43）；未调用 `catalog.select`/`proposal.read`，不代表七工具全覆盖。
 - **198215 历史旧包**：main `18647a97…`、AGENT `f02c135f…`、manifest `af045121…`、listing `9944a0d7…`，人工 UI 13 项通过（2:05）；包字节验证不继承。
 - **197799 历史旧包**：main `fc005b81…`、AGENT `06a058…`、manifest `af045121…`、listing `9944a0d7…`，真实 MiniMax-M3 完成 5 个工具调用、宿主 `Approve once`、保存与八字段读回（M240 $22.99、预算 23、quiet）；之后不仅改 AGENT 文字，还改 UI 摘要及状态、未重跑模型。
 - **197305 历史包**：main `4c3a5daa…`，其 94 秒视频与四张截图仅作历史。
 
-198273 是候选上的新真实 M3 作业，已提交但首次授权待主控操作时 SSH 失联，未取回终态，不能称通过；模型请求数/退出码待取回。精确摘要、CPU 位置与未测项见 [VALIDATION](VALIDATION.md)。
+198273 是候选上的首次真实 M3 作业，**历史失败**：首次授权待主控操作时 SSH 失联，无 live-result、无 relay 请求、模型请求 0，不能称通过；wrapper 超时误映射为 exit0，已在 198316 修正。当前候选的真实模型验收由 **198316** 提供（`passed=true`）。精确摘要、CPU 位置与未测项见 [VALIDATION](VALIDATION.md)。
 
 当前是 14 条合成 + 3 条官网快照（整理摘要、非实时、仅商品价）的规则决策，不包含真实下单、支付、物流或真实检索模型效果。
 
 ## RC5 兼容与打包发布
 
-- 官方 RC5 于 2026-10-11 发布（源码 `83d356c2…`），App Flow 更名为 OctoSense-App-Flow；将能力/network 声明改为用途披露由 **RC4 引入、RC5 延续**，保留设备同意/账户/人工写批准/存储隔离，新增 charts/Wasm 与 HTTPS 修复（本应用不使用）。**不宣称 60 秒超时已修复。** 当前候选 RC5 人工 UI 由 198242 覆盖，真实模型 198273 待取回。
+- 官方 RC5 于 2026-10-11 发布（源码 `83d356c2…`），App Flow 更名为 OctoSense-App-Flow；将能力/network 声明改为用途披露由 **RC4 引入、RC5 延续**，保留设备同意/账户/人工写批准/存储隔离，新增 charts/Wasm 与 HTTPS 修复（本应用不使用）。**不宣称 60 秒超时已修复。** 当前候选 RC5 人工 UI 由 198242 覆盖，真实模型由 **198316** 覆盖（`passed=true`）。
 - 官方 `stamp/check` 197371 对应旧包（main `4c3a5daa…`），**不适用当前候选**；当前候选只经旧 CLI `655114c4`（契约 1.8.0）`stamp/check --allow-unsigned` 结构检查，**不是**新 Hub `38635915`（1.12）工具链或 GitHub attestation 验证。
 - 已有[官方发布工作流](../.github/workflows/publish-app.yml)由版本 tag 触发，生成 GitHub 证明、封存包与发布回执；**已由主控更新为官方 App Flow `45174df…` 模板、Hub pin `38635915…`，未跑 CI、未发布**。发布**逐次授权**。本工作树**尚未 push**。
 
@@ -71,6 +72,6 @@ flowchart LR
 先保证可复现交付和清楚的答辩。当前成熟候选已整合，界面已提供完整回复原文页，不再把“补长回复展开显示”列为待办。研发优先定位首次授权重试与宿主回调超时；预算冲突或其他路径只在新增需求/故障需要时验证，不机械扩测。接入实时商品目录或在线检索服务时保持业务核心与宿主适配分离，并单独报告数据来源和检索效果。新实录/答辩定稿与对外发布继续暂缓，等各自明确批准。
 
 
-原六项顺序仍保留：0 中文/README/发布流程反馈已整合但未发布；1 宿主 Agent dispatch 可行性已有 RC1 证据；2 共享业务工具闭环已有 RC1 单用例；3 有出处报价、条件取舍、选择记录与界面表达已整合，198242 通过 RC5 人工 UI，198273 模型终态待取回；4 宿主超时最小复现与私有反馈完成，未提交或被接收；5 新求职/答辩素材暂缓。A/生成式搜广推、Jev、AgenticOS、全双工研究另行推进。
+原六项顺序仍保留：0 中文/README/发布流程反馈已整合但未发布；1 宿主 Agent dispatch 可行性已有 RC1 证据；2 共享业务工具闭环已有 RC1 单用例；3 有出处报价、条件取舍、选择记录与界面表达已整合，198242 通过 RC5 人工 UI、198316 通过真实模型（198273 为历史失败）；4 宿主超时最小复现与私有反馈完成，未提交或被接收；5 新求职/答辩素材暂缓。A/生成式搜广推、Jev、AgenticOS、全双工研究另行推进。
 
-本轮网络恢复后先查询 **198273** 实际终态与 `live-result.json` / `live-wrapper.json`，再取 **198242** 小型结果和源码副本。首次授权尚无成功点击证据；不要跳过原生批准或重复提交模型。应用运行包留在集群，当前本地文档不包含尚未回传的原始结果。
+本轮网络恢复后已取回 **198273** 失败材料（无 `live-result.json`、无 relay 请求、模型请求 0）、**198316** 真实 M3 成功结果（`live-result passed=true`、10 项 observed 全 true）以及 **198242** 人工 UI 小型副本与源码副本。198316 首次授权与保存批准均主控按实际画面点击；不要跳过原生批准或重复提交模型。应用运行包留在集群，完整运行目录见 `reports/20261011-upstream-alignment/`；本地仅保留小型副本（`evidence/rc5-ui-198242`、`evidence/rc5-agent-198316`），不虚构未回传的原始结果。

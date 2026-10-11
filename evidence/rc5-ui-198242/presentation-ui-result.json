@@ -1,0 +1,362 @@
+{
+  "kind": "presentation-summary-ui",
+  "model_requests": 0,
+  "video_recorded": false,
+  "scope": "Official unmodified RC5, real Store install, scripted UI clicks only. No model, no fixture relay, no native tool-approval claim; summary and proposal_state title text is display-only. Added failure-path checks exercise the existing proposal_state title and the confirm/reject guards only; the top-level async Agent status text is NOT re-verified with a real model.",
+  "checks": {
+    "m240_card_selected_after_explicit_budget_23": true,
+    "pending_state_title": true,
+    "confirm_visible_before_detailed_evidence": true,
+    "proposal_summary_price_budget_remaining": true,
+    "proposal_summary_hard_and_soft_evidence": true,
+    "proposal_summary_deltas_distinct": true,
+    "saved_state_title_verified": true,
+    "manual_save_and_readback_match_record": true,
+    "catalog_switch_readback_keeps_snapshot": true,
+    "failure_candidate_available": true,
+    "price_change_marks_replan": true,
+    "stale_confirm_refused_keeps_m240_record": true,
+    "reject_title_and_draft_unchanged": true
+  },
+  "errors": [],
+  "window_size": [
+    1400,
+    900
+  ],
+  "summary_at_budget_20": "本次请求：需求「quiet wireless mouse」；预算 $20 美元；硬关键词 wireless。\n官网报价快照：人工核对的公开官网页面快照（logitech-us-20261011，采集 2026-10-10T17:40:07Z，US/USD）。规格为整理摘要（curated_page_summary），不是整页原文；仅商品价，运费/税费与配送到用户地址未核验，非实时、非总到手价。\n有满足预算与硬关键词的候选，但软偏好缺乏目录证据（仅表示本演示目录未证实，不代表商品不支持）。\n· Logitech M170 Wireless Mouse（item_id 101）价格 $14.99；未证实的偏好：静音（预算余量 $5.01）\n只读替代（仅供比较，不计入候选，不能直接保存）：\n· Logitech M240 Silent Bluetooth Mouse（item_id 102）价格 $22.99；超出预算 $2.99；静音依据：title＝Logitech M240 Silent Bluetooth Mouse\n  出处：https://www.logitech.com/en-us/shop/p/m240-silent-bluetooth-mouse\n· Logitech Pebble Mouse 2 M350s（item_id 103）价格 $24.99；超出预算 $4.99；静音依据：features＝quiet clicks\n  出处：https://www.logitech.com/en-us/shop/p/pebble-2-m350s-wireless-mouse\n偏好缺证据时，你可以保留当前预算选择合格候选，或手动调整条件后重新研究；不会替你修改条件。\n替代仅供比较；修改需求、预算或硬关键词后需重新研究。",
+  "summary_at_budget_23": "本次请求：需求「quiet wireless mouse」；预算 $23 美元；硬关键词 wireless。\n官网报价快照：人工核对的公开官网页面快照（logitech-us-20261011，采集 2026-10-10T17:40:07Z，US/USD）。规格为整理摘要（curated_page_summary），不是整页原文；仅商品价，运费/税费与配送到用户地址未核验，非实时、非总到手价。\n找到满足预算与硬关键词的候选。\n· Logitech M170 Wireless Mouse（item_id 101）价格 $14.99；未证实的偏好：静音（预算余量 $8.01）\n· Logitech M240 Silent Bluetooth Mouse（item_id 102）价格 $22.99（预算余量 $0.01）\n",
+  "m240_card_index": 1,
+  "proposal_state_pending": "3. 提案待确认 · 尚未保存",
+  "initial_confirm_in_view": true,
+  "confirm_rect": [
+    136,
+    665,
+    148,
+    34
+  ],
+  "proposal_info_rect": [
+    140,
+    761,
+    939,
+    4
+  ],
+  "proposal_summary_before_save": "选择摘要：Logitech M240 Silent Bluetooth Mouse\n商品价 $22.99 ｜ 当时预算 $23 ｜ 余量 $0.01\n当时需求：「quiet wireless mouse」\n必需「wireless」：features＝wireless\n软偏好：静音：目录有证据（title：Logitech M240 Silent Bluetooth Mouse；features：silent click）\n相邻研究对照（不是批准）：预算 $20 → $23（预算增加 $3）；该商品相对旧预算 超出 $2.99。",
+  "stored_draft": {
+    "merchant_version": 2,
+    "brand": "Logitech",
+    "schema_version": 1,
+    "revision": 1,
+    "note": "本地采购草稿；无真实下单、支付或物流。",
+    "title": "Logitech M240 Silent Bluetooth Mouse",
+    "quote": {
+      "variant": "Off-White",
+      "source_url": "https://www.logitech.com/en-us/shop/p/m240-silent-bluetooth-mouse",
+      "stock_at_observation": "listed_in_stock",
+      "facts_kind": "curated_page_summary",
+      "kind": "curated_official_page_snapshot",
+      "snapshot_id": "logitech-us-20261011",
+      "observed_at": "2026-10-10T17:40:07Z",
+      "region": "US",
+      "currency": "USD",
+      "price_basis": "item_price_only",
+      "shipping_to_user": "not_checked",
+      "tax_total": "not_checked",
+      "merchant_quote_validity": "not_checked",
+      "snapshot_price_usd": 22.99
+    },
+    "proposal_id": "p-1791709696-1",
+    "selection_record": {
+      "schema_version": 1,
+      "kind": "catalog_evidence_snapshot",
+      "catalog_source": "official_snapshot",
+      "research_revision": 3,
+      "merchant_version": 2,
+      "request_origin": "ui_current_input",
+      "request": {
+        "need": "quiet wireless mouse",
+        "budget_usd": 23,
+        "hard_keywords": [
+          "wireless"
+        ]
+      },
+      "selected": {
+        "item_id": 102,
+        "title": "Logitech M240 Silent Bluetooth Mouse",
+        "price_usd": 22.99,
+        "budget_remaining_usd": 0.01,
+        "hard_evidence": [
+          {
+            "term": "wireless",
+            "evidence": [
+              {
+                "term": "wireless",
+                "field": "features",
+                "value": "wireless"
+              }
+            ]
+          }
+        ],
+        "preference_checks": [
+          {
+            "preference": "quiet",
+            "label": "静音",
+            "evidence_status": "documented",
+            "evidence": [
+              {
+                "term": "silent",
+                "field": "title",
+                "value": "Logitech M240 Silent Bluetooth Mouse"
+              },
+              {
+                "term": "silent",
+                "field": "features",
+                "value": "silent click"
+              }
+            ]
+          }
+        ]
+      },
+      "comparison": {
+        "previous_request": {
+          "need": "quiet wireless mouse",
+          "budget_usd": 20,
+          "budget_text": "20",
+          "hard_keywords": [
+            "wireless"
+          ],
+          "hard_text": "wireless",
+          "catalog_source": "official_snapshot",
+          "request_origin": "ui_current_input"
+        },
+        "previous_state": "preference_evidence_gap",
+        "previous_research_revision": 2,
+        "previous_origin": "ui_current_input"
+      },
+      "limits": "规则字段证据与相邻研究快照，不是完整语义或用户逐项认可；报价/运费/税费等以quote范围为准；批准仅保存本地草稿，无真实交易。"
+    },
+    "research_revision": 3,
+    "selected_item_id": 102,
+    "confirmed_at": 1791709724.3670628,
+    "draft_id": "d-p-1791709696-1",
+    "catalog_source": "official_snapshot",
+    "price_is_simulated": false,
+    "price_usd": 22.99,
+    "currency": "USD"
+  },
+  "stored_selection_record": {
+    "schema_version": 1,
+    "kind": "catalog_evidence_snapshot",
+    "catalog_source": "official_snapshot",
+    "research_revision": 3,
+    "merchant_version": 2,
+    "request_origin": "ui_current_input",
+    "request": {
+      "need": "quiet wireless mouse",
+      "budget_usd": 23,
+      "hard_keywords": [
+        "wireless"
+      ]
+    },
+    "selected": {
+      "item_id": 102,
+      "title": "Logitech M240 Silent Bluetooth Mouse",
+      "price_usd": 22.99,
+      "budget_remaining_usd": 0.01,
+      "hard_evidence": [
+        {
+          "term": "wireless",
+          "evidence": [
+            {
+              "term": "wireless",
+              "field": "features",
+              "value": "wireless"
+            }
+          ]
+        }
+      ],
+      "preference_checks": [
+        {
+          "preference": "quiet",
+          "label": "静音",
+          "evidence_status": "documented",
+          "evidence": [
+            {
+              "term": "silent",
+              "field": "title",
+              "value": "Logitech M240 Silent Bluetooth Mouse"
+            },
+            {
+              "term": "silent",
+              "field": "features",
+              "value": "silent click"
+            }
+          ]
+        }
+      ]
+    },
+    "comparison": {
+      "previous_request": {
+        "need": "quiet wireless mouse",
+        "budget_usd": 20,
+        "budget_text": "20",
+        "hard_keywords": [
+          "wireless"
+        ],
+        "hard_text": "wireless",
+        "catalog_source": "official_snapshot",
+        "request_origin": "ui_current_input"
+      },
+      "previous_state": "preference_evidence_gap",
+      "previous_research_revision": 2,
+      "previous_origin": "ui_current_input"
+    },
+    "limits": "规则字段证据与相邻研究快照，不是完整语义或用户逐项认可；报价/运费/税费等以quote范围为准；批准仅保存本地草稿，无真实交易。"
+  },
+  "proposal_state_saved": "3. 保存时已独立核验 · 未下单",
+  "draft_summary_readback": "选择摘要：Logitech M240 Silent Bluetooth Mouse\n商品价 $22.99 ｜ 当时预算 $23 ｜ 余量 $0.01\n当时需求：「quiet wireless mouse」\n必需「wireless」：features＝wireless\n软偏好：静音：目录有证据（title：Logitech M240 Silent Bluetooth Mouse；features：silent click）\n相邻研究对照（不是批准）：预算 $20 → $23（预算增加 $3）；该商品相对旧预算 超出 $2.99。",
+  "draft_summary_after_catalog_switch": "选择摘要：Logitech M240 Silent Bluetooth Mouse\n商品价 $22.99 ｜ 当时预算 $23 ｜ 余量 $0.01\n当时需求：「quiet wireless mouse」\n必需「wireless」：features＝wireless\n软偏好：静音：目录有证据（title：Logitech M240 Silent Bluetooth Mouse；features：silent click）\n相邻研究对照（不是批准）：预算 $20 → $23（预算增加 $3）；该商品相对旧预算 超出 $2.99。",
+  "failure_card_index": 0,
+  "proposal_state_failure_pending": "3. 提案待确认 · 尚未保存",
+  "proposal_state_after_price_change": "3. 条件已变化 · 需重新办理",
+  "proposal_status_after_stale_confirm": "报价已变化（当前商户版本 4，提案记录 3），旧提案不能确认，请重新研究。",
+  "stored_selection_record_after_stale_confirm": {
+    "schema_version": 1,
+    "kind": "catalog_evidence_snapshot",
+    "catalog_source": "official_snapshot",
+    "research_revision": 3,
+    "merchant_version": 2,
+    "request_origin": "ui_current_input",
+    "request": {
+      "need": "quiet wireless mouse",
+      "budget_usd": 23,
+      "hard_keywords": [
+        "wireless"
+      ]
+    },
+    "selected": {
+      "item_id": 102,
+      "title": "Logitech M240 Silent Bluetooth Mouse",
+      "price_usd": 22.99,
+      "budget_remaining_usd": 0.01,
+      "hard_evidence": [
+        {
+          "term": "wireless",
+          "evidence": [
+            {
+              "term": "wireless",
+              "field": "features",
+              "value": "wireless"
+            }
+          ]
+        }
+      ],
+      "preference_checks": [
+        {
+          "preference": "quiet",
+          "label": "静音",
+          "evidence_status": "documented",
+          "evidence": [
+            {
+              "term": "silent",
+              "field": "title",
+              "value": "Logitech M240 Silent Bluetooth Mouse"
+            },
+            {
+              "term": "silent",
+              "field": "features",
+              "value": "silent click"
+            }
+          ]
+        }
+      ]
+    },
+    "comparison": {
+      "previous_request": {
+        "need": "quiet wireless mouse",
+        "budget_usd": 20,
+        "budget_text": "20",
+        "hard_keywords": [
+          "wireless"
+        ],
+        "hard_text": "wireless",
+        "catalog_source": "official_snapshot",
+        "request_origin": "ui_current_input"
+      },
+      "previous_state": "preference_evidence_gap",
+      "previous_research_revision": 2,
+      "previous_origin": "ui_current_input"
+    },
+    "limits": "规则字段证据与相邻研究快照，不是完整语义或用户逐项认可；报价/运费/税费等以quote范围为准；批准仅保存本地草稿，无真实交易。"
+  },
+  "proposal_state_after_reject": "3. 该提案已拒绝",
+  "stored_selection_record_after_reject": {
+    "schema_version": 1,
+    "kind": "catalog_evidence_snapshot",
+    "catalog_source": "official_snapshot",
+    "research_revision": 3,
+    "merchant_version": 2,
+    "request_origin": "ui_current_input",
+    "request": {
+      "need": "quiet wireless mouse",
+      "budget_usd": 23,
+      "hard_keywords": [
+        "wireless"
+      ]
+    },
+    "selected": {
+      "item_id": 102,
+      "title": "Logitech M240 Silent Bluetooth Mouse",
+      "price_usd": 22.99,
+      "budget_remaining_usd": 0.01,
+      "hard_evidence": [
+        {
+          "term": "wireless",
+          "evidence": [
+            {
+              "term": "wireless",
+              "field": "features",
+              "value": "wireless"
+            }
+          ]
+        }
+      ],
+      "preference_checks": [
+        {
+          "preference": "quiet",
+          "label": "静音",
+          "evidence_status": "documented",
+          "evidence": [
+            {
+              "term": "silent",
+              "field": "title",
+              "value": "Logitech M240 Silent Bluetooth Mouse"
+            },
+            {
+              "term": "silent",
+              "field": "features",
+              "value": "silent click"
+            }
+          ]
+        }
+      ]
+    },
+    "comparison": {
+      "previous_request": {
+        "need": "quiet wireless mouse",
+        "budget_usd": 20,
+        "budget_text": "20",
+        "hard_keywords": [
+          "wireless"
+        ],
+        "hard_text": "wireless",
+        "catalog_source": "official_snapshot",
+        "request_origin": "ui_current_input"
+      },
+      "previous_state": "preference_evidence_gap",
+      "previous_research_revision": 2,
+      "previous_origin": "ui_current_input"
+    },
+    "limits": "规则字段证据与相邻研究快照，不是完整语义或用户逐项认可；报价/运费/税费等以quote范围为准；批准仅保存本地草稿，无真实交易。"
+  },
+  "passed": true
+}

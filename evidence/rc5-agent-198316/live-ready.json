@@ -1,0 +1,31 @@
+{
+  "opened_app": "traceshop.shopping",
+  "window": {
+    "w": 1400,
+    "h": 900
+  },
+  "requested": {
+    "need": "quiet wireless mouse",
+    "budget_initial": "20",
+    "budget_final": "23",
+    "hard": "wireless"
+  },
+  "raw_input_at_launch": {
+    "need": "quiet wireless mouse",
+    "budget": "23",
+    "hard": "wireless"
+  },
+  "research_status_after_research": "",
+  "catalog_source_label": "当前目录：官网报价快照（3 条，US/USD，非实时）",
+  "agent_task_status": "助手暂时不可用：Waiting for the person to allow this app's agent (OctoSense asks the first time)",
+  "run_dir": "/projects/user007ssd/projects/gosim-agentic-app-2026/reports/20261011-upstream-alignment/live/run-198316",
+  "control_file": "/projects/user007ssd/projects/gosim-agentic-app-2026/reports/20261011-upstream-alignment/live/run-198316/control.jsonl",
+  "replies_file": "/projects/user007ssd/projects/gosim-agentic-app-2026/reports/20261011-upstream-alignment/live/run-198316/replies.jsonl",
+  "result_file": "/projects/user007ssd/projects/gosim-agentic-app-2026/reports/20261011-upstream-alignment/live/run-198316/live-result.json",
+  "relay_log": "/projects/user007ssd/projects/gosim-agentic-app-2026/reports/20261011-upstream-alignment/live/run-198316/relay.jsonl",
+  "native_consent": "not clicked by this controller; supervisor clicks it explicitly",
+  "soft_preference_note": "quiet (M170) not confirmed by official_snapshot; not asserted",
+  "at": 1791711822.991,
+  "diagnostic_image": "/projects/user007ssd/projects/gosim-agentic-app-2026/reports/20261011-upstream-alignment/live/run-198316/diagnostic-consent.png",
+  "diagnostic_native_scale": 0.5
+}

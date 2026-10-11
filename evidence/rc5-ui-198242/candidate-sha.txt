@@ -1,0 +1,2 @@
+18647a971c6305231b6da7a0e0d89b8956849d7d6cd37c046c6b364f79bfa5a7  /projects/user007ssd/projects/gosim-agentic-app-2026/release/v0.5.1-staging/bundle/main.splash
+e3f0e0f5776ff094069b9a50415089fe21b0f86f7684252d63974c63a4b83cdd  /projects/user007ssd/projects/gosim-agentic-app-2026/release/v0.5.1-staging/bundle/tools.json

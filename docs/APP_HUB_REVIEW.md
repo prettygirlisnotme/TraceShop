@@ -44,8 +44,8 @@
 
 ## 模型验证口径 / Model-validation wording
 
-> 历史口径（v0.4.0）。当前 0.5.1 的模型见 [VALIDATION](VALIDATION.md)（真实 M3：197799 为较早业务且后续又改 UI 摘要/状态、未重跑；候选上的 198273 已提交但未取回终态）与 [README](../README.md)；本节不适用于当前包。
-> Historical wording (v0.4.0). For 0.5.1 model evidence see [VALIDATION](VALIDATION.md) (real M3: run 197799 is an earlier business source whose UI summary/status was later changed without a model re-run; the candidate's 198273 is submitted but no terminal state was retrieved) and [README](../README.md); this section does not apply to the current bundle.
+> 历史口径（v0.4.0）。当前 0.5.1 的模型见 [VALIDATION](VALIDATION.md)（真实 M3：候选上的 198316 已通过，`passed=true`、6 请求 5 工具；197799 为较早业务且后续又改 UI 摘要/状态、未重跑，仅作对照；198273 为历史失败、材料保留）与 [README](../README.md)；本节不适用于当前包。
+> Historical wording (v0.4.0). For 0.5.1 model evidence see [VALIDATION](VALIDATION.md) (real M3: the candidate's 198316 passed with `passed=true` and 6 requests/5 tools; 197799 is an earlier business source whose UI summary/status was later changed without a model re-run and is kept only as a comparison; 198273 is a retained historical failure) and [README](../README.md); this section does not apply to the current bundle.
 
 以下口径与 [README](../README.md)、[SUBMISSION](../SUBMISSION.md) 保持一致（v0.4.0 当时）。
 This wording was kept consistent with [README](../README.md) and [SUBMISSION](../SUBMISSION.md) at the time of v0.4.0.

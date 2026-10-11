@@ -1,0 +1,150 @@
+{
+  "kind": "derived_control_checkpoints",
+  "source": "private replies.jsonl; full raw retained in project report",
+  "entries": [
+    {
+      "id": "consent-allow-observed",
+      "op": "click_xy",
+      "at": 1791711920.814,
+      "result": {
+        "ok": true,
+        "x": 446,
+        "y": 608,
+        "reply": {
+          "ok": 1,
+          "f": 641
+        }
+      }
+    },
+    {
+      "id": "retry-start-after-consent",
+      "op": "click_id",
+      "at": 1791711921.685,
+      "result": {
+        "ok": true,
+        "x": 224,
+        "y": 695,
+        "widget": {
+          "i": "agent_start_btn",
+          "ty": "Button",
+          "t": "交给 Agent 办理采购草稿",
+          "r": [
+            136,
+            678,
+            176,
+            34
+          ]
+        },
+        "reply": {
+          "ok": 1,
+          "f": 644
+        }
+      }
+    },
+    {
+      "id": "inspect-save-prompt",
+      "at": 1791712000.814,
+      "draft_before_approval": {
+        "present": false,
+        "paths": [],
+        "json": null
+      },
+      "relay_before_approval": {
+        "counts": {
+          "request": 4,
+          "usage": 4,
+          "tool_call": 4,
+          "tool_result": 3
+        },
+        "tool_canonicals": [
+          "shopping.catalog.research",
+          "shopping.proposal.create",
+          "shopping.status.read"
+        ],
+        "final_seen": false,
+        "relay_log": "/projects/user007ssd/projects/gosim-agentic-app-2026/reports/20261011-upstream-alignment/live/run-198316/relay.jsonl"
+      },
+      "agent_task_status": "回合状态待确认 · 助手回复等待已结束，任务可能仍在继续。可点“同步回复”查看历史回复，处理系统确认，或点“结束 / 取消”后重试。"
+    },
+    {
+      "id": "save-approve-once-observed",
+      "op": "click_xy",
+      "at": 1791712068.943,
+      "result": {
+        "ok": true,
+        "x": 468,
+        "y": 568,
+        "reply": {
+          "ok": 1,
+          "f": 1140
+        }
+      }
+    },
+    {
+      "id": "sync-real-final-once",
+      "op": "sync_reply",
+      "at": 1791712166.644,
+      "result": {
+        "ok": true,
+        "ui": {
+          "agent_task_status": "已同步本次助手回复（来自宿主历史）。 继续办理前请点结束 / 取消。 草稿独立核验成功：已保存且与当前提案字段一致。",
+          "agent_task_reply": "核验通过：`read_ok=true`，`matches_current_proposal=true`，`verification_scope=proposal_fields`，`selection_record_present=true`。\n\n## 结论\n\n**已保存采购草稿**（本地，未真实下单/支付/物流）。\n\n- **所选商品**：item_id **102** — Logitech M240 Silent Bluetooth Mouse（Off-White）\n- **价格**：US **$22.99**（catalog `official_snapshot` 快照，2026-10-10T17:40:07Z；仅商品价，运费/税费/配送到用户地址未核验，非实时、非总到手价）\n- **预算**：$23.00 — 剩余 **$0.01**\n- **硬关键词 \"wireless\"**：`features=\"wireless\"`（catalog literal 命中）\n- **软偏好 \"quiet\"**：`title=\"Logitech M240 Silent Bluetooth Mouse\"` 与 `features=\"silent click\"` 双重目录字段证据\n- **取舍说明**：另一候选 item 101 Logitech M170 Wireless Mouse $14.99 也满足硬关键词，但 quiet 在其目录字段中未证实；按规则，软偏好有证据者优先\n- 草稿 ID：`d-p-1791712000-1`；提案 ID：`p-1791712000-1`",
+          "agent_status": "",
+          "agent_answer": "",
+          "draft_status": "已保存采购草稿，并从存储独立读回核验：字段一致。",
+          "proposal_status": ""
+        }
+      }
+    },
+    {
+      "id": "explicit-end-after-final",
+      "op": "click_id",
+      "at": 1791712199.329,
+      "result": {
+        "ok": true,
+        "x": 1047,
+        "y": 300,
+        "widget": {
+          "i": "agent_cancel_top_btn",
+          "ty": "Button",
+          "t": "结束 / 取消",
+          "r": [
+            1001,
+            283,
+            93,
+            34
+          ]
+        },
+        "reply": {
+          "ok": 1,
+          "f": 1597
+        }
+      }
+    },
+    {
+      "id": "observe-ended-status",
+      "op": "sync_reply",
+      "at": 1791712201.034,
+      "result": {
+        "ok": true,
+        "ui": {
+          "agent_task_status": "已结束，宿主没有仍在运行的办理。任务标记 TraceShopTask-1791711921.384682-2 保留可回看；重新办理会使用新标记。",
+          "agent_task_reply": "核验通过：`read_ok=true`，`matches_current_proposal=true`，`verification_scope=proposal_fields`，`selection_record_present=true`。\n\n## 结论\n\n**已保存采购草稿**（本地，未真实下单/支付/物流）。\n\n- **所选商品**：item_id **102** — Logitech M240 Silent Bluetooth Mouse（Off-White）\n- **价格**：US **$22.99**（catalog `official_snapshot` 快照，2026-10-10T17:40:07Z；仅商品价，运费/税费/配送到用户地址未核验，非实时、非总到手价）\n- **预算**：$23.00 — 剩余 **$0.01**\n- **硬关键词 \"wireless\"**：`features=\"wireless\"`（catalog literal 命中）\n- **软偏好 \"quiet\"**：`title=\"Logitech M240 Silent Bluetooth Mouse\"` 与 `features=\"silent click\"` 双重目录字段证据\n- **取舍说明**：另一候选 item 101 Logitech M170 Wireless Mouse $14.99 也满足硬关键词，但 quiet 在其目录字段中未证实；按规则，软偏好有证据者优先\n- 草稿 ID：`d-p-1791712000-1`；提案 ID：`p-1791712000-1`",
+          "agent_status": "",
+          "agent_answer": "",
+          "draft_status": "已保存采购草稿，并从存储独立读回核验：字段一致。",
+          "proposal_status": ""
+        }
+      }
+    },
+    {
+      "id": "finish-real-check",
+      "op": "finish",
+      "at": 1791712201.039,
+      "result": {
+        "ok": true,
+        "finished": true
+      }
+    }
+  ]
+}

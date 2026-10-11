@@ -1,0 +1,17 @@
+{
+  "kind": "derived_execution_summary",
+  "source": "private live-wrapper.json; full raw retained in project report",
+  "job_id": 198316,
+  "opened_bundle": "traceshop.shopping",
+  "fixture": false,
+  "model": "MiniMax-M3",
+  "native_ui_controller": {
+    "driver": "/projects/user007ssd/projects/gosim-agentic-app-2026/reports/20261011-upstream-alignment/live/live_ui_controller.py",
+    "returncode": 0,
+    "stdout": "{\"step_a_ok\": true, \"observed\": {\"app_opened_for_step_a\": true, \"status_read_seen\": true, \"research_is_ok\": true, \"proposal_created\": true, \"draft_saved\": true, \"draft_read_confirms_current_proposal\": true, \"final_text_seen\": true, \"three_write_tools_carry_task_id\": true, \"research_matches_ui_conditions\": true, \"binding_matches_ui_conditions\": true}, \"errors\": []}\n",
+    "stderr": ""
+  },
+  "shell_exit_code": 0,
+  "relay_exit": 0,
+  "errors": []
+}

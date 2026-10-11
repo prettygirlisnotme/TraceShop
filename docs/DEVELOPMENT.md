@@ -12,7 +12,7 @@
 
 历史函数对照（0.4.x 命名）：`research`=按预算/必需词检索候选；`pick`=生成待确认提案；`request_review`/`adopt_suggestion`=可选宿主审阅；`confirm_draft`=校验后写草稿并读回；`boot`=从私有存储恢复草稿。
 
-见[运行说明](REPRODUCING.md)、[实际验证范围](VALIDATION.md)和[演示提纲](DEMO.zh-CN.md)。**RC5 人工 UI 由 198242 覆盖，真实 M3 的 198273 待取回。** 纯文档修改无需重跑业务；bundle 文件变化后由官方工具重查摘要；业务修改只验证受影响的路径。
+见[运行说明](REPRODUCING.md)、[实际验证范围](VALIDATION.md)和[演示提纲](DEMO.zh-CN.md)。**RC5 人工 UI 由 198242 覆盖，真实 M3 由 198316 覆盖（`passed=true`）；198273 为历史失败。** 纯文档修改无需重跑业务；bundle 文件变化后由官方工具重查摘要；业务修改只验证受影响的路径。
 
 ## 历史 Web 原型（v0.3.0，只作复用/历史）
 
