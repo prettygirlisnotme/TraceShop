@@ -1,9 +1,9 @@
-> **历史资料，只读参考。** 本页七个问答是 v0.4.0 的答复，当时的“当前源码 0.4.1”现已过时；当前作品版本为 **0.5.2**，工具契约、验证范围与发布状态以 [README](../README.md) 和 [VALIDATION](VALIDATION.md) 为准。本页不描述当前包，不用于当前提交。
+> **历史资料，只读参考。** 本页七个问答是 v0.4.0 的答复，当时的“当前源码 0.4.1”现已过时；当前作品版本为 **0.5.3**，工具契约、验证范围与发布状态以 [README](../README.md) 和 [VALIDATION](VALIDATION.md) 为准。本页不描述当前包，不用于当前提交。
 
 # TraceShop — 作者对 Hub 扫描的答复（v0.4.0 历史答复） / author answers to hub scan
 
-> 版本范围 / Version scope: 下面七个问答是 **v0.4.0（`4cf35ca8`）** 提交 App Hub #71 时的历史答复，保留原文与对照译文。**当前作品版本为 0.5.2，工具集、界面与证据状态均已变化**；本轮对评审建议的回应见文末[评审结果与本轮回应](#评审结果与本轮回应--preliminary-result-and-current-round-response)。
-> The seven answers below are the historical answers for the **v0.4.0 (`4cf35ca8`)** bundle submitted to App Hub #71. **The current app version is 0.5.2, with a different tool set, UI and evidence status.** See the current-round response at the end.
+> 版本范围 / Version scope: 下面七个问答是 **v0.4.0（`4cf35ca8`）** 提交 App Hub #71 时的历史答复，保留原文与对照译文。**当前作品版本为 0.5.3，工具集、界面与证据状态均已变化**；本轮对评审建议的回应见文末[评审结果与本轮回应](#评审结果与本轮回应--preliminary-result-and-current-round-response)。
+> The seven answers below are the historical answers for the **v0.4.0 (`4cf35ca8`)** bundle submitted to App Hub #71. **The current app version is 0.5.3, with a different tool set, UI and evidence status.** See the current-round response at the end.
 
 导航 / Navigation: [中文作者答复](#中文作者答复) · [English author answers](#english-author-answers) · [模型验证口径 / Model-validation wording](#模型验证口径--model-validation-wording) · [评审结果与本轮回应](#评审结果与本轮回应--preliminary-result-and-current-round-response)
 
@@ -44,8 +44,8 @@
 
 ## 模型验证口径 / Model-validation wording
 
-> 历史口径（v0.4.0）。当前0.5.2只取得198377首次使用UI证据；真实M3的198316仍对应0.5.1基线（6请求5工具）。精确范围见[VALIDATION](VALIDATION.md)与[README](../README.md)。
-> Historical wording (v0.4.0). Current 0.5.2 has first-use UI evidence from 198377; real M3 run 198316 remains scoped to the 0.5.1 baseline (six requests, five tools). See [VALIDATION](VALIDATION.md) and [README](../README.md).
+> 历史口径（v0.4.0）。当前0.5.3取得198504办理记录/完整回复的固定协议零模型证据；真实M3的198316仍对应0.5.1基线（6请求5工具）。精确范围见[VALIDATION](VALIDATION.md)与[README](../README.md)。
+> Historical wording (v0.4.0). Current 0.5.3 has fixed-protocol, zero-real-model activity-record/full-reply evidence from 198504; real M3 run 198316 remains scoped to the 0.5.1 baseline (six requests, five tools). See [VALIDATION](VALIDATION.md) and [README](../README.md).
 
 以下口径与 [README](../README.md)、[SUBMISSION](../SUBMISSION.md) 保持一致（v0.4.0 当时）。
 This wording was kept consistent with [README](../README.md) and [SUBMISSION](../SUBMISSION.md) at the time of v0.4.0.

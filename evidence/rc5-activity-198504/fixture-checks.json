@@ -1,0 +1,17 @@
+{
+  "checks": {
+    "manual_research_visible_in_real_status": true,
+    "status_binding_is_active": true,
+    "status_binding_has_task_id": true,
+    "status_binding_captured_ui_request": true,
+    "proposal_read_without_proposal_fails": true,
+    "research_is_ok": true,
+    "research_has_candidate": true,
+    "research_has_versions": true,
+    "proposal_create_is_ok": true,
+    "proposal_create_is_pending": true,
+    "proposal_read_is_ok": true,
+    "proposal_read_is_pending": true
+  },
+  "passed": true
+}

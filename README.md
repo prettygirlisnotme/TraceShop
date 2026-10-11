@@ -19,7 +19,7 @@ TraceShop 是一个 **OctoScript / Splash** 应用，作品唯一入口是 [`bun
 
 ## 唯一入口与目录来源
 
-- 入口：[`bundle/main.splash`](bundle/main.splash) · [`bundle/tools.json`](bundle/tools.json) · [`bundle/AGENT.md`](bundle/AGENT.md) · [`bundle/manifest.json`](bundle/manifest.json)（版本 **0.5.2**）。
+- 入口：[`bundle/main.splash`](bundle/main.splash) · [`bundle/tools.json`](bundle/tools.json) · [`bundle/AGENT.md`](bundle/AGENT.md) · [`bundle/manifest.json`](bundle/manifest.json)（版本 **0.5.3**）。
 - 目录来源（会话内切换，`shopping.catalog.select`）：
   - `synthetic_demo`（默认）：14 条纯虚构 USD 演示商品。
   - `official_snapshot`：3 条人工核对的官网页面价格快照（US/USD）。是**整理摘要，不是整页原文**；**非实时**；只有**商品价**，**运费、税费与配送未核验**，不保证库存或可配送。快照已内嵌于脚本，**程序运行时不联网抓取**；`net` 仅按官方规则披露已有来源 URL。
@@ -35,21 +35,22 @@ TraceShop 是一个 **OctoScript / Splash** 应用，作品唯一入口是 [`bun
 6. `shopping.draft.save`：`risk=destructive`、`confirm=host`、不可自动批准；宿主批准后写入草稿并**即时独立读回**（`readback_ok`）。
 7. `shopping.draft.read`：独立读回草稿，分别报告 `read_ok`、`current_proposal_present`、`matches_current_proposal` 与 `verification_scope`。
 
-继承自 0.5.1 的界面与绑定能力：应用发起任务时，把起始条件（`task_id` + 需求/预算/硬关键词/目录来源/商户版本/起始研究版本）绑定到本进程，写工具必须原样携带匹配的 `task_id`，否则拒绝。**该绑定是应用本地快照，不是宿主身份认证，也不承诺任意回合隔离**。研究回复已压缩（`decision` 不再重复候选核对）。界面提供完整回复原文页、选择摘要前置、首屏确认，并把“Agent 回合状态”与“提案业务状态”用独立标题分开显示。
+继承自 0.5.1 的界面与绑定能力：应用发起任务时，把起始条件（`task_id` + 需求/预算/硬关键词/目录来源/商户版本/起始研究版本）绑定到本进程，写工具必须原样携带匹配的 `task_id`，否则拒绝。**该绑定是应用本地快照，不是宿主身份认证，也不承诺任意回合隔离**。研究回复已压缩（`decision` 不再重复候选核对）。界面提供“办理记录 / 完整回复”切换区、选择摘要前置、首屏确认，并把“Agent 回合状态”与“提案业务状态”用独立标题分开显示。
 
-0.5.2 增量只在 `bundle/main.splash` 首页增加一个“预算取舍 $20”按钮（`fill_quote_tradeoff`）：选择后切到 3 条官网报价快照并预填“办公用无线鼠标，安静 / 预算 20 美元 / 必须 wireless”，让预算与软偏好的取舍直接可见。**该按钮只准备输入，不自动研究、不启动 Agent、不生成提案、不保存**，复用既有目录切换与研究/保存核心；有 Agent 任务进行时先返回提示。静音是软偏好、wireless 是硬关键词，按钮点击不是用户对商品或保存的批准。除该按钮外，本版工具/schema/AGENT/算法/图片/视频与 0.5.1 基线一致。
+0.5.3 增量只在 `bundle/main.splash` 把原“完整回复”页扩为**“办理记录 / 完整回复”两个切换区**（各 360px，默认打开“办理记录”，切换按钮在内容之前）：办理记录只登记**实际应用工具返回**（先原样 `app_tools.complete` 再记录结果，最多最近 12 条、仅内存），新任务先清空，刷新保持；助手原文一字不改，**不作为宿主批准、任务终态或完整审计**，手动研究与助手文字都不计入记录。0.5.2 的“预算取舍 $20”按钮保留：选择后切到 3 条官网报价快照并预填“办公用无线鼠标，安静 / 预算 20 美元 / 必须 wireless”，**只准备输入，不自动研究、不启动 Agent、不生成提案、不保存**；静音是软偏好、wireless 是硬关键词，点击不是对商品或保存的批准。除该切换区外，工具/schema/AGENT/算法/图片/视频与 0.5.2 基线一致。
 
 ## 已运行的范围
 
 | 版本与源码 | 运行证据 | 实际范围 |
 | --- | --- | --- |
-| 0.5.2 的 main `7e0c08e1…` | [198377](evidence/rc5-onboarding-198377/README.md)，官方 Linux RC5，CPU4、65秒 | 一条首次使用流程22项检查；预算20→用户明确改23→选择M240，确认按钮可见；零模型、未保存、无新录像 |
+| 0.5.3 当前 main `17bb585a…` | [198504](evidence/rc5-activity-198504/README.md)，官方 Linux RC5，CPU4、4:56 | 办理记录/完整回复切换：25 UI + 12 协议断言全过；五个实际 tool return 逐条、刷新保持、新任务清空、手动研究不记录；固定协议零真实模型、无保存 |
+| 0.5.2 基线 main `7e0c08e1…` | [198377](evidence/rc5-onboarding-198377/README.md)，官方 Linux RC5，CPU4、65秒 | 一条首次使用流程22项检查；预算20→用户明确改23→选择M240，确认按钮可见；零模型、未保存、无新录像 |
 | 0.5.1 基线 main `18647a97…` | 198242人工UI；[198316真实M3](evidence/rc5-agent-198316/) | 13项UI检查；另有6次M3请求、5种工具、宿主批准保存与独立读回的一条任务 |
 | 历史197305 | 仓库内94秒视频与四张截图 | 旧合成目录流程，保留作历史素材 |
 
-198377的业务main与本候选完全相同，测试副本使用私有Linux发布者与签名，其manifest仍为0.5.1；本轮整合后改了0.5.2元数据，**尚未对新十文件整包运行官方发布检查**。旧Hub CLI1.8日志仅属于当时测试副本，新工作流固定Hub1.12且未运行。完整摘要见[package-inputs](package-inputs.json)，版本与失败记录见[VALIDATION](docs/VALIDATION.md)。
+0.5.3 当前 main 由 198504 用私有测试副本（安装副本 manifest/listing 为 0.5.2 + 测试 publisher/签名）实跑，业务 `main.splash` 与 `bundle/` 内的 `17bb585a…` 一致；本轮把 manifest/listing 元数据更新为 0.5.3，**尚未对新十文件整包运行官方发布检查**。旧 Hub CLI1.8 日志仅属测试副本，新工作流固定 Hub1.12 且未运行。完整摘要见[package-inputs](package-inputs.json)，版本与失败记录见[VALIDATION](docs/VALIDATION.md)。
 
-新main未重新运行M3，旧模型证据仍只对应0.5.1；首次使用按钮的Agent活跃守卫仅审阅了代码，未动态驱动。宿主60秒回调限制仍在，真实任务可能需要显式同步回复并结束。当前原生研究使用规则目录，Project A接入与推荐质量评测另行推进。
+新 main 未运行真实模型（198504 是固定协议零模型；布局调整前198494（main `05764fd4…`） 仅证实滚动取景与逐字一致），真实 M3 证据仍只对应 0.5.1 基线（198316）。保存/读回摘要记录、>12 条淘汰与重启清空未动态驱动。宿主 60 秒回调限制仍在，真实任务可能需要显式同步回复并结束。当前原生研究使用规则目录，Project A 接入与推荐质量评测另行推进。
 
 ## 使用
 

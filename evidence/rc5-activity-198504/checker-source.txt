@@ -1,0 +1,4 @@
+hub_cli_source=655114c4943cd2490daaefa2173e7b5aaa20669f
+structural_check_only=true
+rc5_runtime_store_admission_is_separate=true
+no_real_model_fixture=true

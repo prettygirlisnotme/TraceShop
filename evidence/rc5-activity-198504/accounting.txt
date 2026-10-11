@@ -1,0 +1,5 @@
+JobID|State|ExitCode|Elapsed|AllocCPUS|ReqMem|AllocTRES
+198504|COMPLETED|0:0|00:04:56|4|12G|cpu=4,mem=12G,node=1
+198504.batch|COMPLETED|0:0|00:04:56|4||cpu=4,mem=12G,node=1
+198504.extern|COMPLETED|0:0|00:04:56|4||cpu=4,mem=12G,node=1
+198504.0|COMPLETED|0:0|00:04:55|4||cpu=4,mem=12G,node=1

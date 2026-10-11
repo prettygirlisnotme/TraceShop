@@ -1,0 +1,5 @@
+package=octosense_0.1.0-rc.5_amd64.deb
+sha256=e0a836aea8e56864f7f5d30233624a9fca3fd6a75db99c1cf26243e8376f2caa
+bytes=302047982
+unmodified_official=true
+source=existing_cache_no_download

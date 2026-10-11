@@ -1,6 +1,8 @@
 // TraceShop 采购助手 · script-tools-v1 候选（隔离实验，未发布）
 // 业务规则、目录与确认/读回逻辑复用 native/traceshop-app v0.4.0 的同一套函数；
-// 本候选只新增声明式工具入口 fn app_tool(name, call_id) 与 mod.app_tools.*。
+// 本候选只新增声明式工具入口 fn app_tool(name, call_id) 与 mod.app_tools.*，
+// 以及“办理记录”页：在“完整回复”页并列展示最近 12 条应用工具真实返回（内存，只读，
+// 与模型原文分开；应用侧观察，不是宿主认证/模型推理/完整审计）。
 // 官方 ABI：tools.json（schema 1）+ manifest requires:["script-tools-v1"] +
 // HOST-API-V1 §5。宿主为打开该应用的完整 Shell RC1；旧 card-host 不支持。
 // 仅使用官方 SCRIPT-API 已记录的 API：fs.*、host.request、time_now/local_time、
@@ -97,6 +99,11 @@ let last_decision = nil
 let last_research_origin = ""
 // 相邻两次研究请求的比较快照；只在可比且确有变化时记录一层，不是用户指令或批准。
 let last_request_comparison = nil
+// “办理记录”（应用工具活动）：只记录 app_tool 实际调用 mod.app_tools.complete 时收到的那次
+// 真实返回，最多保留最近 12 条。它是应用侧观察，不是宿主认证、不是模型推理、也不是完整审计；
+// 只存内存、不落盘、不写入工具回执、不跨任务复原历史。新任务启动时清空。
+let activity_records = []
+let activity_record_limit = 12
 
 fn fmt_money(n){ "$" + ("" + (round(n * 100) / 100)) }
 fn time_text(epoch){
@@ -843,7 +850,7 @@ fn show_page(n){
         refresh_proposal()
     }
     if n == 4 { ui.stage_info.set_text("4 / 4 · 查看本地采购草稿") }
-    if n == 5 { ui.stage_info.set_text("完整回复 · 原文阅读") }
+    if n == 5 { ui.stage_info.set_text("办理记录 · 完整回复") switch_reply_view("records") }
 }
 
 fn refresh_proposal(){
@@ -1670,6 +1677,8 @@ fn agent_task_launch(need_text, budget_value, hard_list, replan_context, status_
     let nonce = agent_task_token
     let task_id = "TraceShopTask-" + ("" + time_now()) + "-" + ("" + nonce)
     agent_task_id = task_id
+    // 新任务先清空办理记录，随后 refresh_reply_detail 立即刷新页面，避免把旧任务记录当成新任务。
+    activity_records = []
     // 唯一绑定点：由应用在启动时捕获任务起始快照；模型 research 参数永远不能重绑。
     agent_task_binding = {
         task_id: task_id
@@ -2060,14 +2069,163 @@ fn reply_detail_body_text(){
     }
     agent_task_reply_text
 }
+// ---- 办理记录：只读工具活动日志（应用侧观察，不是宿主认证/模型推理/完整审计）----
+fn activity_is_ok(res){
+    if res == nil { return false }
+    let v = history_field(res, "is_ok")
+    if v == nil { return false }
+    v
+}
+// 布尔字段的人话显示；缺失/未知不猜成“是”。
+fn activity_bool_text(v){
+    if v == nil { return "未知" }
+    if v { return "是" }
+    "否"
+}
+// 规则结论状态的人话翻译；未列出的状态原样显示，不猜。
+fn activity_state_text(state){
+    if state == "ready" { return "已找到满足预算与硬关键词的候选" }
+    if state == "no_valid_candidates" { return "没有同时满足预算与硬关键词的候选" }
+    if state == "invalid_budget" { return "预算无效" }
+    if state == "preference_evidence_gap" { return "有候选，但软偏好缺乏目录证据" }
+    if state == "" { return "未返回规则结论状态" }
+    "规则结论状态：" + state
+}
+// 提案状态的人话翻译；“pending”只说待确认，不说已保存。
+fn activity_proposal_state_text(status){
+    if status == "pending" { return "待确认（未保存）" }
+    if status == "saved" { return "保存时已独立核验（未下单）" }
+    if status == "rejected" { return "已拒绝" }
+    if status == "verification_failed" { return "保存结果未通过核验" }
+    if status == "" { return "未返回提案状态" }
+    "提案状态：" + status
+}
+// 展示用的人话操作名；不显示 ABI 原始工具名。
+fn activity_tool_label(name){
+    if name == "shopping.status.read" { return "状态读取" }
+    if name == "shopping.catalog.select" { return "目录切换" }
+    if name == "shopping.catalog.research" { return "商品研究" }
+    if name == "shopping.proposal.create" { return "创建提案" }
+    if name == "shopping.proposal.read" { return "读取提案" }
+    if name == "shopping.draft.save" { return "保存草稿" }
+    if name == "shopping.draft.read" { return "读回草稿" }
+    "其它工具"
+}
+// 仅依据该次工具真实返回生成确定性摘要：读返回对象字段，不读当前 UI 或模型文字。
+// is_ok=false 一律写“未确认成功”，绝不写成“未写入”；未知工具/字段不编造成功。
+fn activity_error_text(res){
+    let message = history_field(res, "message")
+    if message != nil && message != "" { return "" + message }
+    "本次返回未确认成功，请查看当前提案或重新读取状态"
+}
+fn activity_summary(name, res){
+    if res == nil { return "无结构化结果（未确认成功）。" }
+    if name == "shopping.status.read" {
+        let src = "" + history_field(res, "catalog_source")
+        if src == "synthetic_demo" { src = "合成演示目录" }
+        if src == "official_snapshot" { src = "官网报价快照" }
+        let mv = "" + history_field(res, "merchant_version")
+        let hr = activity_bool_text(history_field(res, "has_research"))
+        let cc = "" + history_field(res, "candidate_count")
+        let hp = activity_bool_text(history_field(res, "has_proposal"))
+        let hd = activity_bool_text(history_field(res, "has_draft"))
+        return "状态读取：目录来源 " + src + "，商户版本 " + mv + "；研究 " + hr + "，候选 " + cc + "，提案 " + hp + "，本地草稿 " + hd + "。"
+    }
+    if name == "shopping.catalog.select" {
+        if !activity_is_ok(res) { return "目录切换：未确认成功（" + activity_error_text(res) + "）。" }
+        return "目录切换：目录来源为 " + ("" + history_field(res, "catalog_source")) + "，本次变更 " + activity_bool_text(history_field(res, "changed")) + "。"
+    }
+    if name == "shopping.catalog.research" {
+        if !activity_is_ok(res) { return "商品研究：未确认成功（" + activity_error_text(res) + "）。" }
+        let d = history_field(res, "decision")
+        let st = ""
+        if d != nil { st = "" + history_field(d, "state") }
+        return "商品研究：已返回候选 " + ("" + history_field(res, "candidate_count")) + " 个；" + activity_state_text(st) + "。"
+    }
+    if name == "shopping.proposal.create" {
+        if !activity_is_ok(res) { return "创建提案：未确认成功（" + activity_error_text(res) + "）。" }
+        return "创建提案：已生成待确认提案 " + ("" + history_field(res, "proposal_id")) + "（v" + ("" + history_field(res, "revision")) + "），尚未保存；保存需宿主确认。"
+    }
+    if name == "shopping.proposal.read" {
+        if !activity_is_ok(res) { return "读取提案：未确认成功（" + activity_error_text(res) + "）。" }
+        return "读取提案：已读到提案 " + ("" + history_field(res, "proposal_id")) + "，状态 " + activity_proposal_state_text("" + history_field(res, "status")) + "。"
+    }
+    if name == "shopping.draft.save" {
+        let rb = history_field(res, "readback_ok")
+        if rb != nil && rb {
+            return "保存草稿：已保存并即时独立读回核验：" + ("" + history_field(res, "draft_id")) + "，仍未真实下单。"
+        }
+        return "保存草稿：未确认成功（" + activity_error_text(res) + "）；不能据此断定未写入，可能已写入但核验失败。"
+    }
+    if name == "shopping.draft.read" {
+        let rok = history_field(res, "read_ok")
+        let m = history_field(res, "matches_current_proposal")
+        if rok != nil && rok && m != nil && m {
+            return "读回草稿：已独立读回 " + ("" + history_field(res, "draft_id")) + "，且与当前提案字段一致。"
+        }
+        if rok != nil && rok { return "读回草稿：已读取，但未确认与当前提案一致。" }
+        return "读回草稿：未能确认独立读取成功；" + activity_error_text(res) + "。"
+    }
+    "其它工具：未识别的返回（未确认成功，不编造结论）。"
+}
+fn trim_activity(){
+    if activity_records.len() <= activity_record_limit { return }
+    let keep = []
+    let start = activity_records.len() - activity_record_limit
+    for i in activity_records.len() {
+        if i >= start { keep.push(activity_records[i]) }
+    }
+    activity_records = keep
+}
+// 包装工具完成：先原样把结果交给宿主，再记录本次真实返回；顺序不可颠倒。
+fn complete_shop_tool(name, call_id, res){
+    mod.app_tools.complete(call_id, res)
+    activity_records.push({tool: name call_id: call_id at: floor(time_now())
+        task_id: agent_task_id summary: activity_summary(name, res)})
+    trim_activity()
+    ui.reply_detail_records.set_text(activity_records_text())
+}
+fn activity_records_text(){
+    if activity_records.len() == 0 {
+        return "尚无应用工具记录。开始办理后，这里显示实际返回的操作结果（最近 12 条）；手动研究、确认与助手文字不计入。"
+    }
+    let s = ""
+    let n = 0
+    for rec in activity_records {
+        n = n + 1
+        let tmark = "无任务标记"
+        if rec.task_id != "" { tmark = rec.task_id }
+        s = s + ("" + n) + ". " + rec.summary + "\n"
+        s = s + "    操作：" + activity_tool_label(rec.tool) + " ｜ 时间：" + time_text(rec.at) + " ｜ 任务：" + tmark + "\n"
+    }
+    s
+}
 fn refresh_reply_detail(){
     ui.reply_detail_marker.set_text(reply_detail_marker_text())
+    ui.reply_detail_records.set_text(activity_records_text())
     ui.reply_detail_info.set_text(reply_detail_body_text())
+}
+// 两个只读阅读区（办理记录 / 完整回复）同一时刻只显示一个；首次进入默认记录。
+// 切换函数只设置 visible 与当前区子标题，不引入额外状态机、不改任何业务状态。
+fn switch_reply_view(which){
+    let records = which == "records"
+    ui.activity_records_section.set_visible(records)
+    ui.activity_reply_section.set_visible(!records)
+    if records {
+        ui.reply_detail_subtitle.set_text("办理记录：来自实际工具返回，最多 12 条，关闭应用后清空；手动操作不计入。")
+    } else {
+        ui.reply_detail_subtitle.set_text("完整回复：助手原文，未概括、未修写；不代表宿主批准，也不作为保存凭据。")
+    }
 }
 fn show_reply_detail(){
     refresh_reply_detail()
+    // 不能因为没有最终回复文字就遮盖或否认已有工具记录；两者独立展示。
     if agent_task_reply_text == "" {
-        ui.agent_task_status.set_text("当前没有可查看的完整回复；请先办理并同步助手回复。")
+        if activity_records.len() == 0 {
+            ui.agent_task_status.set_text("当前没有可查看的完整回复或工具记录；请先发起办理任务。")
+        } else {
+            ui.agent_task_status.set_text("当前没有可查看的完整回复文字，但已有应用工具记录；可在本页查看。")
+        }
     }
     show_page(5)
 }
@@ -2395,7 +2553,7 @@ fn app_tool(name, call_id){
     let req = mod.app_tools.request(call_id)
     let args = req.args
     if name == "shopping.status.read" {
-        mod.app_tools.complete(call_id, status_result())
+        complete_shop_tool(name, call_id, status_result())
         return
     }
     if name == "shopping.catalog.select" {
@@ -2404,11 +2562,11 @@ fn app_tool(name, call_id){
         // 只接受两个固定枚举；closed selection 仅切换脚本内嵌目录，无联网、无任意 JSON 输入。
         let source = ""
         if args.source != nil { source = "" + args.source }
-        mod.app_tools.complete(call_id, set_catalog_source(source))
+        complete_shop_tool(name, call_id, set_catalog_source(source))
         return
     }
     if name == "shopping.proposal.read" {
-        mod.app_tools.complete(call_id, proposal_result())
+        complete_shop_tool(name, call_id, proposal_result())
         return
     }
     if name == "shopping.catalog.research" {
@@ -2428,10 +2586,10 @@ fn app_tool(name, call_id){
         // 共享纯判定 guard：绑定任务的研究参数必须与任务起始快照吻合；不匹配则不研究、不清结果、不递增版本。
         let guard = task_binding_guard(task_id_arg, need, budget_text.to_f64(), hard)
         if !guard.is_ok {
-            mod.app_tools.complete(call_id, guard)
+            complete_shop_tool(name, call_id, guard)
             return
         }
-        mod.app_tools.complete(call_id, research_core(need, budget_text, hard, true))
+        complete_shop_tool(name, call_id, research_core(need, budget_text, hard, true))
         return
     }
     if name == "shopping.proposal.create" {
@@ -2442,22 +2600,22 @@ fn app_tool(name, call_id){
         if supplied_task_id != nil { task_id_arg = "" + supplied_task_id }
         let guard = task_binding_guard(task_id_arg, ui.need_input.text(), ui.budget_input.text().to_f64(), split_words(ui.keywords_input.text()))
         if !guard.is_ok {
-            mod.app_tools.complete(call_id, guard)
+            complete_shop_tool(name, call_id, guard)
             return
         }
         let rb_err = task_research_binding_error(agent_task_binding)
         if rb_err != "" {
-            mod.app_tools.complete(call_id, {is_ok: false error_code: rb_err message: task_research_error_message(rb_err)})
+            complete_shop_tool(name, call_id, {is_ok: false error_code: rb_err message: task_research_error_message(rb_err)})
             return
         }
         if !research_inputs_match() || args.research_revision != research_revision ||
             args.merchant_version != merchant_version {
-            mod.app_tools.complete(call_id, {is_ok: false error_code: "stale_research"
+            complete_shop_tool(name, call_id, {is_ok: false error_code: "stale_research"
                 message: "需求、预算、硬关键词、报价或研究版本已改变，请重新研究并使用新版本创建提案。"})
             return
         }
         if args.item_id == nil {
-            mod.app_tools.complete(call_id, {is_ok: false error_code: "missing_item_id" message: "缺少 item_id 参数。"})
+            complete_shop_tool(name, call_id, {is_ok: false error_code: "missing_item_id" message: "缺少 item_id 参数。"})
             return
         }
         let iid = args.item_id
@@ -2466,16 +2624,16 @@ fn app_tool(name, call_id){
             if results[i].item.item_id == iid { idx = i }
         }
         if idx < 0 {
-            mod.app_tools.complete(call_id, {is_ok: false error_code: "item_not_in_results" message: "该 item_id 不在最近一次研究结果中，请先调用 shopping.catalog.research。"})
+            complete_shop_tool(name, call_id, {is_ok: false error_code: "item_not_in_results" message: "该 item_id 不在最近一次研究结果中，请先调用 shopping.catalog.research。"})
             return
         }
         let p = create_proposal_at(idx)
         if p == nil {
-            mod.app_tools.complete(call_id, {is_ok: false error_code: "proposal_failed" message: "无法创建提案，请重新研究。"})
+            complete_shop_tool(name, call_id, {is_ok: false error_code: "proposal_failed" message: "无法创建提案，请重新研究。"})
             return
         }
         if agent_task_active { agent_task_proposal_id = p.proposal_id }
-        mod.app_tools.complete(call_id, proposal_result())
+        complete_shop_tool(name, call_id, proposal_result())
         return
     }
     if name == "shopping.draft.read" {
@@ -2486,7 +2644,7 @@ fn app_tool(name, call_id){
             ui.agent_task_status.set_text("采购草稿已保存并独立核验；请在草稿页查看商品、价格与版本。")
             show_page(4)
         }
-        mod.app_tools.complete(call_id, checked)
+        complete_shop_tool(name, call_id, checked)
         return
     }
     if name == "shopping.draft.save" {
@@ -2501,22 +2659,22 @@ fn app_tool(name, call_id){
         if supplied_task_id != nil { task_id_arg = "" + supplied_task_id }
         let guard = task_binding_guard(task_id_arg, ui.need_input.text(), ui.budget_input.text().to_f64(), split_words(ui.keywords_input.text()))
         if !guard.is_ok {
-            mod.app_tools.complete(call_id, guard)
+            complete_shop_tool(name, call_id, guard)
             return
         }
         let rb_err = task_research_binding_error(agent_task_binding)
         if rb_err != "" {
-            mod.app_tools.complete(call_id, {is_ok: false error_code: rb_err message: task_research_error_message(rb_err)})
+            complete_shop_tool(name, call_id, {is_ok: false error_code: rb_err message: task_research_error_message(rb_err)})
             return
         }
         if proposal == nil {
-            mod.app_tools.complete(call_id, {is_ok: false error_code: "no_proposal"
+            complete_shop_tool(name, call_id, {is_ok: false error_code: "no_proposal"
                 message: "没有待确认提案。当前进程没有内存提案（可能已重启），请重新研究并创建提案；不能凭已存草稿推断当前提案。"})
             return
         }
         if args.proposal_id == nil || args.revision == nil ||
             args.research_revision == nil || args.merchant_version == nil {
-            mod.app_tools.complete(call_id, {is_ok: false error_code: "missing_binding"
+            complete_shop_tool(name, call_id, {is_ok: false error_code: "missing_binding"
                 message: "缺少 proposal_id/revision/research_revision/merchant_version 参数。"})
             return
         }
@@ -2527,7 +2685,7 @@ fn app_tool(name, call_id){
             args.merchant_version != proposal.merchant_version ||
             !proposal_inputs_match() ||
             proposal.merchant_version != merchant_version {
-            mod.app_tools.complete(call_id, {is_ok: false error_code: "stale_proposal"
+            complete_shop_tool(name, call_id, {is_ok: false error_code: "stale_proposal"
                 message: "提案 id/revision/研究版本/商户版本或当前请求快照与当前状态不一致，请重新研究。"})
             return
         }
@@ -2537,7 +2695,7 @@ fn app_tool(name, call_id){
         }
         let res = confirm_draft_core(call_id)
         render_save_result(res)
-        mod.app_tools.complete(call_id, res)
+        complete_shop_tool(name, call_id, res)
         return
     }
     mod.app_tools.fail(call_id, "Unknown tool: " + name)
@@ -2586,7 +2744,7 @@ SolidView{width: Fill height: Fill flow: Down padding: 10 spacing: 6 draw_bg.col
     View{width: Fill height: Fit flow: Right spacing: 8 align: Align{y: 0.5}
         agent_task_status := Label{text: "Agent 办理：未开始。" draw_text.color: secondary draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 12}
         agent_task_sync_btn := BtnG{text: "同步回复" on_click: || agent_task_sync_reply()}
-        reply_detail_top_btn := BtnG{text: "查看完整回复" on_click: || show_reply_detail()}
+        reply_detail_top_btn := BtnG{text: "办理记录 / 回复" on_click: || show_reply_detail()}
         agent_cancel_top_btn := BtnG{text: "结束 / 取消" on_click: || agent_task_cancel()}
     }
     agent_task_reply_panel := ScrollYView{width: Fill height: 64 visible: false
@@ -2704,16 +2862,23 @@ SolidView{width: Fill height: Fill flow: Down padding: 10 spacing: 6 draw_bg.col
             agent_answer_json := TextInput{width: Fill height: 80 text: "" draw_bg +: {color: #xffffff color_hover: #xffffff color_focus: #xffffff color_empty: #xffffff border_radius: 8.0} draw_text +: {color: ink color_hover: ink color_focus: ink color_empty: secondary color_empty_hover: secondary}}
         }
 
-        // 独立可滚动的完整回复原文阅读页：显示 agent_task_reply_text 原文，不概括、不修写。
+        // 办理记录与完整回复：两个只读阅读区，同一时刻只显示一个；按钮在阅读内容之前，
+        // 首次进入默认“办理记录”。记录区只显示应用实际工具返回（内存，最多 12 条）；
+        // 原文区显示 agent_task_reply_text，一字不改。切换只改变可见性，不改业务状态。
         reply_detail_panel := SolidView{width: Fill height: Fit flow: Down spacing: 8 padding: 12 draw_bg.color: panel
-            Label{text: "完整回复原文（只读）" draw_text.color: ink draw_text.text_style.font_size: 15}
+            Label{text: "办理记录与完整回复（只读）" draw_text.color: ink draw_text.text_style.font_size: 15}
             reply_detail_marker := Label{text: "" draw_text.color: secondary draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 12}
-            Label{text: "以下为助手原始回复文字，未概括、未修写；原文本身不等于宿主批准，也不代表任务已结束或草稿已保存。" draw_text.color: secondary draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 12}
             View{width: Fill height: Fit flow: Right spacing: 8
-                reply_detail_refresh_btn := BtnG{text: "刷新原文" on_click: || refresh_reply_detail()}
+                activity_tab_records_btn := BtnG{text: "办理记录" on_click: || switch_reply_view("records")}
+                activity_tab_reply_btn := BtnG{text: "完整回复" on_click: || switch_reply_view("reply")}
+                reply_detail_refresh_btn := BtnG{text: "刷新" on_click: || refresh_reply_detail()}
                 reply_detail_back_btn := BtnG{text: "返回业务页" on_click: || back_from_reply_detail()}
             }
-            ScrollYView{width: Fill height: 360
+            reply_detail_subtitle := Label{text: "" draw_text.color: secondary draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 12}
+            activity_records_section := ScrollYView{width: Fill height: 360
+                reply_detail_records := Label{text: "" draw_text.color: ink draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
+            }
+            activity_reply_section := ScrollYView{width: Fill height: 360 visible: false
                 reply_detail_info := Label{text: "" draw_text.color: ink draw_text.wrap: Word width: Fill draw_text.text_style.font_size: 13}
             }
         }

@@ -1,0 +1,2 @@
+17bb585a6dc6abce1f10f02181ab06e1544414c622de457f12e0741a63668170  /projects/user007ssd/projects/gosim-agentic-app-2026/native/traceshop-activity/bundle/main.splash
+e3f0e0f5776ff094069b9a50415089fe21b0f86f7684252d63974c63a4b83cdd  /projects/user007ssd/projects/gosim-agentic-app-2026/native/traceshop-activity/bundle/tools.json

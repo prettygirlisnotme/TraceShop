@@ -1,0 +1,494 @@
+{
+  "kind": "traceshop-activity-ui",
+  "real_model": false,
+  "fixture": true,
+  "model_requests": 0,
+  "video_recorded": false,
+  "app_id": "traceshop.shopping",
+  "scope": "Official unmodified RC5, real Store install, deterministic localhost fixture (NO REAL MODEL). Verifies app-side activity records from real tool returns and that a new task clears them; no save, no destructive host approval, no video.",
+  "checks": {
+    "manual_research_ran": true,
+    "records_page_opened_before_task": true,
+    "manual_research_not_recorded": true,
+    "fixture_first_task_final": true,
+    "task_idle_after_first": true,
+    "fixture_all_tool_assertions_pass": true,
+    "records_page_opened_after_task": true,
+    "records_exactly_five_actual_returns": true,
+    "first_reply_visible_without_scroll": true,
+    "first_reply_is_exact_fixture_text": true,
+    "refresh_preserves_records_and_reply": true,
+    "records_status_read": true,
+    "records_research_ok": true,
+    "records_proposal_created": true,
+    "records_proposal_read_failure_not_success": true,
+    "records_proposal_read_pending": true,
+    "records_no_draft_save": true,
+    "no_draft_written": true,
+    "records_page_opened_before_second_final": true,
+    "new_task_clears_records": true,
+    "fixture_second_task_final": true,
+    "task_idle_after_second": true,
+    "second_reply_visible_without_scroll": true,
+    "second_reply_is_exact_fixture_text": true,
+    "second_task_no_tools_recorded": true
+  },
+  "errors": [],
+  "window_size": [
+    1400,
+    900
+  ],
+  "records_before_task": "尚无应用工具记录。开始办理后，这里显示实际返回的操作结果（最近 12 条）；手动研究、确认与助手文字不计入。",
+  "reply_diagnostics": {
+    "before_task": {
+      "tag": "before_task",
+      "at": 1791723124.148,
+      "window": [
+        1400,
+        900
+      ],
+      "stage_info": "办理记录 · 完整回复",
+      "agent_task_status": "当前没有可查看的完整回复或工具记录；请先发起办理任务。",
+      "agent_task_reply": "",
+      "agent_task_reply_len": 0,
+      "reply_detail_marker": "任务标记：无（尚未发起办理任务）。",
+      "reply_detail_info": "",
+      "reply_detail_info_len": 0,
+      "widgets": {
+        "reply_detail_marker": {
+          "present": true,
+          "rect": [
+            140,
+            381,
+            939,
+            26
+          ],
+          "text_len": 17
+        },
+        "reply_detail_records": {
+          "present": true,
+          "rect": [
+            140,
+            511,
+            943,
+            24
+          ],
+          "text_len": 54
+        },
+        "reply_detail_info": {
+          "present": false
+        },
+        "reply_detail_refresh_btn": {
+          "present": true,
+          "rect": [
+            315,
+            421,
+            55,
+            34
+          ],
+          "text_len": 2
+        },
+        "reply_detail_back_btn": {
+          "present": true,
+          "rect": [
+            377,
+            421,
+            95,
+            34
+          ],
+          "text_len": 5
+        },
+        "agent_task_reply": {
+          "present": false
+        }
+      }
+    },
+    "first_records": {
+      "tag": "first_records",
+      "at": 1791723265.657,
+      "window": [
+        1400,
+        900
+      ],
+      "stage_info": "办理记录 · 完整回复",
+      "agent_task_status": "本轮已回复 · 请查看办理结果；保存成功以独立核验结果为准。",
+      "agent_task_reply": "NO REAL MODEL fixture: 本次办理已按脚本流程结束（状态读取 -> 读取提案失败 -> 研究 -> 创建提案 -> 读取提案待确认）；未保存草稿、未下单。此文本是确定性协议流量，不是模型推理。",
+      "agent_task_reply_len": 106,
+      "reply_detail_marker": "任务标记：TraceShopTask-1791723258.9159482-2",
+      "reply_detail_info": "",
+      "reply_detail_info_len": 0,
+      "widgets": {
+        "reply_detail_marker": {
+          "present": true,
+          "rect": [
+            140,
+            451,
+            939,
+            26
+          ],
+          "text_len": 39
+        },
+        "reply_detail_records": {
+          "present": true,
+          "rect": [
+            140,
+            581,
+            943,
+            184
+          ],
+          "text_len": 604
+        },
+        "reply_detail_info": {
+          "present": false
+        },
+        "reply_detail_refresh_btn": {
+          "present": true,
+          "rect": [
+            315,
+            491,
+            55,
+            34
+          ],
+          "text_len": 2
+        },
+        "reply_detail_back_btn": {
+          "present": true,
+          "rect": [
+            377,
+            491,
+            95,
+            34
+          ],
+          "text_len": 5
+        },
+        "agent_task_reply": {
+          "present": true,
+          "rect": [
+            128,
+            323,
+            967,
+            46
+          ],
+          "text_len": 106
+        }
+      }
+    },
+    "first_reply": {
+      "tag": "first_reply",
+      "at": 1791723272.306,
+      "window": [
+        1400,
+        900
+      ],
+      "stage_info": "办理记录 · 完整回复",
+      "agent_task_status": "本轮已回复 · 请查看办理结果；保存成功以独立核验结果为准。",
+      "agent_task_reply": "NO REAL MODEL fixture: 本次办理已按脚本流程结束（状态读取 -> 读取提案失败 -> 研究 -> 创建提案 -> 读取提案待确认）；未保存草稿、未下单。此文本是确定性协议流量，不是模型推理。",
+      "agent_task_reply_len": 106,
+      "reply_detail_marker": "任务标记：TraceShopTask-1791723258.9159482-2",
+      "reply_detail_info": "NO REAL MODEL fixture: 本次办理已按脚本流程结束（状态读取 -> 读取提案失败 -> 研究 -> 创建提案 -> 读取提案待确认）；未保存草稿、未下单。此文本是确定性协议流量，不是模型推理。",
+      "reply_detail_info_len": 106,
+      "widgets": {
+        "reply_detail_marker": {
+          "present": true,
+          "rect": [
+            140,
+            451,
+            939,
+            26
+          ],
+          "text_len": 39
+        },
+        "reply_detail_records": {
+          "present": false
+        },
+        "reply_detail_info": {
+          "present": true,
+          "rect": [
+            140,
+            581,
+            943,
+            49
+          ],
+          "text_len": 106
+        },
+        "reply_detail_refresh_btn": {
+          "present": true,
+          "rect": [
+            315,
+            491,
+            55,
+            34
+          ],
+          "text_len": 2
+        },
+        "reply_detail_back_btn": {
+          "present": true,
+          "rect": [
+            377,
+            491,
+            95,
+            34
+          ],
+          "text_len": 5
+        },
+        "agent_task_reply": {
+          "present": true,
+          "rect": [
+            128,
+            323,
+            967,
+            46
+          ],
+          "text_len": 106
+        }
+      }
+    },
+    "first_after_reveal": {
+      "tag": "first_after_reveal",
+      "at": 1791723278.922,
+      "window": [
+        1400,
+        900
+      ],
+      "stage_info": "办理记录 · 完整回复",
+      "agent_task_status": "本轮已回复 · 请查看办理结果；保存成功以独立核验结果为准。",
+      "agent_task_reply": "NO REAL MODEL fixture: 本次办理已按脚本流程结束（状态读取 -> 读取提案失败 -> 研究 -> 创建提案 -> 读取提案待确认）；未保存草稿、未下单。此文本是确定性协议流量，不是模型推理。",
+      "agent_task_reply_len": 106,
+      "reply_detail_marker": "任务标记：TraceShopTask-1791723258.9159482-2",
+      "reply_detail_info": "NO REAL MODEL fixture: 本次办理已按脚本流程结束（状态读取 -> 读取提案失败 -> 研究 -> 创建提案 -> 读取提案待确认）；未保存草稿、未下单。此文本是确定性协议流量，不是模型推理。",
+      "reply_detail_info_len": 106,
+      "widgets": {
+        "reply_detail_marker": {
+          "present": true,
+          "rect": [
+            140,
+            451,
+            939,
+            26
+          ],
+          "text_len": 39
+        },
+        "reply_detail_records": {
+          "present": false
+        },
+        "reply_detail_info": {
+          "present": true,
+          "rect": [
+            140,
+            581,
+            943,
+            49
+          ],
+          "text_len": 106
+        },
+        "reply_detail_refresh_btn": {
+          "present": true,
+          "rect": [
+            315,
+            491,
+            55,
+            34
+          ],
+          "text_len": 2
+        },
+        "reply_detail_back_btn": {
+          "present": true,
+          "rect": [
+            377,
+            491,
+            95,
+            34
+          ],
+          "text_len": 5
+        },
+        "agent_task_reply": {
+          "present": true,
+          "rect": [
+            128,
+            323,
+            967,
+            46
+          ],
+          "text_len": 106
+        }
+      }
+    },
+    "second_reply": {
+      "tag": "second_reply",
+      "at": 1791723302.169,
+      "window": [
+        1400,
+        900
+      ],
+      "stage_info": "办理记录 · 完整回复",
+      "agent_task_status": "本轮已回复 · 请查看办理结果；保存成功以独立核验结果为准。",
+      "agent_task_reply": "NO REAL MODEL fixture: 第二个任务返回纯文字、未调用任何工具；用于验证新任务会清空办理记录。",
+      "agent_task_reply_len": 57,
+      "reply_detail_marker": "任务标记：TraceShopTask-1791723291.0642393-3",
+      "reply_detail_info": "NO REAL MODEL fixture: 第二个任务返回纯文字、未调用任何工具；用于验证新任务会清空办理记录。",
+      "reply_detail_info_len": 57,
+      "widgets": {
+        "reply_detail_marker": {
+          "present": true,
+          "rect": [
+            140,
+            451,
+            939,
+            26
+          ],
+          "text_len": 39
+        },
+        "reply_detail_records": {
+          "present": false
+        },
+        "reply_detail_info": {
+          "present": true,
+          "rect": [
+            140,
+            581,
+            943,
+            24
+          ],
+          "text_len": 57
+        },
+        "reply_detail_refresh_btn": {
+          "present": true,
+          "rect": [
+            315,
+            491,
+            55,
+            34
+          ],
+          "text_len": 2
+        },
+        "reply_detail_back_btn": {
+          "present": true,
+          "rect": [
+            377,
+            491,
+            95,
+            34
+          ],
+          "text_len": 5
+        },
+        "agent_task_reply": {
+          "present": true,
+          "rect": [
+            128,
+            323,
+            967,
+            23
+          ],
+          "text_len": 57
+        }
+      }
+    },
+    "second_after_reveal": {
+      "tag": "second_after_reveal",
+      "at": 1791723309.008,
+      "window": [
+        1400,
+        900
+      ],
+      "stage_info": "办理记录 · 完整回复",
+      "agent_task_status": "本轮已回复 · 请查看办理结果；保存成功以独立核验结果为准。",
+      "agent_task_reply": "NO REAL MODEL fixture: 第二个任务返回纯文字、未调用任何工具；用于验证新任务会清空办理记录。",
+      "agent_task_reply_len": 57,
+      "reply_detail_marker": "任务标记：TraceShopTask-1791723291.0642393-3",
+      "reply_detail_info": "NO REAL MODEL fixture: 第二个任务返回纯文字、未调用任何工具；用于验证新任务会清空办理记录。",
+      "reply_detail_info_len": 57,
+      "widgets": {
+        "reply_detail_marker": {
+          "present": true,
+          "rect": [
+            140,
+            451,
+            939,
+            26
+          ],
+          "text_len": 39
+        },
+        "reply_detail_records": {
+          "present": false
+        },
+        "reply_detail_info": {
+          "present": true,
+          "rect": [
+            140,
+            581,
+            943,
+            24
+          ],
+          "text_len": 57
+        },
+        "reply_detail_refresh_btn": {
+          "present": true,
+          "rect": [
+            315,
+            491,
+            55,
+            34
+          ],
+          "text_len": 2
+        },
+        "reply_detail_back_btn": {
+          "present": true,
+          "rect": [
+            377,
+            491,
+            95,
+            34
+          ],
+          "text_len": 5
+        },
+        "agent_task_reply": {
+          "present": true,
+          "rect": [
+            128,
+            323,
+            967,
+            23
+          ],
+          "text_len": 57
+        }
+      }
+    }
+  },
+  "first_task_consent": "consent_handled",
+  "fixture_checks": {
+    "manual_research_visible_in_real_status": true,
+    "status_binding_is_active": true,
+    "status_binding_has_task_id": true,
+    "status_binding_captured_ui_request": true,
+    "proposal_read_without_proposal_fails": true,
+    "research_is_ok": true,
+    "research_has_candidate": true,
+    "research_has_versions": true,
+    "proposal_create_is_ok": true,
+    "proposal_create_is_pending": true,
+    "proposal_read_is_ok": true,
+    "proposal_read_is_pending": true
+  },
+  "records_after_task": "1. 状态读取：目录来源 合成演示目录，商户版本 1；研究 是，候选 1，提案 否，本地草稿 否。\n    操作：状态读取 ｜ 时间：2026-10-11 12:54（宿主时间） ｜ 任务：TraceShopTask-1791723258.9159482-2\n2. 读取提案：未确认成功（当前没有待确认提案。）。\n    操作：读取提案 ｜ 时间：2026-10-11 12:54（宿主时间） ｜ 任务：TraceShopTask-1791723258.9159482-2\n3. 商品研究：已返回候选 1 个；已找到满足预算与硬关键词的候选。\n    操作：商品研究 ｜ 时间：2026-10-11 12:54（宿主时间） ｜ 任务：TraceShopTask-1791723258.9159482-2\n4. 创建提案：已生成待确认提案 p-1791723264-1（v1），尚未保存；保存需宿主确认。\n    操作：创建提案 ｜ 时间：2026-10-11 12:54（宿主时间） ｜ 任务：TraceShopTask-1791723258.9159482-2\n5. 读取提案：已读到提案 p-1791723264-1，状态 待确认（未保存）。\n    操作：读取提案 ｜ 时间：2026-10-11 12:54（宿主时间） ｜ 任务：TraceShopTask-1791723258.9159482-2\n",
+  "first_reply_text": "NO REAL MODEL fixture: 本次办理已按脚本流程结束（状态读取 -> 读取提案失败 -> 研究 -> 创建提案 -> 读取提案待确认）；未保存草稿、未下单。此文本是确定性协议流量，不是模型推理。",
+  "first_reveal": {
+    "present_before": true,
+    "text_before": "NO REAL MODEL fixture: 本次办理已按脚本流程结束（状态读取 -> 读取提案失败 -> 研究 -> 创建提案 -> 读取提案待确认）；未保存草稿、未下单。此文本是确定性协议流量，不是模型推理。",
+    "revealed": true,
+    "present_after": true,
+    "text_after": "NO REAL MODEL fixture: 本次办理已按脚本流程结束（状态读取 -> 读取提案失败 -> 研究 -> 创建提案 -> 读取提案待确认）；未保存草稿、未下单。此文本是确定性协议流量，不是模型推理。"
+  },
+  "records_after_refresh": "1. 状态读取：目录来源 合成演示目录，商户版本 1；研究 是，候选 1，提案 否，本地草稿 否。\n    操作：状态读取 ｜ 时间：2026-10-11 12:54（宿主时间） ｜ 任务：TraceShopTask-1791723258.9159482-2\n2. 读取提案：未确认成功（当前没有待确认提案。）。\n    操作：读取提案 ｜ 时间：2026-10-11 12:54（宿主时间） ｜ 任务：TraceShopTask-1791723258.9159482-2\n3. 商品研究：已返回候选 1 个；已找到满足预算与硬关键词的候选。\n    操作：商品研究 ｜ 时间：2026-10-11 12:54（宿主时间） ｜ 任务：TraceShopTask-1791723258.9159482-2\n4. 创建提案：已生成待确认提案 p-1791723264-1（v1），尚未保存；保存需宿主确认。\n    操作：创建提案 ｜ 时间：2026-10-11 12:54（宿主时间） ｜ 任务：TraceShopTask-1791723258.9159482-2\n5. 读取提案：已读到提案 p-1791723264-1，状态 待确认（未保存）。\n    操作：读取提案 ｜ 时间：2026-10-11 12:54（宿主时间） ｜ 任务：TraceShopTask-1791723258.9159482-2\n",
+  "second_task_consent": "no_consent_needed",
+  "records_after_second_start": "尚无应用工具记录。开始办理后，这里显示实际返回的操作结果（最近 12 条）；手动研究、确认与助手文字不计入。",
+  "records_after_second_final": "尚无应用工具记录。开始办理后，这里显示实际返回的操作结果（最近 12 条）；手动研究、确认与助手文字不计入。",
+  "second_reply_text": "NO REAL MODEL fixture: 第二个任务返回纯文字、未调用任何工具；用于验证新任务会清空办理记录。",
+  "second_reveal": {
+    "present_before": true,
+    "text_before": "NO REAL MODEL fixture: 第二个任务返回纯文字、未调用任何工具；用于验证新任务会清空办理记录。",
+    "revealed": true,
+    "present_after": true,
+    "text_after": "NO REAL MODEL fixture: 第二个任务返回纯文字、未调用任何工具；用于验证新任务会清空办理记录。"
+  },
+  "passed": true
+}
