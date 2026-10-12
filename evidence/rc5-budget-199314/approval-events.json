@@ -1,0 +1,97 @@
+[
+  {
+    "record_kind": "notification",
+    "kind": "approval_requested",
+    "session_id": "_main:api:octosense#peerctx-traceshop-shopping-22a12f906cd27b73.6550823b-p1-card-traceshop-shopping-g1",
+    "topic": "peerctx-traceshop-shopping-22a12f906cd27b73.6550823b-p1-card-traceshop-shopping-g1",
+    "approval_id": "01a12e3c-7338-7873-a1e6-980166a0ebf1",
+    "turn_id": "e0fd7ff8-1f13-4025-8af3-281ffa935427",
+    "tool_name": "shopping_task_budget_set",
+    "title": "Approve shopping.task.budget.set",
+    "body": "shopping.task.budget.set (destructive) wants to run with these exact arguments:\n{\n  \"budget_usd\": 22.99,\n  \"expected_budget_usd\": 20,\n  \"reason\": \"当前目录满足硬关键词(wireless+silent)的唯一商品价 22.99 USD，超原预算 2.99 USD；仅调本地任务预算，不付款。\",\n  \"task_id\": \"TraceShopTask-1791777063.395466-2\"\n}",
+    "approval_kind": "host_tool",
+    "risk": "destructive",
+    "typed_details": {
+      "kind": "host_tool",
+      "host_tool": {
+        "app": "traceshop.shopping",
+        "tool": "shopping.task.budget.set",
+        "args": {
+          "budget_usd": 22.99,
+          "expected_budget_usd": 20,
+          "reason": "当前目录满足硬关键词(wireless+silent)的唯一商品价 22.99 USD，超原预算 2.99 USD；仅调本地任务预算，不付款。",
+          "task_id": "TraceShopTask-1791777063.395466-2"
+        },
+        "risk": "destructive",
+        "outward": false,
+        "calling_kind": "app_peer",
+        "calling_peer": "traceshop-shopping-22a12f906cd27b73",
+        "calling_session_id": "_main:api:octosense#peerctx-traceshop-shopping-22a12f906cd27b73.6550823b-p1-card-traceshop-shopping-g1",
+        "context_id": "6550823b-p1-card-traceshop-shopping-g1",
+        "tool_call_id": "call_01a12e3c71dd745494a94781",
+        "outcome_unknown_before": false
+      }
+    }
+  },
+  {
+    "record_kind": "notification",
+    "kind": "approval_decided",
+    "session_id": "_main:api:octosense#peerctx-traceshop-shopping-22a12f906cd27b73.6550823b-p1-card-traceshop-shopping-g1",
+    "topic": "peerctx-traceshop-shopping-22a12f906cd27b73.6550823b-p1-card-traceshop-shopping-g1",
+    "approval_id": "01a12e3c-7338-7873-a1e6-980166a0ebf1",
+    "turn_id": "e0fd7ff8-1f13-4025-8af3-281ffa935427",
+    "decision": "approve",
+    "decided_at": "2026-10-12T03:52:15.192656992Z",
+    "decided_by": "_main",
+    "auto_resolved": false,
+    "client_note": "approved on the sheet"
+  },
+  {
+    "record_kind": "notification",
+    "kind": "approval_requested",
+    "session_id": "_main:api:octosense#peerctx-traceshop-shopping-22a12f906cd27b73.6550823b-p1-card-traceshop-shopping-g1",
+    "topic": "peerctx-traceshop-shopping-22a12f906cd27b73.6550823b-p1-card-traceshop-shopping-g1",
+    "approval_id": "01a12e3d-7919-7c23-94f5-b271867584fa",
+    "turn_id": "e0fd7ff8-1f13-4025-8af3-281ffa935427",
+    "tool_name": "shopping_draft_save",
+    "title": "Approve shopping.draft.save",
+    "body": "shopping.draft.save (destructive) wants to run with these exact arguments:\n{\n  \"merchant_version\": 2,\n  \"proposal_id\": \"p-1791777152-1\",\n  \"research_revision\": 3,\n  \"revision\": 1,\n  \"task_id\": \"TraceShopTask-1791777063.395466-2\"\n}",
+    "approval_kind": "host_tool",
+    "risk": "destructive",
+    "typed_details": {
+      "kind": "host_tool",
+      "host_tool": {
+        "app": "traceshop.shopping",
+        "tool": "shopping.draft.save",
+        "args": {
+          "merchant_version": 2,
+          "proposal_id": "p-1791777152-1",
+          "research_revision": 3,
+          "revision": 1,
+          "task_id": "TraceShopTask-1791777063.395466-2"
+        },
+        "risk": "destructive",
+        "outward": false,
+        "calling_kind": "app_peer",
+        "calling_peer": "traceshop-shopping-22a12f906cd27b73",
+        "calling_session_id": "_main:api:octosense#peerctx-traceshop-shopping-22a12f906cd27b73.6550823b-p1-card-traceshop-shopping-g1",
+        "context_id": "6550823b-p1-card-traceshop-shopping-g1",
+        "tool_call_id": "call_01a12e3d77ad7629a601fbbe",
+        "outcome_unknown_before": false
+      }
+    }
+  },
+  {
+    "record_kind": "notification",
+    "kind": "approval_decided",
+    "session_id": "_main:api:octosense#peerctx-traceshop-shopping-22a12f906cd27b73.6550823b-p1-card-traceshop-shopping-g1",
+    "topic": "peerctx-traceshop-shopping-22a12f906cd27b73.6550823b-p1-card-traceshop-shopping-g1",
+    "approval_id": "01a12e3d-7919-7c23-94f5-b271867584fa",
+    "turn_id": "e0fd7ff8-1f13-4025-8af3-281ffa935427",
+    "decision": "approve",
+    "decided_at": "2026-10-12T03:53:42.363315422Z",
+    "decided_by": "_main",
+    "auto_resolved": false,
+    "client_note": "approved on the sheet"
+  }
+]

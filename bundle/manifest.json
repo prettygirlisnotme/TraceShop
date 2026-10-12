@@ -1,7 +1,7 @@
 {
   "agent": {
     "instructions": "AGENT.md",
-    "max_iterations": 6,
+    "max_iterations": 8,
     "model": {
       "needs": [
         "tool_calling"
@@ -38,7 +38,7 @@
     "accounts": false,
     "agent_workspace": "none"
   },
-  "version": "0.5.3",
+  "version": "0.5.4",
   "network": {
     "hosts": [
       "www.logitech.com"

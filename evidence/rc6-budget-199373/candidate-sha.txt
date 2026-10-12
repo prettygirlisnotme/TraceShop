@@ -1,0 +1,2 @@
+43b89dde90a493986fc1f190fea05d62460bd712fb028c29ab404359596bec23  /projects/user007ssd/projects/gosim-agentic-app-2026/native/traceshop-budget-revision/bundle/main.splash
+4d10e50be3c452c808f1f120e334786916fcf34515c4595b1f2a09edc24cc24f  /projects/user007ssd/projects/gosim-agentic-app-2026/native/traceshop-budget-revision/bundle/tools.json

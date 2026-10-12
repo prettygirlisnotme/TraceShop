@@ -1,0 +1,28 @@
+{
+  "checks": {
+    "status_binding_is_active": true,
+    "status_binding_has_task_id": true,
+    "status_binding_captured_ui_request": true,
+    "status_binding_initial_budget_is_20": true,
+    "research_20_has_no_candidate": true,
+    "research_20_has_budget_change_alternative": true,
+    "research_20_alternative_price_is_22_99": true,
+    "alternative_proposal_create_is_rejected": true,
+    "budget_set_is_ok": true,
+    "budget_set_changed": true,
+    "budget_set_before_is_20": true,
+    "budget_set_after_is_23": true,
+    "budget_set_preserves_initial_usd": true,
+    "budget_set_requires_fresh_research": true,
+    "stale_expected_budget_is_rejected": true,
+    "proposal_without_fresh_research_is_rejected": true,
+    "research_23_is_ok": true,
+    "research_23_has_candidate": true,
+    "research_23_top_is_m240_22_99": true,
+    "proposal_create_is_ok": true,
+    "proposal_create_is_pending": true,
+    "proposal_create_selected_m240": true,
+    "no_draft_save_or_read_was_emitted": true
+  },
+  "passed": true
+}

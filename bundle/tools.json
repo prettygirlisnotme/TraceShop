@@ -76,7 +76,7 @@
           },
           "agent_task_binding": {
             "type": "object",
-            "description": "Small local task-binding summary: whether an app-launched task binding exists/active, its task_id, the original request snapshot and the starting research revision. A local binding snapshot, not host turn identity and not a guarantee of arbitrary host-turn isolation.",
+            "description": "Local active/closed binding, currently approved request and initial budget; not host turn authentication.",
             "properties": {
               "present": {
                 "type": "boolean"
@@ -92,7 +92,7 @@
               },
               "request": {
                 "type": "object",
-                "description": "Original request snapshot captured when the task was launched.",
+                "description": "Current approved task request; only a host-approved shopping.task.budget.set can revise its budget.",
                 "properties": {
                   "need": {
                     "type": "string"
@@ -119,6 +119,13 @@
               },
               "note": {
                 "type": "string"
+              },
+              "initial_budget_usd": {
+                "type": "number",
+                "description": "Initial task budget, retained when a later budget is approved."
+              },
+              "budget_revision_count": {
+                "type": "integer"
               }
             }
           }
@@ -188,7 +195,7 @@
     },
     {
       "name": "shopping.catalog.research",
-      "description": "Research the current catalog using the user's need, positive USD budget and hard_keywords. Never raise the budget or delete hard keywords. For an app-started task, carry the original task_id; changed UI conditions, source or versions reject the call without changing business state. Returns up to 3 eligible candidates with prices, budget remaining, catalog features, literal field evidence, preference_checks and dated quote metadata. not_documented means unverified in this catalog, not unsupported. decision contains the request, state, clarification_required, question and separate read-only alternatives; candidate checks are on candidates, not duplicated in decision. Alternatives cannot become proposals. Prices may be synthetic or locally simulated; official snapshots are item prices only, not live totals, shipping, tax or delivery guarantees. No save, purchase or approval occurs here.",
+      "description": "Research the current catalog using the user's need, positive USD budget and hard_keywords. Never silently raise the budget or delete hard keywords; only the host-approved budget revision tool may change it. For an app-started task, carry the original task_id; changed UI conditions, source or versions reject the call without changing business state. Returns up to 3 eligible candidates with prices, budget remaining, catalog features, literal field evidence, preference_checks and dated quote metadata. not_documented means unverified in this catalog, not unsupported. decision contains the request, state, clarification_required, question and separate read-only alternatives; candidate checks are on candidates, not duplicated in decision. Alternatives cannot become proposals. Prices may be synthetic or locally simulated; official snapshots are item prices only, not live totals, shipping, tax or delivery guarantees. No save, purchase or approval occurs here.",
       "implemented_by": "app",
       "risk": "act",
       "input_schema": {
@@ -216,7 +223,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 128,
-            "description": "Optional. When the app launched this task, pass the exact task_id from the task payload; it must match the local binding, and the need/budget/hard-keyword set must match the task's starting snapshot. Omit only for direct host calls with no active binding."
+            "description": "Optional. When the app launched this task, pass the exact task_id from the task payload; it must match the local binding, and the need/budget/hard-keyword set must match the task's currently approved snapshot. Omit only for direct host calls with no active binding."
           }
         },
         "required": [
@@ -594,6 +601,39 @@
                       "type": "boolean",
                       "description": "Always false: alternatives are never eligible candidates and cannot be saved directly."
                     }
+                  }
+                }
+              },
+              "next_action": {
+                "type": "object",
+                "description": "Optional on bound no-candidate tasks only. A suggested host-approval request from a hard-eligible over-budget alternative; never an approval or an eligible candidate. Use the declared budget tool directly rather than a duplicate chat question. Fresh research and separate save approval still required.",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "request_host_approval"
+                    ]
+                  },
+                  "tool": {
+                    "type": "string",
+                    "enum": [
+                      "shopping.task.budget.set"
+                    ]
+                  },
+                  "arguments": {
+                    "type": "object"
+                  },
+                  "approved": {
+                    "type": "boolean",
+                    "enum": [
+                      false
+                    ]
+                  },
+                  "fresh_research_after_approval": {
+                    "type": "boolean"
+                  },
+                  "separate_save_approval": {
+                    "type": "boolean"
                   }
                 }
               }
@@ -1003,6 +1043,104 @@
           },
           "selection_record_present": {
             "type": "boolean"
+          }
+        },
+        "required": [
+          "is_ok"
+        ]
+      }
+    },
+    {
+      "name": "shopping.task.budget.set",
+      "description": "Request host approval to change the active app-launched task's USD budget. expected_budget_usd and budget_usd are the visible before/after amounts. This call requests consent; it is not consent. A denied/cancelled call does not execute. On approval, checks exact active task_id, unchanged need/hard keywords/catalog/merchant/UI and expected current budget. Changes only bound/UI budget, preserves initial budget and stored draft, invalidates old candidates/proposals and requires new research. Returned changed=true is the change receipt. Research again with after_budget_usd before proposing; alternatives never become proposals directly. Saving a draft still needs its own host approval. Never silently relax a constraint. No order or payment.",
+      "implemented_by": "app",
+      "risk": "destructive",
+      "confirm": "host",
+      "auto_approvable": false,
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "The exact task_id of the active app-launched task; it must match the local binding."
+          },
+          "expected_budget_usd": {
+            "type": "number",
+            "minimum": 0.01,
+            "maximum": 100000,
+            "description": "Optimistic-concurrency guard: must equal the current bound budget, so a late or repeated old request cannot overwrite an already revised budget."
+          },
+          "budget_usd": {
+            "type": "number",
+            "minimum": 0.01,
+            "maximum": 100000,
+            "description": "Proposed new USD budget; shown together with expected_budget_usd for host approval. It must differ from the currently bound budget."
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Concise reason shown with the before/after amounts (for example the over-budget candidate price)."
+          }
+        },
+        "required": [
+          "task_id",
+          "expected_budget_usd",
+          "budget_usd",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "is_ok": {
+            "type": "boolean"
+          },
+          "changed": {
+            "type": "boolean"
+          },
+          "error_code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "before_budget_usd": {
+            "type": "number"
+          },
+          "after_budget_usd": {
+            "type": "number"
+          },
+          "fresh_research_required": {
+            "type": "boolean",
+            "description": "True on a successful change: the previous research is invalid and must be redone with the new budget."
+          },
+          "reason": {
+            "type": "string"
+          },
+          "initial_budget_usd": {
+            "type": "number",
+            "description": "The task's original budget, preserved for inspection."
+          },
+          "research_revision": {
+            "type": "integer"
+          },
+          "merchant_version": {
+            "type": "integer"
+          },
+          "catalog_source": {
+            "type": "string",
+            "enum": [
+              "official_snapshot",
+              "synthetic_demo"
+            ]
+          },
+          "binding": {
+            "type": "object",
+            "description": "Updated local task-binding summary (active/task_id/request/start research revision/initial budget). A local snapshot, not host turn identity."
           }
         },
         "required": [

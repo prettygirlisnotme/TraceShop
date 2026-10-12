@@ -1,0 +1,99 @@
+{
+  "kind": "traceshop-budget-revision-ui",
+  "real_model": false,
+  "fixture": true,
+  "model_requests": 0,
+  "video_recorded": false,
+  "app_id": "traceshop.shopping",
+  "scope": "Official unmodified RC5, real Store install, deterministic localhost fixture (NO REAL MODEL). Verifies the app-side budget-revision flow from real tool returns and real native approvals; no save, no video.",
+  "requested": {
+    "need": "办公用无线鼠标",
+    "budget_initial": "20",
+    "hard": "wireless,silent"
+  },
+  "checks": {
+    "catalog_is_official_snapshot": true,
+    "ui_inputs_set_for_task": true,
+    "fixture_started": true,
+    "first_approval_requested": true,
+    "ui_budget_becomes_23_after_approval": true,
+    "second_approval_requested": true,
+    "ui_budget_is_23_before_second_prompt": true,
+    "ui_budget_unchanged_after_stale_reject": true,
+    "fixture_final_reached": true,
+    "fixture_all_tool_assertions_pass": true,
+    "fixture_records_reached_8_tool_calls": true,
+    "ui_budget_final_is_23": true,
+    "records_page_opened": true,
+    "records_show_budget_adjust": true,
+    "records_show_budget_change_amount": true,
+    "records_show_stale_rejection": true,
+    "no_draft_written": true
+  },
+  "errors": [],
+  "window_size": [
+    1400,
+    900
+  ],
+  "ui_at_launch": {
+    "need": "办公用无线鼠标",
+    "budget": "20",
+    "hard": "wireless,silent"
+  },
+  "ready_markers": {
+    "consent": {
+      "budget_input": "20",
+      "awaiting": 0,
+      "diagnostic_image": "/projects/user007ssd/projects/gosim-agentic-app-2026/native/traceshop-budget-revision/check/run-rc6-199373/diagnostic-consent.png"
+    },
+    "budget-approval-1": {
+      "budget_input": "",
+      "awaiting": 1,
+      "diagnostic_image": "/projects/user007ssd/projects/gosim-agentic-app-2026/native/traceshop-budget-revision/check/run-rc6-199373/diagnostic-budget-approval-1.png"
+    },
+    "budget-approval-2": {
+      "budget_input": "23",
+      "awaiting": 2,
+      "diagnostic_image": "/projects/user007ssd/projects/gosim-agentic-app-2026/native/traceshop-budget-revision/check/run-rc6-199373/diagnostic-budget-approval-2.png"
+    }
+  },
+  "start": "consent_handled",
+  "budget_before_first_approval": "",
+  "pending_budget_input_visible": false,
+  "observation_limits": [
+    "Budget input is not rendered on the candidate page during the first host prompt; its empty snap value is not a budget reading. Initial status and later before_budget receipt are separate observations.",
+    "This focused run does not verify final callback recovery or idle lifecycle; the existing host 60-second limit remains."
+  ],
+  "budget_before_second_approval": "23",
+  "turn_callback_status": "回合状态待确认 · 助手回复等待已结束，任务可能仍在继续。可点“同步回复”查看历史回复，处理系统确认，或点“结束 / 取消”后重试。",
+  "fixture_checks": {
+    "status_binding_is_active": true,
+    "status_binding_has_task_id": true,
+    "status_binding_captured_ui_request": true,
+    "status_binding_initial_budget_is_20": true,
+    "research_20_has_no_candidate": true,
+    "research_20_has_budget_change_alternative": true,
+    "research_20_alternative_price_is_22_99": true,
+    "alternative_proposal_create_is_rejected": true,
+    "budget_set_is_ok": true,
+    "budget_set_changed": true,
+    "budget_set_before_is_20": true,
+    "budget_set_after_is_23": true,
+    "budget_set_preserves_initial_usd": true,
+    "budget_set_requires_fresh_research": true,
+    "stale_expected_budget_is_rejected": true,
+    "proposal_without_fresh_research_is_rejected": true,
+    "research_23_is_ok": true,
+    "research_23_has_candidate": true,
+    "research_23_top_is_m240_22_99": true,
+    "proposal_create_is_ok": true,
+    "proposal_create_is_pending": true,
+    "proposal_create_selected_m240": true,
+    "no_draft_save_or_read_was_emitted": true
+  },
+  "final_budget": "23",
+  "fixture_final": "NO REAL MODEL fixture: 本次预算修订流程已按脚本结束（状态读取 → 预算20研究无候选 → 只读替代项创建提案被拒 → 调整预算20→23经宿主确认 → 旧expected预算重试被拒 → 未重新研究即建提案被拒 → 预算23重新研究得 M240 $22.99 → 创建待确认提案）。未保存草稿、未下单。此文本是确定性协议流量，不是模型推理。",
+  "records": "1. 状态读取：目录来源 官网报价快照，商户版本 2；研究 否，候选 0，提案 否，本地草稿 否。\n    操作：状态读取 ｜ 时间：2026-10-12 04:35（宿主时间） ｜ 任务：TraceShopTask-1791779686.0312397-2\n2. 商品研究：未确认成功（无候选；next_action 仅为申请预算批准的提示，不是批准，也未更改预算或保存草稿。）。\n    操作：商品研究 ｜ 时间：2026-10-12 04:35（宿主时间） ｜ 任务：TraceShopTask-1791779686.0312397-2\n3. 创建提案：未确认成功（需求、预算、硬关键词、报价或研究版本已改变，请重新研究并使用新版本创建提案。）。\n    操作：创建提案 ｜ 时间：2026-10-12 04:35（宿主时间） ｜ 任务：TraceShopTask-1791779686.0312397-2\n4. 调整预算：经宿主确认，$20 → $23；需重新研究，未下单。\n    操作：调整预算 ｜ 时间：2026-10-12 04:35（宿主时间） ｜ 任务：TraceShopTask-1791779686.0312397-2\n5. 调整预算：未确认成功（expected_budget_usd 与当前任务预算不一致（当前 23）；请按当前预算重新请求。）；预算未改变。\n    操作：调整预算 ｜ 时间：2026-10-12 04:37（宿主时间） ｜ 任务：TraceShopTask-1791779686.0312397-2\n6. 创建提案：未确认成功（本任务尚无任务启动后的有效研究；请先按绑定条件重新研究。）。\n    操作：创建提案 ｜ 时间：2026-10-12 04:37（宿主时间） ｜ 任务：TraceShopTask-1791779686.0312397-2\n7. 商品研究：已返回候选 1 个；已找到满足预算与硬关键词的候选。\n    操作：商品研究 ｜ 时间：2026-10-12 04:37（宿主时间） ｜ 任务：TraceShopTask-1791779686.0312397-2\n8. 创建提案：已生成待确认提案 p-1791779840-1（v1），尚未保存；保存需宿主确认。\n    操作：创建提案 ｜ 时间：2026-10-12 04:37（宿主时间） ｜ 任务：TraceShopTask-1791779686.0312397-2\n",
+  "proposal_status": "",
+  "passed": true
+}

@@ -1,6 +1,9 @@
-// TraceShop 采购助手 · script-tools-v1 候选（隔离实验，未发布）
+// TraceShop 采购助手 · script-tools-v1 预算修订候选（隔离实验，未发布）
 // 业务规则、目录与确认/读回逻辑复用 native/traceshop-app v0.4.0 的同一套函数；
-// 本候选只新增声明式工具入口 fn app_tool(name, call_id) 与 mod.app_tools.*，
+// 本候选在 0.5.3 办理记录基础上新增第八个声明式工具 shopping.task.budget.set：
+// risk=destructive / confirm=host / auto_approvable=false，只在宿主确认后调整当前任务预算，
+// 保留 initial_budget_usd，强制重新研究；不静默放宽预算，保存仍需独立宿主确认。
+// 只新增声明式工具入口 fn app_tool(name, call_id) 与 mod.app_tools.*，
 // 以及“办理记录”页：在“完整回复”页并列展示最近 12 条应用工具真实返回（内存，只读，
 // 与模型原文分开；应用侧观察，不是宿主认证/模型推理/完整审计）。
 // 官方 ABI：tools.json（schema 1）+ manifest requires:["script-tools-v1"] +
@@ -104,8 +107,16 @@ let last_request_comparison = nil
 // 只存内存、不落盘、不写入工具回执、不跨任务复原历史。新任务启动时清空。
 let activity_records = []
 let activity_record_limit = 12
+// 预算修订（shopping.task.budget.set）：只由该工具在宿主确认后修改当前任务绑定预算。
+// initial_budget_usd 单独保留任务启动时的原始预算，仅用于展示/核对；不改变强约束语义。
+let budget_revision_count = 0
 
 fn fmt_money(n){ "$" + ("" + (round(n * 100) / 100)) }
+// 预算数字文本：整数不带小数尾巴（20 而不是 20.0），供写回输入框与快照比较。
+fn budget_number_text(n){
+    if n == floor(n) { return "" + floor(n) }
+    "" + n
+}
 fn time_text(epoch){
     let t = local_time(epoch)
     "" + t.year + "-" + pad2(t.month) + "-" + pad2(t.day) + " " + pad2(t.hour) + ":" + pad2(t.minute) + "（宿主时间）"
@@ -1517,11 +1528,11 @@ fn hard_set_equal(a, b){
 // 请求是否与绑定快照吻合；匹配返回空串，否则返回中文原因。纯判定，不改任何状态。
 fn binding_request_mismatch(binding, need_text, budget_value, hard_list){
     if binding == nil { return "" }
-    if need_text != binding.need { return "需求与任务起始快照不一致" }
-    if budget_value != binding.budget_usd { return "预算与任务起始快照不一致" }
-    if !hard_set_equal(hard_list, binding.hard_keywords) { return "硬关键词集合与任务起始快照不一致" }
-    if catalog_source != binding.catalog_source { return "目录来源与任务起始快照不一致" }
-    if merchant_version != binding.merchant_version { return "商户版本与任务起始快照不一致" }
+    if need_text != binding.need { return "需求与当前获批任务快照不一致" }
+    if budget_value != binding.budget_usd { return "预算与当前获批任务快照不一致" }
+    if !hard_set_equal(hard_list, binding.hard_keywords) { return "硬关键词集合与当前获批任务快照不一致" }
+    if catalog_source != binding.catalog_source { return "目录来源与当前获批任务快照不一致" }
+    if merchant_version != binding.merchant_version { return "商户版本与当前获批任务快照不一致" }
     ""
 }
 fn task_binding_error_message(code){
@@ -1577,7 +1588,7 @@ fn task_research_binding_error(binding){
 }
 fn task_research_error_message(code){
     if code == "task_research_missing" { return "本任务尚无任务启动后的有效研究；请先按绑定条件重新研究。" }
-    "最新研究与任务起始快照不一致；请先结束任务、修改条件后重新办理。"
+    "最新研究与当前获批任务快照不一致；请先结束任务、修改条件后重新办理。"
 }
 // 小摘要：本地绑定不是宿主回合身份认证，也不承诺任意宿主回合隔离。
 // 原始 request 作为嵌套对象给出（need/数值预算/硬词快照），供状态读取核对。
@@ -1585,17 +1596,97 @@ fn agent_task_binding_summary(){
     if agent_task_binding == nil {
         return {present: false bound: false active: agent_task_active task_id: ""
             request: {need: "" budget_usd: 0.0 hard_keywords: []}
+            initial_budget_usd: 0.0
             catalog_source: "" merchant_version: -1 start_research_revision: -1
+            budget_revision_count: budget_revision_count
             note: "当前无本地任务绑定；读工具不受影响。绑定仅是本地快照，不是宿主回合身份认证。"}
     }
+    // 旧绑定没有 initial_budget_usd 时回退到当前预算，不补造历史。
+    let init_budget = history_field(agent_task_binding, "initial_budget_usd")
+    if init_budget == nil { init_budget = agent_task_binding.budget_usd }
     {present: true bound: true active: agent_task_active
      task_id: agent_task_binding.task_id
      request: {need: agent_task_binding.need budget_usd: agent_task_binding.budget_usd
                hard_keywords: agent_task_binding.hard_keywords}
+     initial_budget_usd: init_budget
      catalog_source: agent_task_binding.catalog_source
      merchant_version: agent_task_binding.merchant_version
      start_research_revision: agent_task_binding.start_research_revision
-     note: "应用本地任务绑定快照，不是宿主回合身份认证，也不承诺任意宿主回合隔离；只用于拒绝条件不符的写调用。"}
+     budget_revision_count: budget_revision_count
+     note: "应用本地任务绑定快照，不是宿主回合身份认证，也不承诺任意宿主回合隔离；只用于拒绝条件不符的写调用。预算只能经宿主确认的 shopping.task.budget.set 调整。"}
+}
+
+// ---- 预算修订核心（shopping.task.budget.set）----
+// 该工具声明 risk=destructive / confirm=host / auto_approvable=false：宿主会在调用本应用前
+// 先请用户批准或拒绝。因此本核心只在“宿主已确认后”被执行；调用工具本身不是批准。
+// 任一步校验失败都不修改任何业务状态。写入前再次检查调用是否仍然 active，取消后不写。
+fn budget_set_error(code, message){
+    {is_ok: false changed: false error_code: code message: message
+     fresh_research_required: false
+     binding: agent_task_binding_summary()}
+}
+// 只更新当前任务绑定预算与 UI 预算；保留 initial_budget_usd；强制重新研究；不动硬关键词/
+// 需求/目录/商户版本/草稿；last_decision 保留供下一次研究做相邻比较。
+fn revise_task_budget(task_id, expected_budget_usd, budget_usd, reason, call_id){
+    if !mod.app_tools.active(call_id) {
+        return budget_set_error("call_inactive", "宿主调用已取消，预算未改变。")
+    }
+    if agent_task_binding == nil {
+        return budget_set_error("no_binding", "当前没有应用发起的任务绑定；预算修订只适用于正在进行的任务。")
+    }
+    let id_err = task_binding_id_error(task_id)
+    if id_err != "" {
+        return budget_set_error(id_err, task_binding_error_message(id_err))
+    }
+    // 用户必须在办理中未改动输入：当前 UI 需求/预算/硬关键词/目录/商户版本仍与绑定一致。
+    let guard = task_binding_guard(task_id, ui.need_input.text(),
+        ui.budget_input.text().to_f64(), split_words(ui.keywords_input.text()))
+    if !guard.is_ok {
+        return budget_set_error(guard.error_code, guard.message)
+    }
+    let current = agent_task_binding.budget_usd
+    // expected_budget_usd 必须等于当前绑定预算，避免迟到/重复的旧请求覆盖已调整的预算。
+    if expected_budget_usd != current {
+        return budget_set_error("stale_budget",
+            "expected_budget_usd 与当前任务预算不一致（当前 " + budget_number_text(current) + "）；请按当前预算重新请求。")
+    }
+    if !(budget_usd >= 0.01 && budget_usd <= 100000) {
+        return budget_set_error("invalid_budget", "新预算必须在 0.01 至 100000 美元之间。")
+    }
+    if budget_usd == current {
+        return budget_set_error("no_change", "新预算与当前任务预算相同，无需调整；未做任何修改。")
+    }
+    // 写入前再次确认调用仍然有效。
+    if !mod.app_tools.active(call_id) {
+        return budget_set_error("call_inactive", "宿主调用已取消，预算未改变。")
+    }
+    let before = current
+    ui.budget_input.set_text(budget_number_text(budget_usd))
+    agent_task_binding.budget_usd = budget_usd
+    if history_field(agent_task_binding, "initial_budget_usd") == nil {
+        agent_task_binding.initial_budget_usd = before
+    }
+    // 起始研究版本推到当前：研究与提案工具随后要求“研究产生于该版本之后”，从而强制全新研究。
+    agent_task_binding.start_research_revision = research_revision
+    budget_revision_count = budget_revision_count + 1
+    // 失效旧研究结果、选中项与旧建议；旧 pending 提案保持展示但因预算变化不能确认。
+    results = []
+    selected_index = -1
+    clear_suggestion()
+    ui.research_status.set_text("已按你的确认把预算从 " + fmt_money(before) + " 调整为 " + fmt_money(budget_usd) + "（本地演示，非真实付款）。请重新研究商品；旧候选与旧提案快照不可确认。")
+    ui.proposal_status.set_text("预算已调整；旧提案不能按新预算确认，请重新研究后创建新提案。")
+    render_candidates()
+    refresh_proposal()
+    show_page(1)
+    {is_ok: true changed: true error_code: ""
+     before_budget_usd: before after_budget_usd: budget_usd
+     fresh_research_required: true
+     reason: reason
+     initial_budget_usd: agent_task_binding.initial_budget_usd
+     research_revision: research_revision
+     merchant_version: merchant_version catalog_source: catalog_source
+     binding: agent_task_binding_summary()
+     message: "预算已按宿主确认更新为 " + budget_number_text(budget_usd) + "；必须按新预算重新研究，保存仍需独立宿主确认。"}
 }
 
 // ---- 需求页“交给 Agent 办理采购草稿”入口（独立于只读审阅）----
@@ -1605,12 +1696,15 @@ fn agent_task_binding_summary(){
 fn agent_task_payload(need_text, budget_value, hard_list, task_id, replan_context){
     let flow = []
     flow.push("先调用 shopping.status.read 读取真实状态，其中 agent_task_binding 是本任务的本地绑定摘要（不是宿主回合身份认证）。")
-    flow.push("本次由应用发起，任务绑定快照的 task_id 为 " + task_id + "。shopping.catalog.research、shopping.proposal.create、shopping.draft.save 三个写工具在本任务内都必须原样携带该 task_id；工具会核对需求、数值预算、硬关键词集合、目录来源与商户版本是否与任务起始快照一致。")
+    flow.push("本次由应用发起，任务绑定快照的 task_id 为 " + task_id + "。shopping.catalog.research、shopping.proposal.create、shopping.draft.save 三个写工具在本任务内都必须原样携带该 task_id；工具会核对需求、数值预算、硬关键词集合、目录来源与商户版本是否与当前获批任务快照一致。")
     flow.push("若任一写工具返回 task_id_expired/task_id_mismatch/task_closed/task_conditions_changed/task_research_missing/task_research_mismatch 等绑定错误，说明条件已变或任务已结束：停下并向用户说明，请用户先结束任务、修改条件后重新办理；不要自行重绑研究参数、放宽条件或改用其它 task_id。")
     flow.push("用 status 返回的 catalog_source 判断本次事实来源：synthetic_demo 为纯虚构演示；official_snapshot 为人工核对的官网页面快照（quote.facts_kind=curated_page_summary，是整理摘要不是整页原文，非实时，仅商品价，运费/税费与配送到用户地址未核验，不保证库存）。除非用户明确要求，否则不要调用 shopping.catalog.select 改变用户当前目录来源。")
-    flow.push("调用 shopping.catalog.research，原样传入 need、budget_usd、hard_keywords 与本次任务的 task_id=" + task_id + "；不得改用其它 task_id 或改动研究参数。")
-    flow.push("读取该次返回的 decision：state=no_valid_candidates 或 invalid_budget（clarification_required=true）时，向用户解释 decision.question 与只读 alternatives 后停止，不要创建提案或保存，等用户明确修改原始输入后再重新研究；不要无原因反复检索。state=preference_evidence_gap 只是软偏好警示，说明未证实之处与取舍后仍可选择硬合格的候选并保存，但不得声称全部需求已满足。")
+    flow.push("调用 shopping.catalog.research，原样传入 need、hard_keywords，以及当前获批 budget_usd（初始任务值，或预算修订工具成功返回的 after_budget_usd） 与本次任务的 task_id=" + task_id + "；不得改用其它 task_id 或改动研究参数。")
+    flow.push("读取该次返回的 decision：state=no_valid_candidates 或 invalid_budget（clarification_required=true）时，不要创建提案或保存；仅无候选且含 budget_change_required 时可按下一步申请一次预算批准，否则解释 decision.question 与只读 alternatives 后停止；不要无原因反复检索。state=preference_evidence_gap 只是软偏好警示，说明未证实之处与取舍后仍可选择硬合格的候选并保存，但不得声称全部需求已满足。")
     flow.push("alternatives 只是只读比较项（currently_eligible=false），绝不进入 candidates，也不得用其中的 item_id 调用 shopping.proposal.create；不得据其自动删词、放宽预算或改条件。")
+    flow.push("当 decision.state=no_valid_candidates 且只读 alternatives 中有 kind=budget_change_required 的商品时：向用户说明该商品准确 price_usd 与超预算金额（budget_delta_usd），并最多一次请求用户确认是否把预算调整到能覆盖该价格；不得静默放宽预算、改硬关键词或删词。")
+    flow.push("说明金额与理由后直接调用 shopping.task.budget.set 来请求宿主批准（risk=destructive；此调用本身不是同意，不额外等待一次聊天确认），原样携带本次任务 task_id、expected_budget_usd（等于当前绑定预算）、budget_usd（新预算）与简短 reason。调用该工具不是批准；用户拒绝或取消时预算不变，不要重试、不要反复请求。")
+    flow.push("shopping.task.budget.set 返回 changed=true 后，必须用返回的新预算重新调用 shopping.catalog.research（仍携带同一 task_id）；只有该次真实返回的 candidates 才能用于 shopping.proposal.create，旧研究、旧候选与旧提案都不可复用。保存仍需一次独立的宿主确认。")
     flow.push("只从该次返回的 candidates 中选择一个 item_id；不得编造候选、价格或特征；不得用 alternatives 里的商品冒充候选。")
     flow.push("逐项查看 candidates 的 facts/evidence 与 preference_checks：preference 表示需求里的软偏好。evidence_status=documented 表示该候选目录原始字段有 literal 证据，应优先并在理由中引用原始 field/value；not_documented 只能说“本演示目录未证实”，不得断言商品不支持，也不得把品牌、常识或型号当成功能证据。")
     flow.push("软偏好只作取舍依据，不替代硬约束；不强制选固定编号，取舍要说明；未证实不得笼统声称满足全部需求。")
@@ -1619,14 +1713,14 @@ fn agent_task_payload(need_text, budget_value, hard_list, task_id, replan_contex
     flow.push("保存返回 readback_ok=true 后再调用 shopping.draft.read，核对 read_ok、matches_current_proposal 与 verification_scope，然后才能说该草稿已保存。")
     flow.push("最终结论写明所选 item_id、准确 price_usd、budget_remaining_usd 与 quiet 等软偏好的原始字段证据；需要价格取舍时逐项列出候选 item_id 与工具原始 price_usd，不得笼统概括“其余更便宜/更贵”，没有已核实的比较不做比较性陈述。")
     flow.push("遇到 is_ok=false 时向用户说明 error_code 与 message，不要当成成功。")
-    let instructions = "你是 TraceShop 采购助手的执行 Agent，只能使用 tools.json 声明的应用工具。严格按用户原始需求、预算与硬关键词办理；预算与硬关键词是强约束，不得放宽、删除或代替。软偏好只在候选有目录原始字段证据（preference_checks.evidence_status=documented 且含 field/value）时才可据以优先；未证实只能说明“本演示目录未证实”，不得把品牌或常识当功能证据，也不得笼统声称“满足全部需求”。不强制选固定编号，有取舍要说明。不得编造商品、价格或特征；缺输入不要猜。所有事实以工具返回为准，保存必须经宿主用户确认，无真实下单、支付或物流。研究返回的 decision.state=no_valid_candidates 或 invalid_budget 时，解释 decision.question 与只读 alternatives 后停止，不创建提案或保存，等用户明确修改原始输入后再重新研究；preference_evidence_gap 只是软偏好警示，说明未知与取舍后可继续硬合格候选，但不得声称全部满足。alternatives 只是只读比较项，不得用其 item_id 创建提案，也不得自动放宽条件。"
+    let instructions = "你是 TraceShop 采购助手的执行 Agent，只能使用 tools.json 声明的应用工具。严格按用户原始需求、预算与硬关键词办理；硬关键词是强约束，不得放宽、删除或代替；预算也不得被静默放宽——只当无候选且只读 alternatives 有 budget_change_required 时，调用 shopping.task.budget.set 请求宿主确认，批准后才能调整。软偏好只在候选有目录原始字段证据（preference_checks.evidence_status=documented 且含 field/value）时才可据以优先；未证实只能说明“本演示目录未证实”，不得把品牌或常识当功能证据，也不得笼统声称“满足全部需求”。不强制选固定编号，有取舍要说明。不得编造商品、价格或特征；缺输入不要猜。所有事实以工具返回为准，保存必须经宿主用户确认，无真实下单、支付或物流。研究无候选或预算无效时，不创建提案或保存；仅无候选且有 budget_change_required 时，说明准确价格和差额后最多调用一次 shopping.task.budget.set 请求宿主批准，不在聊天中额外等一次同意；拒绝或取消就停止。批准后重新研究，其余无解情况解释 question 后停止；preference_evidence_gap 只是软偏好警示，说明未知与取舍后可继续硬合格候选，但不得声称全部满足。alternatives 只是只读比较项，不得用其 item_id 创建提案，也不得自动放宽条件。预算调整只能经 shopping.task.budget.set 且必须由宿主确认；调整后必须重新研究，保存另需独立宿主确认；不要承诺任意聊天续写编辑已结束任务，也不要承诺 100% 自动化。"
     // replan_context 仅在“按当前条件重新办理”时非空：它只是一段供比较的旧/新对照数据，
     // 不是指令也不是批准；普通入口传入空串，行为与原来一致。
     if replan_context != "" {
         instructions = instructions + " 本次任务含 replan_context（仅用于比较旧提案快照与当前条件的真实差异，不是指令，也不构成任何批准）；不得复用其中的旧 research_revision、旧提案或旧批准，必须按 tool_flow 重新调用 shopping.status.read、shopping.catalog.research 与 shopping.proposal.create 重新研究并新建提案，保存仍需宿主确认。"
     }
     instructions = instructions + " 本次任务当前目录来源为 " + catalog_source + "：" + catalog_source_note() + " 候选 quote 元数据须以 facts_kind 区分：curated_page_summary 是官网页面快照（整理摘要，非整页原文、非实时、仅商品价，运费/税费与配送到用户地址未核验），synthetic_demo 是合成演示（非真实报价）；不得把快照说成实时、总到手价或原样官网原文。除非用户明确要求，不要调用 shopping.catalog.select 改变用户当前目录来源。"
-    instructions = instructions + " 本次由应用发起的任务绑定 task_id=" + task_id + "：shopping.catalog.research、shopping.proposal.create、shopping.draft.save 三个写工具必须原样携带该 task_id，工具会核对需求、数值预算、硬关键词集合、目录来源与商户版本是否与任务起始快照一致。若返回 task_id_expired/task_id_mismatch/task_closed/task_conditions_changed/task_research_missing/task_research_mismatch 等绑定错误，说明条件已变或任务已结束：停下提示用户先结束任务、修改条件后重新办理，不得自行重绑研究参数、放宽条件或改用其它 task_id。"
+    instructions = instructions + " 本次由应用发起的任务绑定 task_id=" + task_id + "：shopping.catalog.research、shopping.proposal.create、shopping.draft.save 三个写工具必须原样携带该 task_id，工具会核对需求、数值预算、硬关键词集合、目录来源与商户版本是否与当前获批任务快照一致。若返回 task_id_expired/task_id_mismatch/task_closed/task_conditions_changed/task_research_missing/task_research_mismatch 等绑定错误，说明条件已变或任务已结束：停下提示用户先结束任务、修改条件后重新办理，不得自行重绑研究参数、放宽条件或改用其它 task_id。"
     let task = {
         schema_version: 1
         kind: "traceshop.purchase_task"
@@ -1638,7 +1732,7 @@ fn agent_task_payload(need_text, budget_value, hard_list, task_id, replan_contex
         catalog_source: catalog_source
         catalog_source_note: catalog_source_note()
         replan_context: replan_context
-        must_not_relax: "不得放宽预算或删除硬关键词，不得编造预算、商品、价格或特征。"
+        must_not_relax: "硬关键词不得放宽或删除；预算不得被静默放宽——只能经 shopping.task.budget.set 请求并由用户在宿主批准后调整；不得编造预算、商品、价格或特征。"
         tool_flow: flow
         instructions: instructions
         no_real_order: true
@@ -1679,11 +1773,13 @@ fn agent_task_launch(need_text, budget_value, hard_list, replan_context, status_
     agent_task_id = task_id
     // 新任务先清空办理记录，随后 refresh_reply_detail 立即刷新页面，避免把旧任务记录当成新任务。
     activity_records = []
-    // 唯一绑定点：由应用在启动时捕获任务起始快照；模型 research 参数永远不能重绑。
+    budget_revision_count = 0
+    // 唯一绑定点：由应用在启动时捕获当前获批任务快照；模型 research 参数永远不能重绑。
     agent_task_binding = {
         task_id: task_id
         need: need_text
         budget_usd: budget_value
+        initial_budget_usd: budget_value
         hard_keywords: hard_list
         catalog_source: catalog_source
         merchant_version: merchant_version
@@ -2109,6 +2205,7 @@ fn activity_tool_label(name){
     if name == "shopping.proposal.read" { return "读取提案" }
     if name == "shopping.draft.save" { return "保存草稿" }
     if name == "shopping.draft.read" { return "读回草稿" }
+    if name == "shopping.task.budget.set" { return "调整预算" }
     "其它工具"
 }
 // 仅依据该次工具真实返回生成确定性摘要：读返回对象字段，不读当前 UI 或模型文字。
@@ -2165,6 +2262,18 @@ fn activity_summary(name, res){
         }
         if rok != nil && rok { return "读回草稿：已读取，但未确认与当前提案一致。" }
         return "读回草稿：未能确认独立读取成功；" + activity_error_text(res) + "。"
+    }
+    if name == "shopping.task.budget.set" {
+        if !activity_is_ok(res) {
+            return "调整预算：未确认成功（" + activity_error_text(res) + "）；预算未改变。"
+        }
+        let b = history_field(res, "before_budget_usd")
+        let a = history_field(res, "after_budget_usd")
+        let bt = "?"
+        let at = "?"
+        if b != nil { bt = fmt_money(b) }
+        if a != nil { at = fmt_money(a) }
+        return "调整预算：经宿主确认，" + bt + " → " + at + "；需重新研究，未下单。"
     }
     "其它工具：未识别的返回（未确认成功，不编造结论）。"
 }
@@ -2575,7 +2684,7 @@ fn app_tool(name, call_id){
         let need = ""
         if args.need != nil { need = "" + args.need }
         let budget_text = ""
-        if args.budget_usd != nil { budget_text = "" + args.budget_usd }
+        if history_field(args, "budget_usd") != nil { budget_text = "" + args.budget_usd }
         let hard = []
         if args.hard_keywords != nil {
             for k in args.hard_keywords { hard.push("" + k) }
@@ -2583,13 +2692,40 @@ fn app_tool(name, call_id){
         let task_id_arg = ""
         let supplied_task_id = history_field(args, "task_id")
         if supplied_task_id != nil { task_id_arg = "" + supplied_task_id }
-        // 共享纯判定 guard：绑定任务的研究参数必须与任务起始快照吻合；不匹配则不研究、不清结果、不递增版本。
+        // 共享纯判定 guard：绑定任务的研究参数必须与当前获批任务快照吻合；不匹配则不研究、不清结果、不递增版本。
         let guard = task_binding_guard(task_id_arg, need, budget_text.to_f64(), hard)
         if !guard.is_ok {
             complete_shop_tool(name, call_id, guard)
             return
         }
-        complete_shop_tool(name, call_id, research_core(need, budget_text, hard, true))
+        let researched = research_core(need, budget_text, hard, true)
+        // 只有已通过 task guard 的应用任务才给出预算批准的操作提示。
+        // 提示不是批准，也不把只读替代变成候选；手动研究的原有澄清文案保持。
+        if agent_task_binding != nil && task_id_arg != "" {
+            let d = researched.decision
+            if d.state == "no_valid_candidates" {
+                let hinted = false
+                for alt in d.alternatives {
+                    if !hinted && alt.kind == "budget_change_required" {
+                        d.question = "可请求宿主批准把预算从 " + budget_number_text(budget_text.to_f64()) +
+                            " 调整为 " + budget_number_text(alt.price_usd) +
+                            " 美元；直接调用 shopping.task.budget.set 发起原生批准，不额外用 ask_user_question 再问一次。拒绝就停止，批准后重新研究，保存另需批准。"
+                        d.next_action = {kind: "request_host_approval"
+                            tool: "shopping.task.budget.set"
+                            arguments: {task_id: task_id_arg expected_budget_usd: budget_text.to_f64()
+                                budget_usd: alt.price_usd
+                                reason: "当前目录中满足硬关键词的商品价为 " + budget_number_text(alt.price_usd) +
+                                    " 美元，超原预算 " + budget_number_text(alt.budget_delta_usd) +
+                                    " 美元；仅调整本地任务预算，不付款。"}
+                            approved: false fresh_research_after_approval: true
+                            separate_save_approval: true}
+                        researched.message = "无候选；next_action 仅为申请预算批准的提示，不是批准，也未更改预算或保存草稿。"
+                        hinted = true
+                    }
+                }
+            }
+        }
+        complete_shop_tool(name, call_id, researched)
         return
     }
     if name == "shopping.proposal.create" {
@@ -2652,7 +2788,7 @@ fn app_tool(name, call_id){
         if !mod.app_tools.active(call_id) {
             return
         }
-        // 绑定任务守卫：task_id 必须精确匹配且 active，请求须与任务起始快照吻合；
+        // 绑定任务守卫：task_id 必须精确匹配且 active，请求须与当前获批任务快照吻合；
         // 并且最新研究必须产生于任务启动之后。失败不修改任何业务状态。
         let task_id_arg = ""
         let supplied_task_id = history_field(args, "task_id")
@@ -2695,6 +2831,24 @@ fn app_tool(name, call_id){
         }
         let res = confirm_draft_core(call_id)
         render_save_result(res)
+        complete_shop_tool(name, call_id, res)
+        return
+    }
+    if name == "shopping.task.budget.set" {
+        // 入口先确认调用仍有效；宿主已按 confirm=host / risk=destructive 请求过批准/拒绝，
+        // 这里只在批准后执行，调用工具本身不是批准。
+        if !mod.app_tools.active(call_id) { return }
+        let task_id_arg = ""
+        let supplied_task_id = history_field(args, "task_id")
+        if supplied_task_id != nil { task_id_arg = "" + supplied_task_id }
+        let expected = 0.0
+        if history_field(args, "expected_budget_usd") != nil { expected = args.expected_budget_usd }
+        let new_budget = 0.0
+        if history_field(args, "budget_usd") != nil { new_budget = args.budget_usd }
+        let reason = ""
+        if history_field(args, "reason") != nil { reason = "" + args.reason }
+        // 校验并更新；写入前再次检查 active，取消后不写。
+        let res = revise_task_budget(task_id_arg, expected, new_budget, reason, call_id)
         complete_shop_tool(name, call_id, res)
         return
     }

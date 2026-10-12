@@ -1,0 +1,41 @@
+{
+  "release_tag": "desktop-v0.1.0-rc.6",
+  "published_at": "2026-10-11T12:01:37Z",
+  "release_url": "https://github.com/OctoSense-org/OctoSense/releases/tag/desktop-v0.1.0-rc.6",
+  "asset": {
+    "name": "octosense_0.1.0-rc.6_amd64.deb",
+    "size": 302781872,
+    "digest": "sha256:d58f41b588972968aa15f3b2128128408309b328637cfad5ded2991a6ce2ab3d",
+    "browser_download_url": "https://github.com/OctoSense-org/OctoSense/releases/download/desktop-v0.1.0-rc.6/octosense_0.1.0-rc.6_amd64.deb"
+  },
+  "source": "f9f6fea90b52182790cb2641fd0145c425af4d84",
+  "app_flow": "15b1da01a769a770aaf12bd3012d17c6ff267b6c",
+  "app_hub": "386359153ed6377b5f047bd9ed2767a6a2ac2bc7",
+  "status": "COMPATIBILITY_PASSED_199373_JOBS_ENDED",
+  "rc6_job_id": 199373,
+  "failed_attempt": {
+    "job_id": 199360,
+    "state": "FAILED_4",
+    "reason": "native_showcase TimeoutExpired 280s",
+    "budget_completed": false,
+    "model_requests": 0,
+    "job_elapsed": "00:06:05"
+  },
+  "showcase_deadline_seconds": 480,
+  "step_deadline_seconds": 650,
+  "job_deadline_seconds": 720,
+  "runtime_verified": {
+    "job_id": 199373,
+    "paid_model_requests": 0,
+    "gpu": 0,
+    "fixture": true,
+    "ui_checks": 17,
+    "protocol_checks": 23,
+    "scope": "Store install; task binding, native budget approval20to23, stale retry rejection, fresh research, pending proposal, no draft save/read",
+    "source_hashes_match_real_m3_199314": true,
+    "raw_scope_label_note": "Reused budget-result.json says RC5 in static prose; actual package-metadata/source-at-run/rc6.sbatch prove official RC6 digest d58f41...; raw result retained unchanged.",
+    "job_elapsed": "00:05:38"
+  },
+  "first_script_sha256": "a8f1cef337c2c6bf9f2d66d5ca49169210429302d293f0fc976878ea115c57cc",
+  "successful_script_sha256": "8635a9837b3d22b83b7a4d474f30dad837935209a95972fcc98bf0ca6ad6d303"
+}

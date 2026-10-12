@@ -1,0 +1,1709 @@
+{
+  "kind": "traceshop-budget-revision-live-check",
+  "real_model": true,
+  "model": "MiniMax-M3",
+  "fixture": false,
+  "video_recorded": false,
+  "app_id": "traceshop.shopping",
+  "run_dir": "/projects/user007ssd/projects/gosim-agentic-app-2026/native/traceshop-budget-revision/live-check/run-199314",
+  "relay_log": "/projects/user007ssd/projects/gosim-agentic-app-2026/native/traceshop-budget-revision/live-check/run-199314/relay.jsonl",
+  "control_file": "/projects/user007ssd/projects/gosim-agentic-app-2026/native/traceshop-budget-revision/live-check/run-199314/control.jsonl",
+  "replies_file": "/projects/user007ssd/projects/gosim-agentic-app-2026/native/traceshop-budget-revision/live-check/run-199314/replies.jsonl",
+  "window": {
+    "w": 1400,
+    "h": 900
+  },
+  "step_a_ok": true,
+  "ui_input_at_launch": {
+    "need": "office wireless mouse",
+    "budget": "20",
+    "hard": "wireless,silent"
+  },
+  "binding": {
+    "task_id": "TraceShopTask-1791777063.395466-2",
+    "request": {
+      "budget_usd": 20,
+      "hard_keywords": [
+        "wireless",
+        "silent"
+      ],
+      "need": "office wireless mouse"
+    },
+    "active": true,
+    "bound": true,
+    "catalog_source": "official_snapshot",
+    "merchant_version": 2
+  },
+  "model_requests": [
+    {
+      "seq": 1,
+      "model": "MiniMax-M3",
+      "stream": null,
+      "client_stream": true,
+      "upstream_stream": false,
+      "transport_mode": "nonstream-upstream-sse",
+      "offered": [
+        "ask_user_question",
+        "shopping_catalog_research",
+        "shopping_catalog_select",
+        "shopping_draft_read",
+        "shopping_draft_save",
+        "shopping_proposal_create",
+        "shopping_proposal_read",
+        "shopping_status_read",
+        "shopping_task_budget_set"
+      ]
+    },
+    {
+      "seq": 2,
+      "model": "MiniMax-M3",
+      "stream": null,
+      "client_stream": true,
+      "upstream_stream": false,
+      "transport_mode": "nonstream-upstream-sse",
+      "offered": [
+        "ask_user_question",
+        "shopping_catalog_research",
+        "shopping_catalog_select",
+        "shopping_draft_read",
+        "shopping_draft_save",
+        "shopping_proposal_create",
+        "shopping_proposal_read",
+        "shopping_status_read",
+        "shopping_task_budget_set"
+      ]
+    },
+    {
+      "seq": 3,
+      "model": "MiniMax-M3",
+      "stream": null,
+      "client_stream": true,
+      "upstream_stream": false,
+      "transport_mode": "nonstream-upstream-sse",
+      "offered": [
+        "ask_user_question",
+        "shopping_catalog_research",
+        "shopping_catalog_select",
+        "shopping_draft_read",
+        "shopping_draft_save",
+        "shopping_proposal_create",
+        "shopping_proposal_read",
+        "shopping_status_read",
+        "shopping_task_budget_set"
+      ]
+    },
+    {
+      "seq": 4,
+      "model": "MiniMax-M3",
+      "stream": null,
+      "client_stream": true,
+      "upstream_stream": false,
+      "transport_mode": "nonstream-upstream-sse",
+      "offered": [
+        "ask_user_question",
+        "shopping_catalog_research",
+        "shopping_catalog_select",
+        "shopping_draft_read",
+        "shopping_draft_save",
+        "shopping_proposal_create",
+        "shopping_proposal_read",
+        "shopping_status_read",
+        "shopping_task_budget_set"
+      ]
+    },
+    {
+      "seq": 5,
+      "model": "MiniMax-M3",
+      "stream": null,
+      "client_stream": true,
+      "upstream_stream": false,
+      "transport_mode": "nonstream-upstream-sse",
+      "offered": [
+        "ask_user_question",
+        "shopping_catalog_research",
+        "shopping_catalog_select",
+        "shopping_draft_read",
+        "shopping_draft_save",
+        "shopping_proposal_create",
+        "shopping_proposal_read",
+        "shopping_status_read",
+        "shopping_task_budget_set"
+      ]
+    },
+    {
+      "seq": 6,
+      "model": "MiniMax-M3",
+      "stream": null,
+      "client_stream": true,
+      "upstream_stream": false,
+      "transport_mode": "nonstream-upstream-sse",
+      "offered": [
+        "ask_user_question",
+        "shopping_catalog_research",
+        "shopping_catalog_select",
+        "shopping_draft_read",
+        "shopping_draft_save",
+        "shopping_proposal_create",
+        "shopping_proposal_read",
+        "shopping_status_read",
+        "shopping_task_budget_set"
+      ]
+    },
+    {
+      "seq": 7,
+      "model": "MiniMax-M3",
+      "stream": null,
+      "client_stream": true,
+      "upstream_stream": false,
+      "transport_mode": "nonstream-upstream-sse",
+      "offered": [
+        "ask_user_question",
+        "shopping_catalog_research",
+        "shopping_catalog_select",
+        "shopping_draft_read",
+        "shopping_draft_save",
+        "shopping_proposal_create",
+        "shopping_proposal_read",
+        "shopping_status_read",
+        "shopping_task_budget_set"
+      ]
+    },
+    {
+      "seq": 8,
+      "model": "MiniMax-M3",
+      "stream": null,
+      "client_stream": true,
+      "upstream_stream": false,
+      "transport_mode": "nonstream-upstream-sse",
+      "offered": [
+        "ask_user_question",
+        "shopping_catalog_research",
+        "shopping_catalog_select",
+        "shopping_draft_read",
+        "shopping_draft_save",
+        "shopping_proposal_create",
+        "shopping_proposal_read",
+        "shopping_status_read",
+        "shopping_task_budget_set"
+      ]
+    }
+  ],
+  "tool_calls": [
+    {
+      "seq": 1,
+      "canonical": "shopping.status.read",
+      "tool": "shopping_status_read",
+      "call_id": "call_01a12e3c4afb741ab71da807",
+      "args": {}
+    },
+    {
+      "seq": 2,
+      "canonical": "shopping.catalog.research",
+      "tool": "shopping_catalog_research",
+      "call_id": "call_01a12e3c593f76bb848d8648",
+      "args": {
+        "budget_usd": 20,
+        "hard_keywords": [
+          "wireless",
+          "silent"
+        ],
+        "need": "office wireless mouse",
+        "task_id": "TraceShopTask-1791777063.395466-2"
+      }
+    },
+    {
+      "seq": 3,
+      "canonical": "shopping.task.budget.set",
+      "tool": "shopping_task_budget_set",
+      "call_id": "call_01a12e3c71dd745494a94781",
+      "args": {
+        "budget_usd": 22.99,
+        "expected_budget_usd": 20,
+        "reason": "当前目录满足硬关键词(wireless+silent)的唯一商品价 22.99 USD，超原预算 2.99 USD；仅调本地任务预算，不付款。",
+        "task_id": "TraceShopTask-1791777063.395466-2"
+      }
+    },
+    {
+      "seq": 4,
+      "canonical": "shopping.catalog.research",
+      "tool": "shopping_catalog_research",
+      "call_id": "call_01a12e3d62c473429533e3a8",
+      "args": {
+        "budget_usd": 22.99,
+        "hard_keywords": [
+          "wireless",
+          "silent"
+        ],
+        "need": "office wireless mouse",
+        "task_id": "TraceShopTask-1791777063.395466-2"
+      }
+    },
+    {
+      "seq": 5,
+      "canonical": "shopping.proposal.create",
+      "tool": "shopping_proposal_create",
+      "call_id": "call_01a12e3d6dc0732c9bc469ad",
+      "args": {
+        "item_id": 102,
+        "merchant_version": 2,
+        "research_revision": 3,
+        "task_id": "TraceShopTask-1791777063.395466-2"
+      }
+    },
+    {
+      "seq": 6,
+      "canonical": "shopping.draft.save",
+      "tool": "shopping_draft_save",
+      "call_id": "call_01a12e3d77ad7629a601fbbe",
+      "args": {
+        "merchant_version": 2,
+        "proposal_id": "p-1791777152-1",
+        "research_revision": 3,
+        "revision": 1,
+        "task_id": "TraceShopTask-1791777063.395466-2"
+      }
+    },
+    {
+      "seq": 7,
+      "canonical": "shopping.draft.read",
+      "tool": "shopping_draft_read",
+      "call_id": "call_01a12e3eb6f3745d8c5d062a",
+      "args": {}
+    }
+  ],
+  "tool_results": {
+    "shopping.status.read": {
+      "agent_task_binding": {
+        "active": true,
+        "bound": true,
+        "budget_revision_count": 0,
+        "catalog_source": "official_snapshot",
+        "initial_budget_usd": 20,
+        "merchant_version": 2,
+        "note": "应用本地任务绑定快照，不是宿主回合身份认证，也不承诺任意宿主回合隔离；只用于拒绝条件不符的写调用。预算只能经宿主确认的 shopping.task.budget.set 调整。",
+        "present": true,
+        "request": {
+          "budget_usd": 20,
+          "hard_keywords": [
+            "wireless",
+            "silent"
+          ],
+          "need": "office wireless mouse"
+        },
+        "start_research_revision": 1,
+        "task_id": "TraceShopTask-1791777063.395466-2"
+      },
+      "candidate_count": 0,
+      "catalog_size": 3,
+      "catalog_source": "official_snapshot",
+      "currency": "USD",
+      "has_draft": false,
+      "has_proposal": false,
+      "has_research": false,
+      "is_ok": true,
+      "merchant_version": 2,
+      "message": "TraceShop 本地状态；当前目录来源 official_snapshot；无真实下单。",
+      "price_is_simulated": false,
+      "proposal_id": "",
+      "proposal_revision": -1,
+      "proposal_status": "",
+      "research_current": false,
+      "research_merchant_version": -1,
+      "research_revision": 1,
+      "source_note": "官网报价快照：人工核对的公开官网页面快照（logitech-us-20261011，采集 2026-10-10T17:40:07Z，US/USD）。规格为整理摘要（curated_page_summary），不是整页原文；仅商品价，运费/税费与配送到用户地址未核验，非实时、非总到手价。"
+    },
+    "shopping.catalog.research": {
+      "budget_usd": 22.99,
+      "candidate_count": 1,
+      "candidates": [
+        {
+          "brand": "Logitech",
+          "budget_remaining_usd": 0,
+          "evidence": [
+            {
+              "field": "features",
+              "term": "wireless",
+              "value": "wireless"
+            },
+            {
+              "field": "title",
+              "term": "mouse",
+              "value": "Logitech M240 Silent Bluetooth Mouse"
+            }
+          ],
+          "facts": {
+            "features": [
+              "wireless",
+              "Bluetooth",
+              "silent click",
+              "compact"
+            ]
+          },
+          "item_id": 102,
+          "preference_checks": [],
+          "price_is_simulated": false,
+          "price_usd": 22.99,
+          "quote": {
+            "currency": "USD",
+            "facts_kind": "curated_page_summary",
+            "kind": "curated_official_page_snapshot",
+            "merchant_quote_validity": "not_checked",
+            "observed_at": "2026-10-10T17:40:07Z",
+            "price_basis": "item_price_only",
+            "region": "US",
+            "shipping_to_user": "not_checked",
+            "snapshot_id": "logitech-us-20261011",
+            "snapshot_price_usd": 22.99,
+            "source_url": "https://www.logitech.com/en-us/shop/p/m240-silent-bluetooth-mouse",
+            "stock_at_observation": "listed_in_stock",
+            "tax_total": "not_checked",
+            "variant": "Off-White"
+          },
+          "title": "Logitech M240 Silent Bluetooth Mouse"
+        }
+      ],
+      "catalog_source": "official_snapshot",
+      "currency": "USD",
+      "decision": {
+        "alternatives": [],
+        "clarification_required": false,
+        "merchant_version": 2,
+        "question": "",
+        "request": {
+          "budget_text": "22.99",
+          "budget_usd": 22.99,
+          "catalog_source": "official_snapshot",
+          "hard_keywords": [
+            "wireless",
+            "silent"
+          ],
+          "hard_text": "wireless,silent",
+          "need": "office wireless mouse",
+          "request_origin": "app_tool_arguments"
+        },
+        "research_revision": 3,
+        "rule_note": "规则说明：预算与硬关键词为强约束，不放宽、不删词；软偏好只认目录原始字段 literal 证据，未证实仅表示本目录未见相关字段，不代表商品不支持；替代商品只读，不进入候选、不能直接生成提案。",
+        "state": "ready"
+      },
+      "error_code": "",
+      "is_ok": true,
+      "merchant_version": 2,
+      "message": "",
+      "research_revision": 3
+    },
+    "shopping.task.budget.set": {
+      "after_budget_usd": 22.99,
+      "before_budget_usd": 20,
+      "binding": {
+        "active": true,
+        "bound": true,
+        "budget_revision_count": 1,
+        "catalog_source": "official_snapshot",
+        "initial_budget_usd": 20,
+        "merchant_version": 2,
+        "note": "应用本地任务绑定快照，不是宿主回合身份认证，也不承诺任意宿主回合隔离；只用于拒绝条件不符的写调用。预算只能经宿主确认的 shopping.task.budget.set 调整。",
+        "present": true,
+        "request": {
+          "budget_usd": 22.99,
+          "hard_keywords": [
+            "wireless",
+            "silent"
+          ],
+          "need": "office wireless mouse"
+        },
+        "start_research_revision": 2,
+        "task_id": "TraceShopTask-1791777063.395466-2"
+      },
+      "catalog_source": "official_snapshot",
+      "changed": true,
+      "error_code": "",
+      "fresh_research_required": true,
+      "initial_budget_usd": 20,
+      "is_ok": true,
+      "merchant_version": 2,
+      "message": "预算已按宿主确认更新为 22.99；必须按新预算重新研究，保存仍需独立宿主确认。",
+      "reason": "当前目录满足硬关键词(wireless+silent)的唯一商品价 22.99 USD，超原预算 2.99 USD；仅调本地任务预算，不付款。",
+      "research_revision": 2
+    },
+    "shopping.proposal.create": {
+      "budget_snapshot": "22.99",
+      "catalog_source": "official_snapshot",
+      "currency": "USD",
+      "error_code": "",
+      "expires_at": 1791777792,
+      "hard_keywords_snapshot": "wireless,silent",
+      "is_ok": true,
+      "merchant_version": 2,
+      "message": "",
+      "need_snapshot": "office wireless mouse",
+      "price_is_simulated": false,
+      "price_usd": 22.99,
+      "proposal_id": "p-1791777152-1",
+      "quote": {
+        "currency": "USD",
+        "facts_kind": "curated_page_summary",
+        "kind": "curated_official_page_snapshot",
+        "merchant_quote_validity": "not_checked",
+        "observed_at": "2026-10-10T17:40:07Z",
+        "price_basis": "item_price_only",
+        "region": "US",
+        "shipping_to_user": "not_checked",
+        "snapshot_id": "logitech-us-20261011",
+        "snapshot_price_usd": 22.99,
+        "source_url": "https://www.logitech.com/en-us/shop/p/m240-silent-bluetooth-mouse",
+        "stock_at_observation": "listed_in_stock",
+        "tax_total": "not_checked",
+        "variant": "Off-White"
+      },
+      "research_revision": 3,
+      "revision": 1,
+      "selected_item_id": 102,
+      "selection_record": {
+        "catalog_source": "official_snapshot",
+        "comparison": {
+          "previous_origin": "app_tool_arguments",
+          "previous_request": {
+            "budget_text": "20",
+            "budget_usd": 20,
+            "catalog_source": "official_snapshot",
+            "hard_keywords": [
+              "wireless",
+              "silent"
+            ],
+            "hard_text": "wireless,silent",
+            "need": "office wireless mouse",
+            "request_origin": "app_tool_arguments"
+          },
+          "previous_research_revision": 2,
+          "previous_state": "no_valid_candidates"
+        },
+        "kind": "catalog_evidence_snapshot",
+        "limits": "规则字段证据与相邻研究快照，不是完整语义或用户逐项认可；报价/运费/税费等以quote范围为准；批准仅保存本地草稿，无真实交易。",
+        "merchant_version": 2,
+        "request": {
+          "budget_usd": 22.99,
+          "hard_keywords": [
+            "wireless",
+            "silent"
+          ],
+          "need": "office wireless mouse"
+        },
+        "request_origin": "app_tool_arguments",
+        "research_revision": 3,
+        "schema_version": 1,
+        "selected": {
+          "budget_remaining_usd": 0,
+          "hard_evidence": [
+            {
+              "evidence": [
+                {
+                  "field": "features",
+                  "term": "wireless",
+                  "value": "wireless"
+                }
+              ],
+              "term": "wireless"
+            },
+            {
+              "evidence": [
+                {
+                  "field": "title",
+                  "term": "silent",
+                  "value": "Logitech M240 Silent Bluetooth Mouse"
+                },
+                {
+                  "field": "features",
+                  "term": "silent",
+                  "value": "silent click"
+                }
+              ],
+              "term": "silent"
+            }
+          ],
+          "item_id": 102,
+          "preference_checks": [],
+          "price_usd": 22.99,
+          "title": "Logitech M240 Silent Bluetooth Mouse"
+        }
+      },
+      "selection_record_present": true,
+      "status": "pending",
+      "title": "Logitech M240 Silent Bluetooth Mouse"
+    },
+    "shopping.draft.save": {
+      "catalog_source": "official_snapshot",
+      "confirmed_at": 1791777280,
+      "currency": "USD",
+      "draft_id": "d-p-1791777152-1",
+      "error_code": "",
+      "is_ok": true,
+      "merchant_version": 2,
+      "message": "已确认并保存采购草稿（未下单）。",
+      "price_is_simulated": false,
+      "price_usd": 22.99,
+      "proposal_id": "p-1791777152-1",
+      "quote": {
+        "currency": "USD",
+        "facts_kind": "curated_page_summary",
+        "kind": "curated_official_page_snapshot",
+        "merchant_quote_validity": "not_checked",
+        "observed_at": "2026-10-10T17:40:07Z",
+        "price_basis": "item_price_only",
+        "region": "US",
+        "shipping_to_user": "not_checked",
+        "snapshot_id": "logitech-us-20261011",
+        "snapshot_price_usd": 22.99,
+        "source_url": "https://www.logitech.com/en-us/shop/p/m240-silent-bluetooth-mouse",
+        "stock_at_observation": "listed_in_stock",
+        "tax_total": "not_checked",
+        "variant": "Off-White"
+      },
+      "readback_ok": true,
+      "research_revision": 3,
+      "revision": 1,
+      "selected_item_id": 102,
+      "selection_record": {
+        "catalog_source": "official_snapshot",
+        "comparison": {
+          "previous_origin": "app_tool_arguments",
+          "previous_request": {
+            "budget_text": "20",
+            "budget_usd": 20,
+            "catalog_source": "official_snapshot",
+            "hard_keywords": [
+              "wireless",
+              "silent"
+            ],
+            "hard_text": "wireless,silent",
+            "need": "office wireless mouse",
+            "request_origin": "app_tool_arguments"
+          },
+          "previous_research_revision": 2,
+          "previous_state": "no_valid_candidates"
+        },
+        "kind": "catalog_evidence_snapshot",
+        "limits": "规则字段证据与相邻研究快照，不是完整语义或用户逐项认可；报价/运费/税费等以quote范围为准；批准仅保存本地草稿，无真实交易。",
+        "merchant_version": 2,
+        "request": {
+          "budget_usd": 22.99,
+          "hard_keywords": [
+            "wireless",
+            "silent"
+          ],
+          "need": "office wireless mouse"
+        },
+        "request_origin": "app_tool_arguments",
+        "research_revision": 3,
+        "schema_version": 1,
+        "selected": {
+          "budget_remaining_usd": 0,
+          "hard_evidence": [
+            {
+              "evidence": [
+                {
+                  "field": "features",
+                  "term": "wireless",
+                  "value": "wireless"
+                }
+              ],
+              "term": "wireless"
+            },
+            {
+              "evidence": [
+                {
+                  "field": "title",
+                  "term": "silent",
+                  "value": "Logitech M240 Silent Bluetooth Mouse"
+                },
+                {
+                  "field": "features",
+                  "term": "silent",
+                  "value": "silent click"
+                }
+              ],
+              "term": "silent"
+            }
+          ],
+          "item_id": 102,
+          "preference_checks": [],
+          "price_usd": 22.99,
+          "title": "Logitech M240 Silent Bluetooth Mouse"
+        }
+      },
+      "selection_record_present": true
+    },
+    "shopping.draft.read": {
+      "catalog_source": "official_snapshot",
+      "confirmed_at": 1791777280,
+      "currency": "USD",
+      "current_proposal_present": true,
+      "draft_id": "d-p-1791777152-1",
+      "error_code": "",
+      "is_ok": true,
+      "matches_current_proposal": true,
+      "merchant_version": 2,
+      "message": "独立读回并核对提案ID、草稿ID、修订、研究/报价版本、商品、价格、币种与提案保存的来源快照。",
+      "present": true,
+      "price_is_simulated": false,
+      "price_usd": 22.99,
+      "proposal_id": "p-1791777152-1",
+      "quote": {
+        "currency": "USD",
+        "facts_kind": "curated_page_summary",
+        "kind": "curated_official_page_snapshot",
+        "merchant_quote_validity": "not_checked",
+        "observed_at": "2026-10-10T17:40:07Z",
+        "price_basis": "item_price_only",
+        "region": "US",
+        "shipping_to_user": "not_checked",
+        "snapshot_id": "logitech-us-20261011",
+        "snapshot_price_usd": 22.99,
+        "source_url": "https://www.logitech.com/en-us/shop/p/m240-silent-bluetooth-mouse",
+        "stock_at_observation": "listed_in_stock",
+        "tax_total": "not_checked",
+        "variant": "Off-White"
+      },
+      "read_ok": true,
+      "research_revision": 3,
+      "revision": 1,
+      "selected_item_id": 102,
+      "selection_record": {
+        "catalog_source": "official_snapshot",
+        "comparison": {
+          "previous_origin": "app_tool_arguments",
+          "previous_request": {
+            "budget_text": "20",
+            "budget_usd": 20,
+            "catalog_source": "official_snapshot",
+            "hard_keywords": [
+              "wireless",
+              "silent"
+            ],
+            "hard_text": "wireless,silent",
+            "need": "office wireless mouse",
+            "request_origin": "app_tool_arguments"
+          },
+          "previous_research_revision": 2,
+          "previous_state": "no_valid_candidates"
+        },
+        "kind": "catalog_evidence_snapshot",
+        "limits": "规则字段证据与相邻研究快照，不是完整语义或用户逐项认可；报价/运费/税费等以quote范围为准；批准仅保存本地草稿，无真实交易。",
+        "merchant_version": 2,
+        "request": {
+          "budget_usd": 22.99,
+          "hard_keywords": [
+            "wireless",
+            "silent"
+          ],
+          "need": "office wireless mouse"
+        },
+        "request_origin": "app_tool_arguments",
+        "research_revision": 3,
+        "schema_version": 1,
+        "selected": {
+          "budget_remaining_usd": 0,
+          "hard_evidence": [
+            {
+              "evidence": [
+                {
+                  "field": "features",
+                  "term": "wireless",
+                  "value": "wireless"
+                }
+              ],
+              "term": "wireless"
+            },
+            {
+              "evidence": [
+                {
+                  "field": "title",
+                  "term": "silent",
+                  "value": "Logitech M240 Silent Bluetooth Mouse"
+                },
+                {
+                  "field": "features",
+                  "term": "silent",
+                  "value": "silent click"
+                }
+              ],
+              "term": "silent"
+            }
+          ],
+          "item_id": 102,
+          "preference_checks": [],
+          "price_usd": 22.99,
+          "title": "Logitech M240 Silent Bluetooth Mouse"
+        }
+      },
+      "selection_record_present": true,
+      "verification_scope": "proposal_fields"
+    }
+  },
+  "ordered_tool_results": [
+    {
+      "pos": 4,
+      "seq": 2,
+      "canonical": "shopping.status.read",
+      "call_id": "call_01a12e3c4afb741ab71da807",
+      "result": {
+        "agent_task_binding": {
+          "active": true,
+          "bound": true,
+          "budget_revision_count": 0,
+          "catalog_source": "official_snapshot",
+          "initial_budget_usd": 20,
+          "merchant_version": 2,
+          "note": "应用本地任务绑定快照，不是宿主回合身份认证，也不承诺任意宿主回合隔离；只用于拒绝条件不符的写调用。预算只能经宿主确认的 shopping.task.budget.set 调整。",
+          "present": true,
+          "request": {
+            "budget_usd": 20,
+            "hard_keywords": [
+              "wireless",
+              "silent"
+            ],
+            "need": "office wireless mouse"
+          },
+          "start_research_revision": 1,
+          "task_id": "TraceShopTask-1791777063.395466-2"
+        },
+        "candidate_count": 0,
+        "catalog_size": 3,
+        "catalog_source": "official_snapshot",
+        "currency": "USD",
+        "has_draft": false,
+        "has_proposal": false,
+        "has_research": false,
+        "is_ok": true,
+        "merchant_version": 2,
+        "message": "TraceShop 本地状态；当前目录来源 official_snapshot；无真实下单。",
+        "price_is_simulated": false,
+        "proposal_id": "",
+        "proposal_revision": -1,
+        "proposal_status": "",
+        "research_current": false,
+        "research_merchant_version": -1,
+        "research_revision": 1,
+        "source_note": "官网报价快照：人工核对的公开官网页面快照（logitech-us-20261011，采集 2026-10-10T17:40:07Z，US/USD）。规格为整理摘要（curated_page_summary），不是整页原文；仅商品价，运费/税费与配送到用户地址未核验，非实时、非总到手价。"
+      }
+    },
+    {
+      "pos": 8,
+      "seq": 3,
+      "canonical": "shopping.catalog.research",
+      "call_id": "call_01a12e3c593f76bb848d8648",
+      "result": {
+        "budget_usd": 20,
+        "candidate_count": 0,
+        "candidates": [],
+        "catalog_source": "official_snapshot",
+        "currency": "USD",
+        "decision": {
+          "alternatives": [
+            {
+              "brand": "Logitech",
+              "budget_delta_usd": 2.99,
+              "currently_eligible": false,
+              "hard_evidence": [
+                {
+                  "evidence": [
+                    {
+                      "field": "features",
+                      "term": "wireless",
+                      "value": "wireless"
+                    }
+                  ],
+                  "term": "wireless"
+                },
+                {
+                  "evidence": [
+                    {
+                      "field": "title",
+                      "term": "silent",
+                      "value": "Logitech M240 Silent Bluetooth Mouse"
+                    },
+                    {
+                      "field": "features",
+                      "term": "silent",
+                      "value": "silent click"
+                    }
+                  ],
+                  "term": "silent"
+                }
+              ],
+              "item_id": 102,
+              "kind": "budget_change_required",
+              "missing_hard_keywords": [],
+              "preference_checks": [],
+              "price_is_simulated": false,
+              "price_usd": 22.99,
+              "quote": {
+                "currency": "USD",
+                "facts_kind": "curated_page_summary",
+                "kind": "curated_official_page_snapshot",
+                "merchant_quote_validity": "not_checked",
+                "observed_at": "2026-10-10T17:40:07Z",
+                "price_basis": "item_price_only",
+                "region": "US",
+                "shipping_to_user": "not_checked",
+                "snapshot_id": "logitech-us-20261011",
+                "snapshot_price_usd": 22.99,
+                "source_url": "https://www.logitech.com/en-us/shop/p/m240-silent-bluetooth-mouse",
+                "stock_at_observation": "listed_in_stock",
+                "tax_total": "not_checked",
+                "variant": "Off-White"
+              },
+              "title": "Logitech M240 Silent Bluetooth Mouse"
+            },
+            {
+              "brand": "Logitech",
+              "budget_delta_usd": 0,
+              "currently_eligible": false,
+              "hard_evidence": [
+                {
+                  "evidence": [
+                    {
+                      "field": "title",
+                      "term": "wireless",
+                      "value": "Logitech M170 Wireless Mouse"
+                    },
+                    {
+                      "field": "features",
+                      "term": "wireless",
+                      "value": "wireless"
+                    }
+                  ],
+                  "term": "wireless"
+                },
+                {
+                  "evidence": [],
+                  "term": "silent"
+                }
+              ],
+              "item_id": 101,
+              "kind": "hard_evidence_missing",
+              "missing_hard_keywords": [
+                "silent"
+              ],
+              "preference_checks": [],
+              "price_is_simulated": false,
+              "price_usd": 14.99,
+              "quote": {
+                "currency": "USD",
+                "facts_kind": "curated_page_summary",
+                "kind": "curated_official_page_snapshot",
+                "merchant_quote_validity": "not_checked",
+                "observed_at": "2026-10-10T17:40:07Z",
+                "price_basis": "item_price_only",
+                "region": "US",
+                "shipping_to_user": "not_checked",
+                "snapshot_id": "logitech-us-20261011",
+                "snapshot_price_usd": 14.99,
+                "source_url": "https://www.logitech.com/en-us/shop/p/m170-wireless-mouse",
+                "stock_at_observation": "listed_in_stock",
+                "tax_total": "not_checked",
+                "variant": "Black"
+              },
+              "title": "Logitech M170 Wireless Mouse"
+            }
+          ],
+          "clarification_required": true,
+          "merchant_version": 2,
+          "next_action": {
+            "approved": false,
+            "arguments": {
+              "budget_usd": 22.99,
+              "expected_budget_usd": 20,
+              "reason": "当前目录中满足硬关键词的商品价为 22.99 美元，超原预算 2.99 美元；仅调整本地任务预算，不付款。",
+              "task_id": "TraceShopTask-1791777063.395466-2"
+            },
+            "fresh_research_after_approval": true,
+            "kind": "request_host_approval",
+            "separate_save_approval": true,
+            "tool": "shopping.task.budget.set"
+          },
+          "question": "可请求宿主批准把预算从 20 调整为 22.99 美元；直接调用 shopping.task.budget.set 发起原生批准，不额外用 ask_user_question 再问一次。拒绝就停止，批准后重新研究，保存另需批准。",
+          "request": {
+            "budget_text": "20",
+            "budget_usd": 20,
+            "catalog_source": "official_snapshot",
+            "hard_keywords": [
+              "wireless",
+              "silent"
+            ],
+            "hard_text": "wireless,silent",
+            "need": "office wireless mouse",
+            "request_origin": "app_tool_arguments"
+          },
+          "research_revision": 2,
+          "rule_note": "规则说明：预算与硬关键词为强约束，不放宽、不删词；软偏好只认目录原始字段 literal 证据，未证实仅表示本目录未见相关字段，不代表商品不支持；替代商品只读，不进入候选、不能直接生成提案。",
+          "state": "no_valid_candidates"
+        },
+        "error_code": "no_candidates",
+        "is_ok": false,
+        "merchant_version": 2,
+        "message": "无候选；next_action 仅为申请预算批准的提示，不是批准，也未更改预算或保存草稿。",
+        "research_revision": 2
+      }
+    },
+    {
+      "pos": 12,
+      "seq": 4,
+      "canonical": "shopping.task.budget.set",
+      "call_id": "call_01a12e3c71dd745494a94781",
+      "result": {
+        "after_budget_usd": 22.99,
+        "before_budget_usd": 20,
+        "binding": {
+          "active": true,
+          "bound": true,
+          "budget_revision_count": 1,
+          "catalog_source": "official_snapshot",
+          "initial_budget_usd": 20,
+          "merchant_version": 2,
+          "note": "应用本地任务绑定快照，不是宿主回合身份认证，也不承诺任意宿主回合隔离；只用于拒绝条件不符的写调用。预算只能经宿主确认的 shopping.task.budget.set 调整。",
+          "present": true,
+          "request": {
+            "budget_usd": 22.99,
+            "hard_keywords": [
+              "wireless",
+              "silent"
+            ],
+            "need": "office wireless mouse"
+          },
+          "start_research_revision": 2,
+          "task_id": "TraceShopTask-1791777063.395466-2"
+        },
+        "catalog_source": "official_snapshot",
+        "changed": true,
+        "error_code": "",
+        "fresh_research_required": true,
+        "initial_budget_usd": 20,
+        "is_ok": true,
+        "merchant_version": 2,
+        "message": "预算已按宿主确认更新为 22.99；必须按新预算重新研究，保存仍需独立宿主确认。",
+        "reason": "当前目录满足硬关键词(wireless+silent)的唯一商品价 22.99 USD，超原预算 2.99 USD；仅调本地任务预算，不付款。",
+        "research_revision": 2
+      }
+    },
+    {
+      "pos": 16,
+      "seq": 5,
+      "canonical": "shopping.catalog.research",
+      "call_id": "call_01a12e3d62c473429533e3a8",
+      "result": {
+        "budget_usd": 22.99,
+        "candidate_count": 1,
+        "candidates": [
+          {
+            "brand": "Logitech",
+            "budget_remaining_usd": 0,
+            "evidence": [
+              {
+                "field": "features",
+                "term": "wireless",
+                "value": "wireless"
+              },
+              {
+                "field": "title",
+                "term": "mouse",
+                "value": "Logitech M240 Silent Bluetooth Mouse"
+              }
+            ],
+            "facts": {
+              "features": [
+                "wireless",
+                "Bluetooth",
+                "silent click",
+                "compact"
+              ]
+            },
+            "item_id": 102,
+            "preference_checks": [],
+            "price_is_simulated": false,
+            "price_usd": 22.99,
+            "quote": {
+              "currency": "USD",
+              "facts_kind": "curated_page_summary",
+              "kind": "curated_official_page_snapshot",
+              "merchant_quote_validity": "not_checked",
+              "observed_at": "2026-10-10T17:40:07Z",
+              "price_basis": "item_price_only",
+              "region": "US",
+              "shipping_to_user": "not_checked",
+              "snapshot_id": "logitech-us-20261011",
+              "snapshot_price_usd": 22.99,
+              "source_url": "https://www.logitech.com/en-us/shop/p/m240-silent-bluetooth-mouse",
+              "stock_at_observation": "listed_in_stock",
+              "tax_total": "not_checked",
+              "variant": "Off-White"
+            },
+            "title": "Logitech M240 Silent Bluetooth Mouse"
+          }
+        ],
+        "catalog_source": "official_snapshot",
+        "currency": "USD",
+        "decision": {
+          "alternatives": [],
+          "clarification_required": false,
+          "merchant_version": 2,
+          "question": "",
+          "request": {
+            "budget_text": "22.99",
+            "budget_usd": 22.99,
+            "catalog_source": "official_snapshot",
+            "hard_keywords": [
+              "wireless",
+              "silent"
+            ],
+            "hard_text": "wireless,silent",
+            "need": "office wireless mouse",
+            "request_origin": "app_tool_arguments"
+          },
+          "research_revision": 3,
+          "rule_note": "规则说明：预算与硬关键词为强约束，不放宽、不删词；软偏好只认目录原始字段 literal 证据，未证实仅表示本目录未见相关字段，不代表商品不支持；替代商品只读，不进入候选、不能直接生成提案。",
+          "state": "ready"
+        },
+        "error_code": "",
+        "is_ok": true,
+        "merchant_version": 2,
+        "message": "",
+        "research_revision": 3
+      }
+    },
+    {
+      "pos": 20,
+      "seq": 6,
+      "canonical": "shopping.proposal.create",
+      "call_id": "call_01a12e3d6dc0732c9bc469ad",
+      "result": {
+        "budget_snapshot": "22.99",
+        "catalog_source": "official_snapshot",
+        "currency": "USD",
+        "error_code": "",
+        "expires_at": 1791777792,
+        "hard_keywords_snapshot": "wireless,silent",
+        "is_ok": true,
+        "merchant_version": 2,
+        "message": "",
+        "need_snapshot": "office wireless mouse",
+        "price_is_simulated": false,
+        "price_usd": 22.99,
+        "proposal_id": "p-1791777152-1",
+        "quote": {
+          "currency": "USD",
+          "facts_kind": "curated_page_summary",
+          "kind": "curated_official_page_snapshot",
+          "merchant_quote_validity": "not_checked",
+          "observed_at": "2026-10-10T17:40:07Z",
+          "price_basis": "item_price_only",
+          "region": "US",
+          "shipping_to_user": "not_checked",
+          "snapshot_id": "logitech-us-20261011",
+          "snapshot_price_usd": 22.99,
+          "source_url": "https://www.logitech.com/en-us/shop/p/m240-silent-bluetooth-mouse",
+          "stock_at_observation": "listed_in_stock",
+          "tax_total": "not_checked",
+          "variant": "Off-White"
+        },
+        "research_revision": 3,
+        "revision": 1,
+        "selected_item_id": 102,
+        "selection_record": {
+          "catalog_source": "official_snapshot",
+          "comparison": {
+            "previous_origin": "app_tool_arguments",
+            "previous_request": {
+              "budget_text": "20",
+              "budget_usd": 20,
+              "catalog_source": "official_snapshot",
+              "hard_keywords": [
+                "wireless",
+                "silent"
+              ],
+              "hard_text": "wireless,silent",
+              "need": "office wireless mouse",
+              "request_origin": "app_tool_arguments"
+            },
+            "previous_research_revision": 2,
+            "previous_state": "no_valid_candidates"
+          },
+          "kind": "catalog_evidence_snapshot",
+          "limits": "规则字段证据与相邻研究快照，不是完整语义或用户逐项认可；报价/运费/税费等以quote范围为准；批准仅保存本地草稿，无真实交易。",
+          "merchant_version": 2,
+          "request": {
+            "budget_usd": 22.99,
+            "hard_keywords": [
+              "wireless",
+              "silent"
+            ],
+            "need": "office wireless mouse"
+          },
+          "request_origin": "app_tool_arguments",
+          "research_revision": 3,
+          "schema_version": 1,
+          "selected": {
+            "budget_remaining_usd": 0,
+            "hard_evidence": [
+              {
+                "evidence": [
+                  {
+                    "field": "features",
+                    "term": "wireless",
+                    "value": "wireless"
+                  }
+                ],
+                "term": "wireless"
+              },
+              {
+                "evidence": [
+                  {
+                    "field": "title",
+                    "term": "silent",
+                    "value": "Logitech M240 Silent Bluetooth Mouse"
+                  },
+                  {
+                    "field": "features",
+                    "term": "silent",
+                    "value": "silent click"
+                  }
+                ],
+                "term": "silent"
+              }
+            ],
+            "item_id": 102,
+            "preference_checks": [],
+            "price_usd": 22.99,
+            "title": "Logitech M240 Silent Bluetooth Mouse"
+          }
+        },
+        "selection_record_present": true,
+        "status": "pending",
+        "title": "Logitech M240 Silent Bluetooth Mouse"
+      }
+    },
+    {
+      "pos": 24,
+      "seq": 7,
+      "canonical": "shopping.draft.save",
+      "call_id": "call_01a12e3d77ad7629a601fbbe",
+      "result": {
+        "catalog_source": "official_snapshot",
+        "confirmed_at": 1791777280,
+        "currency": "USD",
+        "draft_id": "d-p-1791777152-1",
+        "error_code": "",
+        "is_ok": true,
+        "merchant_version": 2,
+        "message": "已确认并保存采购草稿（未下单）。",
+        "price_is_simulated": false,
+        "price_usd": 22.99,
+        "proposal_id": "p-1791777152-1",
+        "quote": {
+          "currency": "USD",
+          "facts_kind": "curated_page_summary",
+          "kind": "curated_official_page_snapshot",
+          "merchant_quote_validity": "not_checked",
+          "observed_at": "2026-10-10T17:40:07Z",
+          "price_basis": "item_price_only",
+          "region": "US",
+          "shipping_to_user": "not_checked",
+          "snapshot_id": "logitech-us-20261011",
+          "snapshot_price_usd": 22.99,
+          "source_url": "https://www.logitech.com/en-us/shop/p/m240-silent-bluetooth-mouse",
+          "stock_at_observation": "listed_in_stock",
+          "tax_total": "not_checked",
+          "variant": "Off-White"
+        },
+        "readback_ok": true,
+        "research_revision": 3,
+        "revision": 1,
+        "selected_item_id": 102,
+        "selection_record": {
+          "catalog_source": "official_snapshot",
+          "comparison": {
+            "previous_origin": "app_tool_arguments",
+            "previous_request": {
+              "budget_text": "20",
+              "budget_usd": 20,
+              "catalog_source": "official_snapshot",
+              "hard_keywords": [
+                "wireless",
+                "silent"
+              ],
+              "hard_text": "wireless,silent",
+              "need": "office wireless mouse",
+              "request_origin": "app_tool_arguments"
+            },
+            "previous_research_revision": 2,
+            "previous_state": "no_valid_candidates"
+          },
+          "kind": "catalog_evidence_snapshot",
+          "limits": "规则字段证据与相邻研究快照，不是完整语义或用户逐项认可；报价/运费/税费等以quote范围为准；批准仅保存本地草稿，无真实交易。",
+          "merchant_version": 2,
+          "request": {
+            "budget_usd": 22.99,
+            "hard_keywords": [
+              "wireless",
+              "silent"
+            ],
+            "need": "office wireless mouse"
+          },
+          "request_origin": "app_tool_arguments",
+          "research_revision": 3,
+          "schema_version": 1,
+          "selected": {
+            "budget_remaining_usd": 0,
+            "hard_evidence": [
+              {
+                "evidence": [
+                  {
+                    "field": "features",
+                    "term": "wireless",
+                    "value": "wireless"
+                  }
+                ],
+                "term": "wireless"
+              },
+              {
+                "evidence": [
+                  {
+                    "field": "title",
+                    "term": "silent",
+                    "value": "Logitech M240 Silent Bluetooth Mouse"
+                  },
+                  {
+                    "field": "features",
+                    "term": "silent",
+                    "value": "silent click"
+                  }
+                ],
+                "term": "silent"
+              }
+            ],
+            "item_id": 102,
+            "preference_checks": [],
+            "price_usd": 22.99,
+            "title": "Logitech M240 Silent Bluetooth Mouse"
+          }
+        },
+        "selection_record_present": true
+      }
+    },
+    {
+      "pos": 28,
+      "seq": 8,
+      "canonical": "shopping.draft.read",
+      "call_id": "call_01a12e3eb6f3745d8c5d062a",
+      "result": {
+        "catalog_source": "official_snapshot",
+        "confirmed_at": 1791777280,
+        "currency": "USD",
+        "current_proposal_present": true,
+        "draft_id": "d-p-1791777152-1",
+        "error_code": "",
+        "is_ok": true,
+        "matches_current_proposal": true,
+        "merchant_version": 2,
+        "message": "独立读回并核对提案ID、草稿ID、修订、研究/报价版本、商品、价格、币种与提案保存的来源快照。",
+        "present": true,
+        "price_is_simulated": false,
+        "price_usd": 22.99,
+        "proposal_id": "p-1791777152-1",
+        "quote": {
+          "currency": "USD",
+          "facts_kind": "curated_page_summary",
+          "kind": "curated_official_page_snapshot",
+          "merchant_quote_validity": "not_checked",
+          "observed_at": "2026-10-10T17:40:07Z",
+          "price_basis": "item_price_only",
+          "region": "US",
+          "shipping_to_user": "not_checked",
+          "snapshot_id": "logitech-us-20261011",
+          "snapshot_price_usd": 22.99,
+          "source_url": "https://www.logitech.com/en-us/shop/p/m240-silent-bluetooth-mouse",
+          "stock_at_observation": "listed_in_stock",
+          "tax_total": "not_checked",
+          "variant": "Off-White"
+        },
+        "read_ok": true,
+        "research_revision": 3,
+        "revision": 1,
+        "selected_item_id": 102,
+        "selection_record": {
+          "catalog_source": "official_snapshot",
+          "comparison": {
+            "previous_origin": "app_tool_arguments",
+            "previous_request": {
+              "budget_text": "20",
+              "budget_usd": 20,
+              "catalog_source": "official_snapshot",
+              "hard_keywords": [
+                "wireless",
+                "silent"
+              ],
+              "hard_text": "wireless,silent",
+              "need": "office wireless mouse",
+              "request_origin": "app_tool_arguments"
+            },
+            "previous_research_revision": 2,
+            "previous_state": "no_valid_candidates"
+          },
+          "kind": "catalog_evidence_snapshot",
+          "limits": "规则字段证据与相邻研究快照，不是完整语义或用户逐项认可；报价/运费/税费等以quote范围为准；批准仅保存本地草稿，无真实交易。",
+          "merchant_version": 2,
+          "request": {
+            "budget_usd": 22.99,
+            "hard_keywords": [
+              "wireless",
+              "silent"
+            ],
+            "need": "office wireless mouse"
+          },
+          "request_origin": "app_tool_arguments",
+          "research_revision": 3,
+          "schema_version": 1,
+          "selected": {
+            "budget_remaining_usd": 0,
+            "hard_evidence": [
+              {
+                "evidence": [
+                  {
+                    "field": "features",
+                    "term": "wireless",
+                    "value": "wireless"
+                  }
+                ],
+                "term": "wireless"
+              },
+              {
+                "evidence": [
+                  {
+                    "field": "title",
+                    "term": "silent",
+                    "value": "Logitech M240 Silent Bluetooth Mouse"
+                  },
+                  {
+                    "field": "features",
+                    "term": "silent",
+                    "value": "silent click"
+                  }
+                ],
+                "term": "silent"
+              }
+            ],
+            "item_id": 102,
+            "preference_checks": [],
+            "price_usd": 22.99,
+            "title": "Logitech M240 Silent Bluetooth Mouse"
+          }
+        },
+        "selection_record_present": true,
+        "verification_scope": "proposal_fields"
+      }
+    }
+  ],
+  "final_text": "Readback `read_ok=true`, `matches_current_proposal=true`. Task complete.\n\n## Result\n\n| Field | Value |\n|---|---|\n| Item ID | 102 |\n| Title | Logitech M240 Silent Bluetooth Mouse (Off-White) |\n| Price (USD) | 22.99 |\n| Budget | 22.99 (revised from 20 by host approval) |\n| Budget remaining (USD) | 0.00 |\n| Proposal | `p-1791777152-1` (revision 1) |\n| Draft | `d-p-1791777152-1` (saved, independent readback verified) |\n| Catalog | official_snapshot (logitech-us-20261011) |\n\n**Hard-keyword evidence (from catalog literal fields):**\n- `wireless` — `features.wireless` ✓\n- `silent` — `title` contains \"Silent\" + `features.silent click` ✓\n\n**Soft preference (\"quiet\" / silent operation):** No dedicated `preference_checks` field documented in this catalog snapshot. The `silent click` feature in `features` is consistent with quiet use, but I am not asserting full satisfaction of any additional soft preference beyond the hard-keyword evidence shown above.\n\n**Important quote limits** (per `facts_kind=curated_page_summary`): item price only; shipping, tax, delivery-to-user address, and current stock are not verified by this snapshot; not real-time; not a total-to-door price. No real purchase, payment, or fulfillment occurred — only a local purchase draft was saved after independent readback.",
+  "final_seen": true,
+  "host_callback_timeout_note": "The known host 60-second final-callback limit is not treated as a business failure; final_text_seen is reported but not scored.",
+  "budget_revision": {
+    "succeeded": true,
+    "call_args": {
+      "budget_usd": 22.99,
+      "expected_budget_usd": 20,
+      "reason": "当前目录满足硬关键词(wireless+silent)的唯一商品价 22.99 USD，超原预算 2.99 USD；仅调本地任务预算，不付款。",
+      "task_id": "TraceShopTask-1791777063.395466-2"
+    },
+    "before_budget_usd": 20.0,
+    "after_budget_usd": 22.99,
+    "fresh_research_required": true,
+    "initial_budget_usd": 20
+  },
+  "first_research": {
+    "present": true,
+    "error_code": "no_candidates",
+    "decision_state": "no_valid_candidates",
+    "candidate_count": 0,
+    "budget_change_required_alternatives": 1
+  },
+  "research_after_revision": {
+    "present": true,
+    "is_ok": true,
+    "candidate_count": 1
+  },
+  "quote": {
+    "item_id": 102,
+    "title": "Logitech M240 Silent Bluetooth Mouse",
+    "price_usd": 22.99,
+    "quote": {
+      "currency": "USD",
+      "facts_kind": "curated_page_summary",
+      "kind": "curated_official_page_snapshot",
+      "merchant_quote_validity": "not_checked",
+      "observed_at": "2026-10-10T17:40:07Z",
+      "price_basis": "item_price_only",
+      "region": "US",
+      "shipping_to_user": "not_checked",
+      "snapshot_id": "logitech-us-20261011",
+      "snapshot_price_usd": 22.99,
+      "source_url": "https://www.logitech.com/en-us/shop/p/m240-silent-bluetooth-mouse",
+      "stock_at_observation": "listed_in_stock",
+      "tax_total": "not_checked",
+      "variant": "Off-White"
+    }
+  },
+  "selected_item_id": 102,
+  "selection_record": {
+    "catalog_source": "official_snapshot",
+    "comparison": {
+      "previous_origin": "app_tool_arguments",
+      "previous_request": {
+        "budget_text": "20",
+        "budget_usd": 20,
+        "catalog_source": "official_snapshot",
+        "hard_keywords": [
+          "wireless",
+          "silent"
+        ],
+        "hard_text": "wireless,silent",
+        "need": "office wireless mouse",
+        "request_origin": "app_tool_arguments"
+      },
+      "previous_research_revision": 2,
+      "previous_state": "no_valid_candidates"
+    },
+    "kind": "catalog_evidence_snapshot",
+    "limits": "规则字段证据与相邻研究快照，不是完整语义或用户逐项认可；报价/运费/税费等以quote范围为准；批准仅保存本地草稿，无真实交易。",
+    "merchant_version": 2,
+    "request": {
+      "budget_usd": 22.99,
+      "hard_keywords": [
+        "wireless",
+        "silent"
+      ],
+      "need": "office wireless mouse"
+    },
+    "request_origin": "app_tool_arguments",
+    "research_revision": 3,
+    "schema_version": 1,
+    "selected": {
+      "budget_remaining_usd": 0,
+      "hard_evidence": [
+        {
+          "evidence": [
+            {
+              "field": "features",
+              "term": "wireless",
+              "value": "wireless"
+            }
+          ],
+          "term": "wireless"
+        },
+        {
+          "evidence": [
+            {
+              "field": "title",
+              "term": "silent",
+              "value": "Logitech M240 Silent Bluetooth Mouse"
+            },
+            {
+              "field": "features",
+              "term": "silent",
+              "value": "silent click"
+            }
+          ],
+          "term": "silent"
+        }
+      ],
+      "item_id": 102,
+      "preference_checks": [],
+      "price_usd": 22.99,
+      "title": "Logitech M240 Silent Bluetooth Mouse"
+    }
+  },
+  "draft": {
+    "paths": [
+      "traceshop.shopping/purchase_draft.json"
+    ],
+    "json": {
+      "merchant_version": 2,
+      "brand": "Logitech",
+      "schema_version": 1,
+      "revision": 1,
+      "note": "本地采购草稿；无真实下单、支付或物流。",
+      "title": "Logitech M240 Silent Bluetooth Mouse",
+      "quote": {
+        "variant": "Off-White",
+        "source_url": "https://www.logitech.com/en-us/shop/p/m240-silent-bluetooth-mouse",
+        "stock_at_observation": "listed_in_stock",
+        "facts_kind": "curated_page_summary",
+        "kind": "curated_official_page_snapshot",
+        "snapshot_id": "logitech-us-20261011",
+        "observed_at": "2026-10-10T17:40:07Z",
+        "region": "US",
+        "currency": "USD",
+        "price_basis": "item_price_only",
+        "shipping_to_user": "not_checked",
+        "tax_total": "not_checked",
+        "merchant_quote_validity": "not_checked",
+        "snapshot_price_usd": 22.99
+      },
+      "proposal_id": "p-1791777152-1",
+      "selection_record": {
+        "schema_version": 1,
+        "kind": "catalog_evidence_snapshot",
+        "catalog_source": "official_snapshot",
+        "research_revision": 3,
+        "merchant_version": 2,
+        "request_origin": "app_tool_arguments",
+        "request": {
+          "need": "office wireless mouse",
+          "budget_usd": 22.99,
+          "hard_keywords": [
+            "wireless",
+            "silent"
+          ]
+        },
+        "selected": {
+          "item_id": 102,
+          "title": "Logitech M240 Silent Bluetooth Mouse",
+          "price_usd": 22.99,
+          "budget_remaining_usd": 0,
+          "hard_evidence": [
+            {
+              "term": "wireless",
+              "evidence": [
+                {
+                  "term": "wireless",
+                  "field": "features",
+                  "value": "wireless"
+                }
+              ]
+            },
+            {
+              "term": "silent",
+              "evidence": [
+                {
+                  "term": "silent",
+                  "field": "title",
+                  "value": "Logitech M240 Silent Bluetooth Mouse"
+                },
+                {
+                  "term": "silent",
+                  "field": "features",
+                  "value": "silent click"
+                }
+              ]
+            }
+          ],
+          "preference_checks": []
+        },
+        "comparison": {
+          "previous_request": {
+            "need": "office wireless mouse",
+            "budget_usd": 20,
+            "budget_text": "20",
+            "hard_keywords": [
+              "wireless",
+              "silent"
+            ],
+            "hard_text": "wireless,silent",
+            "catalog_source": "official_snapshot",
+            "request_origin": "app_tool_arguments"
+          },
+          "previous_state": "no_valid_candidates",
+          "previous_research_revision": 2,
+          "previous_origin": "app_tool_arguments"
+        },
+        "limits": "规则字段证据与相邻研究快照，不是完整语义或用户逐项认可；报价/运费/税费等以quote范围为准；批准仅保存本地草稿，无真实交易。"
+      },
+      "research_revision": 3,
+      "selected_item_id": 102,
+      "confirmed_at": 1791777222.63011,
+      "draft_id": "d-p-1791777152-1",
+      "catalog_source": "official_snapshot",
+      "price_is_simulated": false,
+      "price_usd": 22.99,
+      "currency": "USD"
+    }
+  },
+  "consistency": {
+    "write_tool_call_counts": {
+      "shopping.catalog.research": 2,
+      "shopping.proposal.create": 1,
+      "shopping.draft.save": 1,
+      "shopping.task.budget.set": 1
+    },
+    "write_tools_share_task_id": true,
+    "draft_request_budget_usd": 22.99,
+    "draft_request_budget_equals_approved_after": true,
+    "draft_read_confirms_current_proposal": true,
+    "tool_order_positions": [
+      8,
+      12,
+      16,
+      20,
+      24,
+      28
+    ],
+    "tool_order_correct": true
+  },
+  "observed": {
+    "app_opened_for_step_a": true,
+    "first_research_preserves_initial_conditions": true,
+    "budget_change_alternative_present": true,
+    "initial_binding_matches_ui": true,
+    "one_budget_request_matches_receipt": true,
+    "first_research_at_initial_budget_failed_no_candidates": true,
+    "budget_set_succeeded": true,
+    "budget_set_before_equals_initial_budget": true,
+    "budget_set_after_differs_from_before": true,
+    "budget_set_fresh_research_required": true,
+    "research_after_budget_matches": true,
+    "proposal_created": true,
+    "draft_saved": true,
+    "draft_read_confirms_current_proposal": true,
+    "write_tools_share_task_id": true,
+    "draft_request_budget_equals_approved_after": true,
+    "tool_order_correct": true
+  },
+  "passed": true,
+  "declared_tools": [
+    "shopping.status.read",
+    "shopping.catalog.select",
+    "shopping.catalog.research",
+    "shopping.proposal.create",
+    "shopping.proposal.read",
+    "shopping.draft.save",
+    "shopping.draft.read",
+    "shopping.task.budget.set"
+  ],
+  "observed_relay_tools": [
+    "shopping.catalog.research",
+    "shopping.draft.read",
+    "shopping.draft.save",
+    "shopping.proposal.create",
+    "shopping.status.read",
+    "shopping.task.budget.set"
+  ],
+  "missing_declared_tools": [
+    "shopping.catalog.select",
+    "shopping.proposal.read"
+  ],
+  "missing_tools_are_not_failure": true,
+  "control": {
+    "finished": true,
+    "processed": [
+      "consent-199314",
+      "launch-199314",
+      "approval-frame-199314",
+      "approve-budget-22.99-199314",
+      "save-approval-frame-199314",
+      "approve-save-199314",
+      "sync-final-199314",
+      "end-199314",
+      "finish-199314"
+    ]
+  },
+  "errors": [],
+  "at": 1791777291.318
+}

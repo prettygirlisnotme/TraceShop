@@ -1,0 +1,36 @@
+{
+  "model_requests": 8,
+  "tool_calls": 7,
+  "tool_kinds": [
+    "shopping.catalog.research",
+    "shopping.draft.read",
+    "shopping.draft.save",
+    "shopping.proposal.create",
+    "shopping.status.read",
+    "shopping.task.budget.set"
+  ],
+  "total_tokens": 120325,
+  "prompt_tokens": 119055,
+  "cached_prompt_tokens": 101995,
+  "completion_tokens": 1270,
+  "approval_requested_tools": [
+    "shopping_task_budget_set",
+    "shopping_draft_save"
+  ],
+  "approval_decisions": [
+    {
+      "kind": "approval_decided",
+      "approval_id": "01a12e3c-7338-7873-a1e6-980166a0ebf1",
+      "decision": "approve",
+      "reason": null,
+      "answer": null
+    },
+    {
+      "kind": "approval_decided",
+      "approval_id": "01a12e3d-7919-7c23-94f5-b271867584fa",
+      "decision": "approve",
+      "reason": null,
+      "answer": null
+    }
+  ]
+}
