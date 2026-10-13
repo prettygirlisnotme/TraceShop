@@ -1,0 +1,47 @@
+{
+  "agent": {
+    "instructions": "AGENT.md",
+    "max_iterations": 8,
+    "model": {
+      "needs": [
+        "tool_calling"
+      ]
+    },
+    "profile": "read-only",
+    "token_budget": 80000,
+    "tools": [
+      "ask_user_question"
+    ]
+  },
+  "capabilities": [
+    "storage",
+    "octos.session.open",
+    "octos.session.history",
+    "octos.turn.start",
+    "octos.turn.interrupt",
+    "net"
+  ],
+  "compute": {
+    "instruction_budget": 4000000,
+    "memory_bytes": 33554432
+  },
+  "id": "traceshop.shopping",
+  "integrity": {
+    "bundle_blake3": "1aaf5306ad991a23debcd75df17d752a186dc093dc5482984b51ce29cde00389"
+  },
+  "name": "TraceShop 采购助手",
+  "network": {
+    "hosts": [
+      "www.logitech.com"
+    ]
+  },
+  "requires": [
+    "script-tools-v1"
+  ],
+  "schema": 1,
+  "storage": {
+    "accounts": false,
+    "agent_workspace": "none"
+  },
+  "version": "0.5.4"
+}

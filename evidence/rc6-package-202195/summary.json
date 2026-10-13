@@ -1,0 +1,16 @@
+{
+  "job_id": "202195",
+  "passed": true,
+  "scope": "Final release input bytes: stamp private copy and official unsigned structure check",
+  "hub_pin": "386359153ed6377b5f047bd9ed2767a6a2ac2bc7",
+  "hub_binary_sha256": "2527757a38ebef4eb2b7c0b1c038266b242a5cea4cf5de0b3209bd799266e18f",
+  "input_files": 10,
+  "input_unchanged": true,
+  "cpu": 4,
+  "gpu": 0,
+  "model_requests": 0,
+  "signed": false,
+  "keys_read": false,
+  "github_attestation": false,
+  "hub_admission": false
+}

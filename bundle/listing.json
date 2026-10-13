@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "subtitle": "有据可查的采购决策，条件变化后明确重办",
-  "description": "TraceShop 是 OctoScript/Splash 购物决策应用。Agent 通过八个声明工具读取状态、切换目录来源、研究候选、创建/读取提案、在用户明确同意且经宿主确认后调整当前任务预算、申请宿主确认保存与独立读回。目录来源可选：14条合成USD演示商品（默认基线）或3条人工核对官网页面快照（US/USD；整理摘要非整页原文，非实时，仅商品价，运费/税费与配送未核验）。提案绑定需求、预算、研究与商户版本；条件变化会阻止旧提案保存，并展示旧/新条件。无候选且替代项超预算时，最多一次请求用户确认调整预算：只有经 shopping.task.budget.set 并由宿主批准后才改预算，随后强制重新研究；不得静默放宽。用户明确点击重新办理后，Agent 重新研究和创建新提案，写入仍需新的宿主批准。候选展示原始字段、软偏好证据与quote来源元数据（URL/采集时间/价格口径），区分目录有证据与目录未证实。无真实下单、支付或物流。 办理记录与完整回复可切换查看：记录仅来自实际应用工具返回、最多12条、仅保留于内存；助手原文不改写，不作为宿主批准或保存凭据。",
+  "subtitle": "无解时协商，批准后行动，执行后核验",
+  "description": "TraceShop 是 OctoScript / Splash 采购决策应用。Agent 通过八个应用工具读取任务、切换目录、研究候选、创建和读取提案、申请预算调整、保存草稿与独立读回。预算不足时提出具体取舍，预算修改须经宿主批准；批准后在同一任务中重新研究，保存采购草稿仍需另一次批准。提案绑定需求、预算及研究/商户版本，条件变化后必须重新办理。界面展示商品字段证据、报价来源和实际工具记录。目录包含14条合成演示商品与3条人工整理的Logitech美国官网快照，使用USD；快照非实时，仅商品价，运费、税费、配送和当前库存未核验。最终结果是宿主私有存储中的本地采购草稿，无真实下单、付款或物流。",
   "category": "shopping",
   "keywords": [
     "shopping",
@@ -11,8 +11,8 @@
     "shopping decision"
   ],
   "screenshots": [
-    "screenshots/01-changed.png",
-    "screenshots/02-host-approval.png",
+    "screenshots/01-budget-approval.png",
+    "screenshots/02-save-approval.png",
     "screenshots/03-readback.png",
     "screenshots/04-complete.png"
   ],
@@ -25,7 +25,7 @@
     "support": "https://github.com/prettygirlisnotme/TraceShop/issues",
     "privacy_policy_url": "https://github.com/prettygirlisnotme/TraceShop/blob/main/PRIVACY.md"
   },
-  "release_notes": "私有0.5.4候选；同业务源码199314在官方RC5真实M3完成20→22.99原生批准、强制重新研究、保存另批、独立读回；199373官方RC6固定协议兼容通过，零真实模型；未发布，无新正式媒体；宿主60秒回调限制仍存。",
+  "release_notes": "0.5.4：同任务预算协商、批准后重新研究、另批保存与独立草稿读回。官方未修改RC6上由真实MiniMax-M3完成所述流程，仓库提供同次实录、中文字幕和截图。宿主60秒回调仍可能超时，应用支持显式历史同步；未声称修复宿主时限。目录为规则检索与官网快照，无实时交易或原生Project A模型接入。",
   "age_rating": "all",
   "license": "Apache-2.0"
 }

@@ -1,0 +1,120 @@
+{
+  "source_job": 202120,
+  "original_slurm_state": "FAILED",
+  "original_exit": "4:0",
+  "original_passed": false,
+  "original_observed": {
+    "app_opened_for_step_a": true,
+    "first_research_preserves_initial_conditions": false,
+    "budget_change_alternative_present": false,
+    "initial_binding_matches_ui": true,
+    "one_budget_request_matches_receipt": false,
+    "first_research_at_initial_budget_failed_no_candidates": false,
+    "budget_set_succeeded": true,
+    "budget_set_before_equals_initial_budget": true,
+    "budget_set_after_differs_from_before": true,
+    "budget_set_fresh_research_required": true,
+    "research_after_budget_matches": false,
+    "proposal_created": false,
+    "draft_saved": false,
+    "draft_read_confirms_current_proposal": true,
+    "write_tools_share_task_id": true,
+    "draft_request_budget_equals_approved_after": true,
+    "tool_order_correct": false
+  },
+  "reviewed_passed": true,
+  "reviewed_observed": {
+    "app_opened_for_step_a": true,
+    "first_research_preserves_initial_conditions": true,
+    "budget_change_alternative_present": true,
+    "initial_binding_matches_ui": true,
+    "one_budget_request_matches_receipt": true,
+    "first_research_at_initial_budget_failed_no_candidates": true,
+    "budget_set_succeeded": true,
+    "budget_set_before_equals_initial_budget": true,
+    "budget_set_after_differs_from_before": true,
+    "budget_set_fresh_research_required": true,
+    "research_after_budget_matches": true,
+    "proposal_created": true,
+    "draft_saved": true,
+    "draft_read_confirms_current_proposal": true,
+    "write_tools_share_task_id": true,
+    "draft_request_budget_equals_approved_after": true,
+    "tool_order_correct": true
+  },
+  "reviewed_true": 17,
+  "predicate_count": 17,
+  "review_scope": "This run only: unique exact suffix, two observed prefixes, matching canonical and order; original predicates unchanged.",
+  "frozen_draft_source": "Original report captured the actual saved file; no live UI, host or model rerun.",
+  "original_report_sha256": "ae0b56789b708c904c614174fbb6ea7c9fe5426c096bcce85548b8707d5ba62d",
+  "relay_sha256": "030b122905947d194ad605a2a2b8b3338e59566ac1ec0535ef03629b0916e1b1",
+  "controller_sha256": "f78ddd7a4697a0e8206d2d2ecd7dc9eef563096088c639903459d18c4ebd2c1a",
+  "call_id_pairs": [
+    {
+      "call_id": "chatcmpl-tool-98db354be2ea3ecb",
+      "result_call_id": "call_tool-98db354be2ea3ecb",
+      "canonical": "shopping.status.read",
+      "call_pos": 2,
+      "result_pos": 4
+    },
+    {
+      "call_id": "chatcmpl-tool-b64ec7886206cedb",
+      "result_call_id": "call_tool-b64ec7886206cedb",
+      "canonical": "shopping.catalog.research",
+      "call_pos": 6,
+      "result_pos": 8
+    },
+    {
+      "call_id": "chatcmpl-tool-80b1e4fe0fe0e23f",
+      "result_call_id": "call_tool-80b1e4fe0fe0e23f",
+      "canonical": "shopping.task.budget.set",
+      "call_pos": 10,
+      "result_pos": 12
+    },
+    {
+      "call_id": "chatcmpl-tool-94944cbc72192b75",
+      "result_call_id": "call_tool-94944cbc72192b75",
+      "canonical": "shopping.catalog.research",
+      "call_pos": 14,
+      "result_pos": 16
+    },
+    {
+      "call_id": "chatcmpl-tool-88aef2bcb8f401bb",
+      "result_call_id": "call_tool-88aef2bcb8f401bb",
+      "canonical": "shopping.proposal.create",
+      "call_pos": 18,
+      "result_pos": 20
+    },
+    {
+      "call_id": "chatcmpl-tool-9f182ad19eb71fe2",
+      "result_call_id": "call_tool-9f182ad19eb71fe2",
+      "canonical": "shopping.draft.save",
+      "call_pos": 22,
+      "result_pos": 24
+    },
+    {
+      "call_id": "chatcmpl-tool-96af49177101e750",
+      "result_call_id": "call_tool-96af49177101e750",
+      "canonical": "shopping.draft.read",
+      "call_pos": 26,
+      "result_pos": 28
+    }
+  ],
+  "requests": 8,
+  "tool_calls": 7,
+  "tool_types": 6,
+  "usage": {
+    "prompt_tokens": 118479,
+    "completion_tokens": 1095,
+    "total_tokens": 119574
+  },
+  "final_text_seen": true,
+  "model_or_host_rerun": false,
+  "model_wording_limit": "Original text contains an unqualified unique-hard-match claim; subtitles do not repeat it or rewrite the original.",
+  "public_path_redaction": {
+    "scope": "Public copies only: replace the project absolute path prefix with <PRIVATE_PROJECT_ROOT>; business fields, passed values, IDs, events and numbers unchanged.",
+    "original_report_sha256_scope": "Unredacted private original. This is not the public copy SHA.",
+    "public_original_report_sha256": "a7b156e7ca3bc2a595e153cb07b5cd9651278f4282f9673bcf9588d9ca632ebb",
+    "public_reviewed_result_sha256": "696e887371ea9cc6155a18a28b4d6642d4ee715e5673c089a7dbd16dce9c37d0"
+  }
+}

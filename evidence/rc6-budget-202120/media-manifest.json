@@ -1,0 +1,100 @@
+{
+  "source_job": 202120,
+  "media_job": "202195",
+  "raw_video_sha256": "01a0f0a21e892fa69b4b82c59d1189645b8f3818650106538b6775ed2db1d3e0",
+  "raw_seconds": 464.842,
+  "raw_preserved": true,
+  "video_seconds": 112.74000000000001,
+  "planned_seconds": 113.7,
+  "video_bytes": 965943,
+  "video_sha256": "6bc8479fc189ecee85142a13f881bf078c40668d9541da0749d518a9bff61df9",
+  "srt_sha256": "ccb0c3a2ba37286185e48270ccc49e36a31f08c2663f705777b5f0a753bb62fc",
+  "thumbnail_sha256": "9bd31c4cf97a2fff62e57b4e55e96cd0c5d9bc42fbbfecced6c1fa4575b265cd",
+  "segments": [
+    [
+      40,
+      54.7,
+      "输入需求：办公无线鼠标，预算20美元；再填入无线、静音条件。"
+    ],
+    [
+      180,
+      202,
+      "首次宿主授权后启动；它先读取状态并研究。"
+    ],
+    [
+      248,
+      267,
+      "预算内无解：单独批准20→22.99，再重新研究。"
+    ],
+    [
+      278,
+      287,
+      "M240提案后，模型另行请求保存本地草稿。"
+    ],
+    [
+      316,
+      339,
+      "第二次业务批准后保存；随后独立draft.read核对。"
+    ],
+    [
+      382,
+      397,
+      "宿主回调超时；同步历史恢复实际最终回复。"
+    ],
+    [
+      448,
+      459,
+      "M240 $22.99，已保存并读回；没有付款或下单。"
+    ]
+  ],
+  "cut_waits": true,
+  "generated_ui_frames": false,
+  "speed_changed": false,
+  "audio": false,
+  "crop": {
+    "x": 110,
+    "y": 128,
+    "width": 1000,
+    "height": 656
+  },
+  "subtitles_outside_ui": true,
+  "font_source": "https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf",
+  "font_sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
+  "screenshots": {
+    "01-budget-approval.png": {
+      "source_png": "f00352.png",
+      "source_seconds": 207.9457,
+      "sha256": "b745005a48ca847b46805181615274c5e0cabab76e5bf8f7ad4feff58a4317c8",
+      "pixels_changed": false,
+      "resolution": "1400x900"
+    },
+    "02-save-approval.png": {
+      "source_png": "f00471.png",
+      "source_seconds": 279.9331,
+      "sha256": "70957f2f19be4cd4b4893842ebdcbd1842a5f23fcf1accdc5e8400def7d40908",
+      "pixels_changed": false,
+      "resolution": "1400x900"
+    },
+    "03-readback.png": {
+      "source_png": "f00558.png",
+      "source_seconds": 334.676,
+      "sha256": "aba13191ed1543cfb28053fcee2f6803dbb42dd6542a4c8a565c47e4367a031e",
+      "pixels_changed": false,
+      "resolution": "1400x900"
+    },
+    "04-complete.png": {
+      "source_png": "f00667.png",
+      "source_seconds": 395.176,
+      "sha256": "1d86a1714a4a9abf501d342c403ab58c0b88d687e36302d4375406d3761b8c59",
+      "pixels_changed": false,
+      "resolution": "1400x900"
+    }
+  },
+  "external_model_requests": 0,
+  "gpu": 0,
+  "signed": false,
+  "keys_read": false,
+  "original_report_preserved": true,
+  "reviewed_predicates": 17,
+  "review_summary": "review-summary.json"
+}

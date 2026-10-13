@@ -1,12 +1,12 @@
 {
   "AGENT.md": "d079839b96bf815d571890c01834efc41ea6e57dbab3da6284733d7cad58ce33",
   "assets/icon.svg": "c3dc4f8af970087ece5e31e0445df02e614fd28898fa946981d4d89c0c6d2996",
-  "listing.json": "d0fba06c074b5fae69d15d063e911579f29195cb2eb667e3b6c72bb12be9fa04",
+  "listing.json": "eaa8dc31baee95e6bf21298cad559cf0329bb32a388e5417e2e124d423f52844",
   "main.splash": "43b89dde90a493986fc1f190fea05d62460bd712fb028c29ab404359596bec23",
   "manifest.json": "28a2d84c075359d9c8f20fa515a618fe1915ab4cf669293ca33a4ef8650d4538",
-  "screenshots/01-changed.png": "a77f02a4b72ee1b0d02087756a05ccc94a65308fa4c9f78e4e04f47f3aaee128",
-  "screenshots/02-host-approval.png": "efb296742507abd349e50842316bff73850eb49b205172cc6b143e215133ce22",
-  "screenshots/03-readback.png": "5f438c0027b24319e3cc5abe6ee648920e3634aa9889c78d9b935a5bfb0c4927",
-  "screenshots/04-complete.png": "8327514bbdc52a64951c199a81e15ed7c36fa8b8215f6d29a397787f0a6a382f",
+  "screenshots/01-budget-approval.png": "b745005a48ca847b46805181615274c5e0cabab76e5bf8f7ad4feff58a4317c8",
+  "screenshots/02-save-approval.png": "70957f2f19be4cd4b4893842ebdcbd1842a5f23fcf1accdc5e8400def7d40908",
+  "screenshots/03-readback.png": "aba13191ed1543cfb28053fcee2f6803dbb42dd6542a4c8a565c47e4367a031e",
+  "screenshots/04-complete.png": "1d86a1714a4a9abf501d342c403ab58c0b88d687e36302d4375406d3761b8c59",
   "tools.json": "4d10e50be3c452c808f1f120e334786916fcf34515c4595b1f2a09edc24cc24f"
 }

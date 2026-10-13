@@ -1,18 +1,16 @@
-> 本页面向开发者。0.4.x 的函数命名仍保留在下文“历史函数对照”中，但当前作品源码、工具契约、验证范围与发布状态以 [README](../README.md) 和 [VALIDATION](VALIDATION.md) 为准。
-
 # 开发说明
 
-## 当前独立应用（0.5.3，待发布）
+## 当前独立应用（0.5.4）
 
-比赛作品唯一入口是 [bundle/](../bundle/)，业务核心在 [bundle/main.splash](../bundle/main.splash)。从 0.4.0 起，完整购物任务运行在 OctoScript / Splash 中，无需下方的历史 Web 服务。
+比赛作品入口是 [bundle/](../bundle/)。任务、界面与本地草稿逻辑在 [main.splash](../bundle/main.splash)，八个宿主应用工具在 [tools.json](../bundle/tools.json)，Agent 的办理约定在 [AGENT.md](../bundle/AGENT.md)。
 
-当前提供七个宿主应用工具（见 [bundle/tools.json](../bundle/tools.json)）：`shopping.status.read`、`shopping.catalog.select`、`shopping.catalog.research`、`shopping.proposal.create`、`shopping.proposal.read`、`shopping.draft.save`、`shopping.draft.read`。界面按钮与工具共用同一套 `research_core → create_proposal_at → confirm_draft_core → draft_read_result` 业务核心。
+同一业务核心同时供界面与工具调用：读取状态 → 检查预算和硬条件 → 创建提案 → 请求宿主批准 → 保存草稿 → 独立读回。原预算无解时，`shopping.task.budget.set` 可请求批准调整当前任务预算；批准后必须重新研究，保存仍需另一次批准。最多请求一次预算调整是 Agent 策略，不是处理器的硬计数限制。
 
-核心区别：Agent 可以研究并建议商品，**保存还需要宿主确认**；写入函数返回后要独立读取草稿并核对字段，才能显示成功。商品事实、模型理由与用户授权分别处理。目录来源可切换（`synthetic_demo` 14 条合成；`official_snapshot` 3 条官网快照，整理摘要、非实时、仅商品价）。应用发起任务时绑定起始条件（`task_id` + 需求/预算/硬关键词/目录来源/商户版本/起始研究版本），写工具须携带匹配 `task_id`；该绑定是本地快照，不是宿主身份认证。
+任务绑定需求、预算、硬关键词、目录与商户/研究版本。条件改变会使旧提案失效；该绑定是应用内快照，不是宿主身份认证。报价来自合成目录或人工整理官网快照，不是实时交易系统。办理记录只来自真实工具返回，最多12条、仅内存；完整模型回复可单独查看。
 
-历史函数对照（0.4.x 命名）：`research`=按预算/必需词检索候选；`pick`=生成待确认提案；`request_review`/`adopt_suggestion`=可选宿主审阅；`confirm_draft`=校验后写草稿并读回；`boot`=从私有存储恢复草稿。
+当前运行证据、发布状态和宿主超时限制统一见 [VALIDATION](VALIDATION.md)。业务变更只检查受影响路径；纯文档与媒体变更不重跑模型。包字节变化后更新摘要，并由官方发布工具重新盖章和封存。
 
-见[运行说明](REPRODUCING.md)、[实际验证范围](VALIDATION.md)和[演示提纲](DEMO.zh-CN.md)。0.5.3 相对 0.5.2 只在 `bundle/main.splash` 把原“完整回复”页扩为“办理记录 / 完整回复”两个 360px 切换区（默认记录、按钮在内容前）；办理记录只登记实际应用工具返回（先原样 `app_tools.complete` 再记录、最多最近 12 条、仅内存、新任务清空、原文不改），0.5.2 的 `fill_quote_tradeoff` 预算取舍按钮保留。**0.5.3 新 main 的 RC5 覆盖是 198504 办理记录/完整回复（25 UI + 12 协议、固定协议零模型）与布局调整前198494（main `05764fd4…`） 滚动取景；0.5.2 基线的 RC5 覆盖是 198377 首次使用流程；0.5.1 基线的 RC5 人工 UI 由 198242 覆盖，真实 M3 由 198316 覆盖（`passed=true`，不适用于 0.5.3）；198273 为历史失败。** 纯文档修改无需重跑业务；bundle 文件变化后由官方工具重查摘要；业务修改只验证受影响的路径。
+[运行与复现](REPRODUCING.md) · [中文接手入口](HANDOFF.md) · [演示说明](DEMO.zh-CN.md)
 
 ## 历史 Web 原型（v0.3.0，只作复用/历史）
 
